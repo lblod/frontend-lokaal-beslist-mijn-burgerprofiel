@@ -1,4 +1,4 @@
-# BurgerNabijeBesluitendatabank (front-end)
+# Lokaal Beslist - Mijn burgerprofiel (front-end)
 
 [The front-end for BNB](https://burgernabije-besluitendatabank-dev.s.redhost.be/), a site that uses linked data to empower everyone in Flanders to consult the decisions made by their local authorities.
 
@@ -119,10 +119,10 @@ Or in template files by using the `is-feature-enabled` helper:
 
 ### Environment variables
 
-| Name              | Description                                                     |
-| ----------------- | --------------------------------------------------------------- |
-| PLAUSIBLE_APIHOST | The domain where the plausible.js can be found                  |
-| PLAUSIBLE_DOMAIN  | The domain that has been configured to be tracked. If undefined |
+| Name                         | Description                                                        |
+| ---------------------------- | ------------------------------------------------------------------ |
+| PLAUSIBLE_APIHOST            | The domain where the plausible.js can be found                     |
+| PLAUSIBLE_DOMAIN             | The domain that has been configured to be tracked. If undefined    |
 | GOVERNING_BODY_DISABLED_LIST | A comma-separated list of governing bodies that should be disabled |
 
 ### Disabling governing bodies
