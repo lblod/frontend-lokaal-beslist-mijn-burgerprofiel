@@ -1,0 +1,102 @@
+:root {
+  --value-abstentions: 0;
+  --value-opponents: 0;
+  --value-proponents: 0;
+}
+
+.c-chart {
+  display: flex;
+  gap: $au-unit;
+  margin-top: $au-unit;
+  align-items: center;
+  flex-direction: column;
+
+  @include mq(small) {
+    flex-direction: row;
+  }
+}
+
+.c-chart__pie {
+  margin: 0 auto;
+  transform: rotate(-90deg);
+  border-radius: 50%;
+  display: block;
+  height: auto;
+  flex-shrink: 0;
+  width: 200px;
+
+  circle {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.c-chart__legend {
+  @include au-font-size(var(--au-h6));
+
+  color: var(--au-gray-700);
+  flex-shrink: 0;
+  width: 200px;
+
+  @include mq(small) {
+    width: calc(100% - 200px);
+  }
+}
+
+.c-chart__legend-item {
+  list-style-type: none;
+  display: flex;
+  align-items: center;
+}
+
+.c-chart__legend-item::before {
+  content: "";
+  display: block;
+  width: $au-unit-small;
+  height: $au-unit-small;
+  background-color: var(--au-gray-500);
+  border-radius: 0.3rem;
+  margin-bottom: 0.1rem;
+  margin-right: $au-unit-small;
+}
+
+.c-chart__legend-item--proponents::before {
+  background-color: var(--au-green-500);
+}
+
+.c-chart__legend-item--opponents::before {
+  background-color: var(--au-red-600);
+}
+
+.c-chart__legend-item--abstentions::before {
+  background-color: var(--au-gray-400);
+}
+
+.c-pie {
+  fill: transparent;
+  stroke-width: 50;
+  stroke-dasharray: 0 158;
+  transform: rotate(var(--offset));
+  transform-origin: center center;
+}
+
+.c-pie--proponents {
+  stroke: var(--au-green-500);
+  stroke-dasharray: var(--value-proponents) 158;
+}
+
+.c-pie--opponents {
+  --offset: calc(((var(--value-proponents) / 158) * 360) * 1deg);
+
+  stroke: var(--au-red-600);
+  stroke-dasharray: var(--value-opponents) 158;
+}
+
+.c-pie--abstentions {
+  --offset: calc(
+    (((var(--value-proponents) + var(--value-opponents)) / 158) * 360) * 1deg
+  );
+
+  stroke: var(--au-gray-400);
+  stroke-dasharray: var(--value-abstentions) 158;
+}

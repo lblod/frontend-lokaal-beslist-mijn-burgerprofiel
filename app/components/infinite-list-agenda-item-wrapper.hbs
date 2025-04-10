@@ -1,0 +1,54 @@
+{{#let this.itemsService as |loader|}}
+  <div
+    class="au-u-flex au-u-flex--between au-u-flex--spaced-small au-u-flex-center au-u-flex--vertical-center au-u-margin-top-small"
+  >
+    <p class="au-u-margin-left au-u-h4 au-u-medium au-u-word-nowrap">
+      {{format-number loader.total 0}}
+      Zoekresultaten
+    </p>
+    <section class="au-u-margin-right au-u-flex">
+      <AuLabel for="sort-on" class="au-u-hidden-visually" />
+      <select
+        id="sort-on"
+        type="select"
+        {{on "change" this.filterService.handleDateSortChange}}
+        class="au-c-input au-u-1-1 au-u-max-width-xsmall@small"
+      >
+        <option
+          value="desc"
+          selected={{eq this.filterService.filters.dateSort "desc"}}
+        >Nieuwste eerst</option>
+        <option
+          value="asc"
+          selected={{eq this.filterService.filters.dateSort "asc"}}
+        >Oudste eerst</option>
+      </select>
+    </section>
+  </div>
+  <MultiTabs @loader={{loader}} />
+  {{#if loader.hasErroredAgendaItems}}
+    <Oops @title="Oeps!" @content="Er is iets fout gelopen!" />
+  {{else if (and loader.loadAgendaItems.isRunning (not loader.agendaItems))}}
+    <LoaderFullPage @content="Agendapunten aan het laden" />
+  {{else if loader.agendaItems}}
+    <InfiniteList
+      @loadMore={{loader.loadMoreAgendaItems}}
+      @isLoading={{loader.loadAgendaItems.isRunning}}
+      @itemsShown={{loader.agendaItems.length}}
+      @itemsAmount={{loader.total}}
+    >
+      {{#each loader.agendaItems as |item|}}
+        <AgendaItemCard @item={{item}} />
+      {{/each}}
+    </InfiniteList>
+  {{else}}
+    <div class="au-o-box">
+      <AuAlert
+        @size="small"
+        @skin="warning"
+        @icon="info-circle"
+        @title="Er werden geen zoekresultaten gevonden."
+      />
+    </div>
+  {{/if}}
+{{/let}}

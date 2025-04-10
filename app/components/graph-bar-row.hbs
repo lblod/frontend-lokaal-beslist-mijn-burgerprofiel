@@ -1,0 +1,19 @@
+<div class="au-u-flex au-u-flex--spaced-small au-u-1-1 graph-bar-container">
+  <section class="graph-bar-text">
+    <p>
+      {{@name}}
+    </p>
+  </section>
+  <div
+    class="au-u-flex au-u-flex--spaced-small graph-bar"
+    {{! Divide percentages by 2 in order to improve visibility on smaller screens}}
+    {{! template-lint-disable style-concatenation }}
+    {{! template-lint-disable no-inline-styles }}
+    style="width: {{divide @percentage 2}}%;"
+  >
+    <p class="graph-bar-count">
+      {{@count}}
+    </p>
+  </div>
+
+</div>

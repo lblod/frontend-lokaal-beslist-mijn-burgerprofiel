@@ -1,0 +1,18 @@
+{
+    "git": {
+        "commitMessage": "chore: Release ${version}",
+        "tagName": "v${version}"
+    },
+    "github": {
+        "release": true
+    },
+    "npm": {
+        "publish": false
+    },
+    "plugins": {
+        "@release-it-plugins/lerna-changelog": {
+            "infile": "CHANGELOG.md",
+            "launchEditor": true
+        }
+    }
+}

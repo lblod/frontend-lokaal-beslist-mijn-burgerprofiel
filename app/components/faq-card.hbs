@@ -1,0 +1,19 @@
+<AuCard
+  id="help-zoekresultaten"
+  @expandable={{true}}
+  @flex={{true}}
+  @divided={{true}}
+  as |c|
+>
+  <c.header @badgeSkin="brand" @badgeIcon="info-circle">
+    <AuHeading @level="3" @skin="4">
+      {{@heading}}
+    </AuHeading>
+    <p>
+      {{@subheading}}
+    </p>
+  </c.header>
+  <c.content>
+    {{yield}}
+  </c.content>
+</AuCard>

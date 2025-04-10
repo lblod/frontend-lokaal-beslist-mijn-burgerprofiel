@@ -1,0 +1,19 @@
+<li>
+  <article class="c-agenda-item-card">
+    <AuHeading @level="2" @skin="5">
+      <AuLink @route="agenda-items.agenda-item" @model={{@item.id}}>
+        {{@item.titleResolved}}
+      </AuLink>
+    </AuHeading>
+    {{#if @item.description}}
+      <p class="au-u-base">{{@item.description}}</p>
+    {{/if}}
+    <div class="au-u-margin-top-tiny">
+      {{@item.dateFormatted}}
+      -
+      {{@item.governingBodyClassificationNameResolved}}
+      -
+      {{@item.municipality}}
+    </div>
+  </article>
+</li>

@@ -1,0 +1,397 @@
+@use "sass:map";
+
+// with name JSD widget
+iframe[name*="JSD widget"] {
+  bottom: 100px !important;
+  right: 20px !important;
+}
+
+.graph-bar-container {
+  height: 25px;
+  position: relative;
+  justify-content: end;
+}
+
+.truncate {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.graph-bar-text {
+  position: absolute;
+  left: 0;
+}
+
+.graph-bar {
+  justify-content: end;
+  height: 25px;
+  background-color: var(--au-blue-300);
+}
+
+.graph-bar-count {
+  text-align: end;
+  padding-right: 10px;
+  padding-left: 10px;
+}
+
+// Add ol styles
+ol {
+  counter-reset: item;
+
+  > li {
+    display: flex;
+    gap: $au-unit-small;
+    flex-wrap: nowrap;
+    padding-inline-start: $au-unit-tiny;
+    list-style-type: none;
+    counter-increment: item;
+  }
+
+  > li + li {
+    margin-top: $au-unit-small;
+  }
+
+  > li::before {
+    display: block;
+    font-weight: var(--au-medium);
+    content: counter(item) ".";
+    text-align: right;
+    width: $au-unit;
+    flex-shrink: 0;
+  }
+}
+
+// Some cursor override?
+cursor {
+  cursor: pointer;
+}
+
+// Extend region class
+.au-o-region-huge {
+  padding-top: $au-unit;
+  padding-bottom: $au-unit;
+
+  @include mq($au-region-breakpoint) {
+    padding-top: $au-unit-huge;
+    padding-bottom: $au-unit-huge;
+  }
+}
+
+// Sticky utility
+.u-top-sticky {
+  @include mq(small) {
+    top: $au-unit;
+    position: sticky;
+  }
+}
+
+// Header link
+.u-header-link {
+  text-decoration: none;
+  font-weight: var(--au-medium);
+}
+
+// Yellow top border
+.u-color-top-border {
+  border-top: solid 0.5rem var(--au-yellow-300);
+}
+
+.u-gray-top-border {
+  border-top: 1px solid var(--au-gray-200);
+}
+
+// Card fill override
+.au-c-card--fill {
+  height: initial !important;
+}
+
+// Accordion override
+.c-accordion-holder {
+  display: flex;
+
+  .au-c-accordion {
+    .au-c-toolbar {
+      align-items: center;
+    }
+
+    .au-c-icon {
+      margin-top: 0 !important;
+    }
+
+    .au-c-button--link {
+      text-decoration: none;
+      font-weight: var(--au-medium);
+
+      @include au-font-size(var(--au-h4));
+    }
+  }
+
+  > .au-c-accordion {
+    margin-top: 0.6rem;
+    width: 100%;
+    padding-bottom: 0;
+  }
+
+  > .au-c-accordion .au-c-toolbar {
+    align-items: flex-start;
+  }
+
+  > .au-c-accordion .au-c-toolbar .au-c-icon {
+    margin-top: 0.85rem !important;
+  }
+
+  > .au-c-accordion > .au-c-content {
+    margin-left: calc(7.2rem * -1);
+    border-top: 0.1rem solid var(--au-gray-200);
+    margin-top: $au-unit;
+    padding-top: 0;
+  }
+
+  &:first-of-type {
+    padding-top: $au-unit-small;
+    border-top: 0.1rem solid var(--au-gray-200);
+  }
+
+  & + & {
+    margin-top: $au-unit-small;
+    padding-top: $au-unit-small;
+    border-top: 0.1rem solid var(--au-gray-200);
+  }
+}
+
+.c-accordion-holder--top {
+  > .au-c-accordion > .au-c-content {
+    margin-left: 0;
+  }
+}
+
+// Custom form row
+.au-c-form-row--button {
+  --gap: #{$au-unit-small};
+  --button: 100%;
+
+  display: flex;
+  flex-flow: row wrap;
+  gap: var(--gap);
+
+  & > .au-c-input-wrapper {
+    flex-basis: 100%;
+  }
+
+  & > .au-c-button {
+    flex-basis: var(--button);
+  }
+
+  @include mq(small) {
+    --button: 100px;
+
+    & > .au-c-input-wrapper {
+      flex-basis: calc(100% - var(--gap) - var(--button));
+    }
+  }
+}
+
+.c-advanced-filter-holder {
+  .au-c-accordion {
+    .au-c-toolbar__group {
+      .au-c-icon {
+        color: var(--au-gray-900);
+      }
+    }
+
+    .au-c-button {
+      color: var(--au-gray-900);
+      text-decoration: none;
+      font-weight: var(--au-medium);
+
+      @include au-font-size(var(--au-h5));
+    }
+  }
+}
+
+// Truncate
+.u-truncate {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 50ch;
+}
+
+// Vote table colors
+.c-vote-table-proponent {
+  color: var(--au-green-700);
+}
+
+.c-vote-table-opponent {
+  color: var(--au-red-600);
+}
+
+.c-vote-table-abstention {
+  color: var(--au-gray-800);
+}
+
+// Add auto scroll behaviour
+.u-overflow-y-scroll {
+  overflow-y: scroll;
+  height: 100%;
+}
+
+.u-overflow-divider {
+  * + & {
+    border-top: 0.1rem solid var(--au-gray-200);
+    margin-top: $au-unit-small;
+  }
+
+  @include mq(large) {
+    * + & {
+      margin-top: $au-unit-small + $au-unit-tiny;
+    }
+  }
+}
+
+.u-overflow-padding {
+  padding: $au-unit-small $au-unit $au-unit;
+
+  @include mq(large) {
+    padding-top: $au-unit-small + $au-unit-tiny;
+  }
+}
+
+// Fix footer list responsiveness
+.au-c-main-footer .au-c-list-horizontal {
+  @include mq($until: small) {
+    flex-direction: column;
+    gap: $au-unit-small;
+    align-items: flex-start;
+    margin-top: 0;
+  }
+}
+
+.au-c-main-footer .au-c-list-horizontal__item + .au-c-list-horizontal__item {
+  @include mq($until: small) {
+    border-left: 0;
+    margin-left: 0;
+    padding-left: 0;
+  }
+}
+
+// <input type="date"> fixes for Safari
+.au-c-input {
+  // We don't set a background color, and safari uses a different one on iOS
+  background-color: var(--au-white);
+}
+
+.ember-power-select-group-name {
+  font-weight: var(--au-medium);
+  padding: $au-unit-small $au-unit;
+  color: var(--au-gray-900);
+  font-family: var(--au-font);
+}
+
+.au-c-input[type="date"] {
+  appearance: none; // This ensures the datepicker fills the full width on iOS
+  line-height: $au-input-height; // This vertical aligns the text in the middle
+
+  // https://github.com/tailwindlabs/tailwindcss-forms/blob/e60d81afe6526a015e8f38023f454b4d27c9859b/src/index.js#L99-L101
+  &::-webkit-datetime-edit,
+  &::-webkit-datetime-edit-year-field,
+  &::-webkit-datetime-edit-month-field,
+  &::-webkit-datetime-edit-day-field,
+  &::-webkit-datetime-edit-hour-field,
+  &::-webkit-datetime-edit-minute-field,
+  &::-webkit-datetime-edit-second-field,
+  &::-webkit-datetime-edit-millisecond-field,
+  &::-webkit-datetime-edit-meridiem-field {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  // https://github.com/tailwindlabs/tailwindcss-forms/blob/e60d81afe6526a015e8f38023f454b4d27c9859b/src/index.js#L82-L87
+  &::-webkit-datetime-edit-fields-wrapper {
+    padding: 0;
+  }
+
+  // https://github.com/tailwindlabs/tailwindcss-forms/blob/e60d81afe6526a015e8f38023f454b4d27c9859b/src/index.js#L89-L91
+  &::-webkit-date-and-time-value {
+    min-height: 1.5em;
+    text-align: left; // iOS shows the text centered by default
+  }
+}
+
+// The max-width utils don't have responsive versions yet
+.au-u-max-width-xsmall\@small {
+  @include mq(small) {
+    max-width: map.get($mq-breakpoints, "xsmall");
+  }
+}
+
+.au-o-layout.au-o-region-large,
+.au-c-main-container__content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#route-detail {
+  height: 100% !important;
+}
+
+// Override footer
+.au-c-main-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $au-unit;
+
+  & > .au-c-main-footer__brand {
+    padding: 0;
+  }
+
+  & .au-c-brand {
+    display: flex;
+  }
+
+  & > .au-c-main-footer__content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: $au-unit;
+    flex-grow: 1;
+    padding-top: $au-unit-tiny * 0.3;
+  }
+}
+
+.advanced-search-alert {
+  ul {
+    list-style: disc;
+    margin-left: 2rem;
+    margin-top: 1rem;
+  }
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+#governing-body {
+  ul {
+    margin: 0 0.6rem;
+  }
+}
+
+// Remove extra dot visible at the end of selected option,
+// Related to BNB-452 CommentId=97815
+.ember-power-select-multiple-options li {
+  list-style: none;
+}
+
+.infinite-scroll-height {
+  max-height: 100vh;
+}
+
+.au-c-main-header__title {
+  max-width: 100% !important;
+}

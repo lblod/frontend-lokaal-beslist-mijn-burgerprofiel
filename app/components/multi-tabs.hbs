@@ -1,0 +1,22 @@
+<AuTabs as |Tab|>
+  <Tab>
+    <AuLink
+      @route="agenda-items.index"
+      @query={{this.filters}}
+      class={{if
+        (eq this.router.currentRouteName "agenda-items.index")
+        "active"
+      }}
+    >
+      {{format-number @loader.totalAgendaItems 0}}
+      Agendapunten</AuLink>
+  </Tab>
+  <Tab>
+    <AuLink
+      @route="sessions.index"
+      @query={{this.filters}}
+      class={{if (eq this.router.currentRouteName "sessions.index") "active"}}
+    >{{format-number @loader.totalSessions 0}}
+      Zittingen</AuLink>
+  </Tab>
+</AuTabs>

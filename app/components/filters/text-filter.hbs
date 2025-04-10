@@ -1,0 +1,29 @@
+<form {{on "submit" this.handleSubmit}} class="{{@class}} au-u-1-1">
+  <Filters::Filter
+    @id={{@id}}
+    @label={{@label}}
+    @labelHidden={{@labelHidden}}
+    @rowClass={{@rowClass}}
+  >
+    {{! TODO: This is based on the AuInput version. Replace this once the 2-way-binding is removed:
+        https://github.com/appuniversum/ember-appuniversum/issues/250
+    }}
+    <span class="au-c-input-wrapper au-c-input-wrapper--right">
+      <input
+        {{!template-lint-disable no-duplicate-id}}
+        id={{@id}}
+        value={{this.value}}
+        class="au-c-input au-c-input--block {{@inputClass}}"
+        disabled={{@disabled}}
+        placeholder={{@placeholder}}
+        {{on "input" this.handleChange}}
+      />
+      <AuIcon @icon={{@icon}} @alignment="right" />
+    </span>
+    {{#if @buttonText}}
+      <AuButton type="submit" class={{@inputClass}} @width="block">
+        {{@buttonText}}
+      </AuButton>
+    {{/if}}
+  </Filters::Filter>
+</form>

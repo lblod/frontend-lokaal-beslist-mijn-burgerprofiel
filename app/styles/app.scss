@@ -1,0 +1,44 @@
+/* ==================================
+   #EMBER-APPUNIVERSUM
+   ================================== */
+
+/**
+ * A design universe for Flanders GOV applications
+ */
+
+/**
+ * CONTENTS
+ * ---
+ * SETTINGS: Project settings and variables
+ * TOOLS: Mixins
+ * GENERIC: Reset, global box-sizing and font-styles
+ * ELEMENTS: Plain html tag styling
+ * OBJECTS: OOCSS unstyled objects (namespace: '.au-o-...')
+ * COMPONENTS: Components (namespace: '.au-c-...')
+ * PLUGINS: Third-party styles
+ * UTILITIES: Single function helper classes (namespace: '.au-u-...')
+ */
+
+$au-flex-utilities-responsive: true;
+
+// Ember appuniversum
+@import "@appuniversum/ember-appuniversum/styles/a-settings";
+@import "@appuniversum/ember-appuniversum/styles/a-tools";
+@import "@appuniversum/ember-appuniversum/styles/a-generic";
+@import "@appuniversum/ember-appuniversum/styles/a-elements";
+@import "@appuniversum/ember-appuniversum/styles/a-objects";
+@import "@appuniversum/ember-appuniversum/styles/a-components";
+@import "@appuniversum/ember-appuniversum/styles/a-plugins";
+@import "@appuniversum/ember-appuniversum/styles/a-utilities";
+
+// Components
+@import "components/c-interface";
+@import "components/c-agenda-item-card";
+@import "components/c-infinite-list";
+@import "components/c-description-list";
+@import "components/c-chart";
+@import "components/c-responsive-tables";
+@import "components/c-home";
+
+// Overrides
+@import "shame";

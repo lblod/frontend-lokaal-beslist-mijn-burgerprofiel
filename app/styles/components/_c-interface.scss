@@ -1,0 +1,152 @@
+.c-interface {
+  display: flex;
+  flex-wrap: wrap;
+
+  @include mq(small) {
+    flex-direction: row-reverse;
+    align-items: stretch;
+    height: 100%;
+  }
+}
+
+.c-interface__sidebar {
+  --sidebar: 100%;
+
+  flex-basis: var(--sidebar);
+
+  // Without this `width`, the sidebar dissapears from the page on some breakpoints if the content is too wide
+  width: var(--sidebar);
+  padding: $au-unit-small;
+  background-color: var(--au-gray-100);
+  border-bottom: 0.1rem solid var(--au-gray-200);
+
+  @include mq(small) {
+    --sidebar: 250px;
+
+    padding: $au-unit;
+    border-bottom: 0;
+    border-right: 0.1rem solid var(--au-gray-200);
+    height: 100%;
+  }
+
+  @include mq(medium) {
+    --sidebar: 300px;
+  }
+
+  @include mq(large) {
+    --sidebar: 356px;
+  }
+}
+
+.c-interface__sidebar--dialog {
+  @include mq($until: small) {
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    top: 0;
+    left: 0;
+    background-color: var(--au-white);
+    flex-direction: column;
+
+    &.is-visible {
+      display: flex;
+    }
+  }
+}
+
+.c-interface__content {
+  --main: 100%;
+
+  flex-basis: var(--main);
+  padding: $au-unit-small;
+  overflow: auto;
+
+  & > div {
+    scroll-behavior: smooth;
+  }
+
+  @include mq(small) {
+    --main: calc(100% - 250px);
+
+    height: 100%;
+    padding: $au-unit;
+  }
+
+  @include mq(medium) {
+    --main: calc(100% - 300px);
+  }
+
+  @include mq(large) {
+    --main: calc(100% - 356px);
+  }
+}
+
+.c-interface__content--fixed {
+  height: 100%;
+  overflow: hidden;
+  padding: 0;
+}
+
+.c-interface__sidebar-main {
+  display: flex;
+  flex-direction: column;
+  gap: $au-unit;
+  flex-grow: 1;
+}
+
+.c-interface__filter-button {
+  @include mq(small) {
+    display: none;
+  }
+}
+
+.au-c-interface__filter-link {
+  @include mq($until: small) {
+    display: none;
+  }
+
+  @include mq(small) {
+    @include au-font-size(var(--au-base), 1);
+
+    font-weight: var(--au-regular);
+    position: absolute;
+    top: -1000px;
+    left: -1000px;
+
+    &,
+    &:hover,
+    &:focus {
+      color: var(--au-gray-900);
+      text-decoration: underline;
+      text-decoration-color: var(--au-gray-300);
+    }
+
+    &:focus {
+      position: relative;
+      outline: var(--au-outline);
+      top: $au-unit-small;
+      left: 0;
+    }
+  }
+}
+
+.c-interface__sidebar-submit-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: $au-unit-tiny;
+
+  @include mq(small) {
+    display: none;
+  }
+}
+
+.c-interface__sidebar-close-button {
+  display: flex;
+  justify-content: flex-end;
+
+  @include mq(small) {
+    display: none;
+  }
+}

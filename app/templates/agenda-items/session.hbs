@@ -1,0 +1,19 @@
+{{page-title "Zitting"}}
+
+<AuToolbar @size="medium" @skin="tint" @border="bottom" as |Group|>
+  <Group>
+    <ul class="au-c-list-horizontal au-c-list-horizontal--small">
+      <li class="au-c-list-horizontal__item">
+        <AuLink @route="agenda-items.agenda-item" @model={{this.model.agendaItem.id}} @icon="arrow-left">
+          Terug naar agendapunt
+        </AuLink>
+      </li>
+    </ul>
+  </Group>
+</AuToolbar>
+
+<Session
+  @governingBodyName={{this.model.session.governingBodyNameResolved}}
+  @sessionDate={{this.model.session.dateFormatted}}
+  @sessionAgendaItems={{this.agendaItemsSorted}}
+/>

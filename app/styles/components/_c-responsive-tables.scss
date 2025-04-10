@@ -1,0 +1,37 @@
+.c-responsive-tables {
+  --width: 100%;
+  --gap: #{$au-unit-small};
+
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: $au-unit-small;
+  gap: var(--gap);
+
+  & .au-c-table {
+    min-width: 100%;
+  }
+
+  & > .au-c-table-wrapper {
+    flex-basis: var(--width);
+  }
+
+  tr:last-child {
+    border-bottom: 0;
+  }
+
+  @include mq(small) {
+    --width: 33.333%;
+    --gap: 0;
+
+    & > .au-c-table-wrapper:not(:last-child) {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    & > .au-c-table-wrapper + .au-c-table-wrapper {
+      border-left: 0;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  }
+}

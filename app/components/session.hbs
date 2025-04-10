@@ -1,0 +1,26 @@
+<AuBodyContainer @scroll={{true}} id="route-session" class="au-o-region-large">
+  <div class="au-o-layout">
+    <AuHeading @level="1" class="au-u-margin-bottom">
+      {{@governingBodyName}}
+      {{@sessionDate}}
+    </AuHeading>
+    <ul class="c-infinite-list">
+      {{#each @sessionAgendaItems as |item|}}
+        <li>
+          <article class="c-agenda-item-card">
+            <AuHeading @level="1" @skin="5">
+              <AuLink
+                class="c-agenda-item-card__link"
+                @route="agenda-items.agenda-item"
+                @model={{item.id}}
+              >
+                {{item.titleFormatted}}
+              </AuLink>
+            </AuHeading>
+            <p class="c-agenda-item-card__content">{{item.description}}</p>
+          </article>
+        </li>
+      {{/each}}
+    </ul>
+  </div>
+</AuBodyContainer>

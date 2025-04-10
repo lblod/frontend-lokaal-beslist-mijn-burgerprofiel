@@ -1,0 +1,19 @@
+<Filters::Filter @id={{@id}} @label={{@label}}>
+  <PowerSelect
+    class="au-u-1-1"
+    {{!template-lint-disable no-duplicate-id}}
+    id={{@id}}
+    @onChange={{this.selectChange}}
+    @selected={{this.selected}}
+    @options={{@options}}
+    @allowClear={{@allowClear}}
+    @searchField={{@searchField}}
+    @placeholder={{@placeholder}}
+    @noMatchesMessage={{concat "Geen " @label " gevonden"}}
+    @searchMessage="Aan het zoeken..."
+    @searchEnabled={{@searchEnabled}}
+    as |value|
+  >
+    {{value}}
+  </PowerSelect>
+</Filters::Filter>

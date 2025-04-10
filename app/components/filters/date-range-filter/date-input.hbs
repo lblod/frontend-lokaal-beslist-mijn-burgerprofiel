@@ -1,0 +1,15 @@
+<input
+  {{! class="au-c-input au-c-input--block" }}
+  class="au-c-input au-c-input--block {{if @errorMessage 'au-c-input--error'}}"
+  type="date"
+  value={{@value}}
+  min={{@min}}
+  max={{@max}}
+  {{on "change" this.handleChange}}
+  ...attributes
+/>
+{{#if @errorMessage}}
+  {{#each @errorMessage as |message|}}
+    <AuHelpText @error={{true}}>{{message}}</AuHelpText>
+  {{/each}}
+{{/if}}

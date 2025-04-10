@@ -1,0 +1,139 @@
+<div class="au-o-flow au-o-flow--small au-u-padding au-u-padding-bottom-none">
+  <AuHeading @level="1" @skin="2">Wat zoek je?</AuHeading>
+  <section
+    class="au-u-flex au-u-flex--column@large au-u-flex--vertical-start au-u-flex--spaced-small@medium au-u-flex--spaced au-u-1-1"
+  >
+    <div
+      class="au-u-flex au-u-1-1 au-u-flex--column au-u-max-width-xsmall@small"
+    >
+      <form
+        {{on "submit" this.handleSubmit}}
+        class="au-u-max-width-xsmall@small au-u-margin-bottom-small au-u-margin-bottom-none@medium au-u-1-1"
+      >
+        <Filters::Filter @rowClass="au-c-form-row--button">
+          <div class="au-u-flex flex-1 au-u-1-1">
+            <div
+              class="au-u-flex au-u-flex--column au-u-flex--vertical-end au-u-1-1"
+            >
+              <div class="au-u-1-1 au-u-flex au-u-flex--spaced-tiny">
+                <span
+                  class="au-c-input-wrapper au-c-input-wrapper--right au-u-1-1"
+                >
+                  <input
+                    id="keyword"
+                    value={{this.filterService.filters.keyword}}
+                    class="au-c-input au-c-input--block"
+                    placeholder="Zoek in alle lokale agendapunten"
+                    {{on "input" this.handleChange}}
+                  />
+                  <AuIcon @icon="search" @alignment="right" />
+                </span>
+                <div class="au-u-hidden-from@small">
+                  <a
+                    href="#filtersidebar"
+                    class="au-c-button au-c-button--secondary au-c-button--block c-interface__filter-button"
+                    {{on "click" @showFilter}}
+                  >
+                    <AuIcon @icon="filter" />
+                  </a>
+                </div>
+              </div>
+              <AuButton
+                @skin="link-secondary"
+                @icon="circle-question"
+                class="au-u-margin-top-tiny au-u-padding-none au-u-visible-from@small"
+                {{on "click" this.toggleAdvancedSearch}}
+              >
+                Geavanceerd zoeken
+              </AuButton>
+            </div>
+          </div>
+          <AuButton type="submit" @width="block">
+            Zoeken
+          </AuButton>
+          <AuButton
+            @skin="link-secondary"
+            @icon="circle-question"
+            class="au-u-padding-none au-u-hidden-from@small au-u-flex--end"
+            {{on "click" this.toggleAdvancedSearch}}
+          >
+            Geavanceerd zoeken
+          </AuButton>
+        </Filters::Filter>
+      </form>
+
+      {{#let this.filterService.keywordAdvancedSearch as |advancedSearch|}}
+        {{#if advancedSearch}}
+          <p class="au-u-margin-bottom-small au-u-margin-top-small">
+            We zoeken geavanceerd op:</p>
+          <div class="au-u-flex au-u-flex--spaced-small au-u-flex--wrap">
+            {{#each advancedSearch.must as |item|}}
+              <AuPill
+                @skin="success"
+                @onClickAction={{fn this.removeAdvancedSearchItem item}}
+                @actionIcon="cross"
+                @actionText="close"
+              >Exact: {{item}}</AuPill>
+            {{/each}}
+            {{#each advancedSearch.or as |item index|}}
+              <AuPill
+                @skin="ongoing"
+                @onClickAction={{fn this.removeAdvancedSearchItem item}}
+                @actionIcon="cross"
+                @actionText="close"
+              >
+                {{item}}
+              </AuPill>
+              {{#if (not-eq index (sub advancedSearch.or.length 1))}}<span
+                >OF</span>{{/if}}
+            {{/each}}
+            {{#each advancedSearch.not as |item|}}
+              <AuPill
+                @skin="warning"
+                @onClickAction={{fn this.removeAdvancedSearchItem item}}
+                @actionIcon="cross"
+                @actionText="close"
+              >Negeer: {{item}}</AuPill>
+            {{/each}}
+          </div>
+        {{/if}}
+      {{/let}}
+    </div>
+    {{#if this.showAdvancedSearch}}
+      <AuAlert
+        @closable={{true}}
+        @onClose={{this.toggleAdvancedSearch}}
+        class="au-u-1-1 au-u-max-width-medium advanced-search-alert"
+        @title="Gebruik de volgende commando's om betere zoekresultaten te krijgen:"
+      >
+        <ul>
+          <li class="au-u-margin-bottom-tiny">Zet exacte trefwoorden tussen
+            aanhalingstekens. E.g.:
+            <AuPill @skin="success">“Straatlampen“</AuPill>
+          </li>
+          <li class="au-u-margin-bottom-tiny">Maak een combinatie van exacte
+            trefwoorden. E.g.:
+            <AuPill @skin="success">“Straatlampen“ </AuPill>
+            <AuPill @skin="success">“Gent”</AuPill>
+          </li>
+          <li class="au-u-margin-bottom-tiny">Gebruik een minteken voor
+            ongewenste trefwoorden. E.g.:
+            <AuPill @skin="warning">-straat</AuPill>
+          </li>
+          <li class="au-u-margin-bottom-tiny">
+            Typ OF tussen gewenste trefwoorden: E.g.:
+            <AuPill @skin="info">straatlampen OF straatverlichting</AuPill>
+          </li>
+          <li class="au-u-margin-bottom-tiny">Combineer meerdere functies met
+            EN. E.g.:
+            <AuPill @skin="info">klimaat OF dienst</AuPill>
+            EN
+            <AuPill @skin="warning"> -straat</AuPill>
+            EN
+            <AuPill @skin="success">"vergadering"</AuPill>
+          </li>
+        </ul>
+      </AuAlert>
+    {{/if}}
+  </section>
+</div>

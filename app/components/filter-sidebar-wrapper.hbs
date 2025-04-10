@@ -1,0 +1,88 @@
+<FilterSidebar
+  @id="filtersidebar"
+  @class="c-interface__sidebar c-interface__sidebar--dialog {{if
+    @hasFilter
+    'is-visible'
+  }}"
+  {{focus-trap
+    isActive=@hasFilter
+    shouldSelfFocus=true
+    additionalElements=(array "#ember-basic-dropdown-wormhole")
+    focusTrapOptions=(hash onDeactivate=@hideFilter)
+  }}
+>
+  <div class="c-interface__sidebar-close-button">
+    <a
+      href="#filtercontent"
+      class="au-c-button au-c-button--naked"
+      {{on "click" @hideFilter}}
+    >
+      Terug
+    </a>
+  </div>
+  <div class="c-interface__sidebar-main">
+    <h3 class="au-u-h4 au-u-medium">Verfijn de zoekresultaten</h3>
+    <Filters::SelectMultipleFilter
+      @id="municipality"
+      @label="Kies één of meer besturen"
+      @options={{this.governmentList.options}}
+      @selected={{this.governmentList.selected}}
+      @updateSelected={{this.updateSelectedGovernment}}
+      @noMatchesMessage="Geen besturen gevonden"
+      @searchField="label"
+      @queryParam="gemeentes+provincies"
+      @placeholder="Alle besturen"
+    />
+    <Filters::DateRangeFilter
+      @startQueryParam="begin"
+      @endQueryParam="eind"
+      @start={{this.filterService.filters.plannedStartMin}}
+      @end={{this.filterService.filters.plannedStartMax}}
+      @updateSelected={{this.updateSelectedDateRange}}
+    />
+    <Filters::SelectFilter
+      @id="status"
+      @label="Status agendapunten"
+      @options={{this.statusOfAgendaItemsOptions}}
+      @selected={{this.status}}
+      @updateSelected={{this.setStatus}}
+      @queryParam="status"
+      @allowClear={{false}}
+      @searchEnabled={{false}}
+      @placeholder="Alle agendapunten"
+    />
+    <section class="c-advanced-filter-holder">
+      <Accordion
+        @defaultOpen={{this.showAdvancedFilters}}
+        @iconOpen="nav-up"
+        @iconClosed="nav-down"
+        @buttonLabel="Geavanceerde filters"
+      >
+        <Filters::SelectMultipleFilter
+          @id="governing-body"
+          @label="Kies één of meer bestuursorganen"
+          @options={{this.governigBodyOptions}}
+          @selected={{this.governingBodyList.selected}}
+          @updateSelected={{this.updateSelectedGoverningBodyClassifications}}
+          @noMatchesMessage="Geen bestuursorganen gevonden"
+          @searchField="label"
+          @queryParam="bestuursorganen"
+          @placeholder="Alle bestuursorganen"
+        />
+      </Accordion>
+    </section>
+  </div>
+  <div class="c-interface__sidebar-submit-buttons">
+    <AuButton @skin="primary" @width="block" {{on "click" @hideFilter}}>
+      Zoeken
+    </AuButton>
+
+    <a
+      href="#filtercontent"
+      class="au-c-button au-c-button--naked au-c-button--block"
+      {{on "click" @hideFilter}}
+    >
+      Annuleer
+    </a>
+  </div>
+</FilterSidebar>

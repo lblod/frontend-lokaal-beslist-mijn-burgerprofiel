@@ -1,0 +1,16 @@
+<li>
+  <article class="c-agenda-item-card">
+    <AuHeading @level="2" @skin="5">
+      <AuLink @route="sessions.session" @model={{@item.id}}>
+        {{@item.governingBodyClassificationNameResolved}}
+        {{@item.dateFormatted}}
+      </AuLink>
+    </AuHeading>
+    <div class="c-agenda-item-card__footer">
+      {{@item.municipality}}
+      -
+      {{@item.agendaItemCount}}
+      agendapunten
+    </div>
+  </article>
+</li>
