@@ -1,0 +1,18 @@
+steps:
+  install:
+    image: madnificent/ember:4.12.1-node_18
+    commands:
+      - npm ci
+  release:
+    image: plugins/docker
+    settings:
+      repo: ${CI_REPO}
+      tags: "${CI_COMMIT_TAG##v}"
+      purge: true
+      username:
+        from_secret: docker_username
+      password:
+        from_secret: docker_password
+when:
+  - event: tag
+    ref: refs/tags/v*

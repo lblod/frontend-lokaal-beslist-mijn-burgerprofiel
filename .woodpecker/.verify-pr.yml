@@ -1,22 +1,22 @@
 steps:
   install:
-    image: danlynn/ember-cli:6.1.0-node_22.12
+    image: madnificent/ember:4.12.1-node_18
     commands:
       - npm ci
   lint:js:
-    image: danlynn/ember-cli:6.1.0-node_22.12
+    image: madnificent/ember:4.12.1-node_18
     commands:
       - npm run lint:js
   lint:hbs:
-    image: danlynn/ember-cli:6.1.0-node_22.12
+    image: madnificent/ember:4.12.1-node_18
     commands:
       - npm run lint:hbs
   lint:dependencies:
-    image: danlynn/ember-cli:6.1.0-node_22.12
+    image: madnificent/ember:4.12.1-node_18
     commands:
       - npm run lint:css
   test:
-    image: danlynn/ember-cli:6.1.0-node_22.12
+    image: madnificent/ember:4.12.1-node_18
     commands:
       - npm run test:ember
 when:
