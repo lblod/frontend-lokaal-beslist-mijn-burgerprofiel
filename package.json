@@ -143,5 +143,8 @@
   },
   "pre-commit": [
     "lint"
-  ]
+  ],
+  "dependencies": {
+    "@govflanders/mbp-embed-sdk": "^0.0.5"
+  }
 }
