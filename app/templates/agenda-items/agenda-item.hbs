@@ -75,7 +75,7 @@
               </li>
             </ul>
             <AuContent @skin="small">
-              <p class="au-u-muted">
+              <p class="au-u-muted au-u-word-break">
                 {{#if this.model.agendaItem.description}}
                   {{this.model.agendaItem.description}}
                 {{else}}
@@ -133,7 +133,7 @@
                         @buttonLabel="Motivering"
                       >
                         <AuContent @skin="small" class="au-u-padding">
-                          <p class="au-u-muted">
+                          <p class="au-u-muted au-u-word-break">
                             {{resolution.motivation}}
                           </p>
                         </AuContent>
@@ -331,29 +331,32 @@
               {{/if}}
             {{/if}}
             {{#if (is-pending this.model.similarAgendaItemsPromise)}}
-                <AuHeading @level="2" @skin="4">
-                  {{#if this.keywordStore.keyword}}
-                    Meer relevante info over
-                    <AuLink
-                      class="au-u-medium"
-                    >{{this.keywordStore.keyword}}</AuLink>
-                  {{else}}
-                    Meer agendapunten
-                  {{/if}}
-                  in
+              <AuHeading @level="2" @skin="4">
+                {{#if this.keywordStore.keyword}}
+                  Meer relevante info over
                   <AuLink
-                    @route="agenda-items"
-                    @query={{this.municipalityQuery}}
                     class="au-u-medium"
-                  >{{this.model.agendaItem.session.municipality}}</AuLink>
-                  worden geladen...
-                </AuHeading>
+                  >{{this.keywordStore.keyword}}</AuLink>
+                {{else}}
+                  Meer agendapunten
+                {{/if}}
+                in
+                <AuLink
+                  @route="agenda-items"
+                  @query={{this.municipalityQuery}}
+                  class="au-u-medium"
+                >{{this.model.agendaItem.session.municipality}}</AuLink>
+                worden geladen...
+              </AuHeading>
             {{else}}
-              {{#let (await this.model.similarAgendaItemsPromise) as |similarAgendaItems|}}
+              {{#let
+                (await this.model.similarAgendaItemsPromise)
+                as |similarAgendaItems|
+              }}
                 {{#if
                   (and
-                     this.model.agendaItem.session.hasMunicipality
-                     similarAgendaItems.length
+                    this.model.agendaItem.session.hasMunicipality
+                    similarAgendaItems.length
                   )
                 }}
                   <AuHeading @level="2" @skin="4">

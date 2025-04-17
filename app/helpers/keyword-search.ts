@@ -57,10 +57,18 @@ function getKeywordAdvancedSearch(
 
 function formatQueryToParts(query: string, operators: string[]): string[] {
   const formattedQuery = query
-    .replace(/-\w+/g, (match) => 'NOT ' + match.slice(1))
-    .replace(/EN/g, 'SKIP')
-    .replace(/OF/g, 'OR')
-    .replace(/"([^"]+)"/g, (match, p1) => `MUST ${p1}`)
+    .split(/(".*?")/g)
+    .map((part) => {
+      if (part.startsWith('"') && part.endsWith('"')) {
+        return `MUST ${part.slice(1, -1)}`;
+      } else {
+        return part
+          .replace(/-\w+/g, (match) => 'NOT ' + match.slice(1))
+          .replace(/EN/g, 'SKIP')
+          .replace(/OF/g, 'OR');
+      }
+    })
+    .join('')
     .trim();
 
   if (
@@ -70,7 +78,6 @@ function formatQueryToParts(query: string, operators: string[]): string[] {
   ) {
     return [];
   }
-
   return formattedQuery.split(/ (SKIP) /);
 }
 
