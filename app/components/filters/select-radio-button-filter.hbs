@@ -4,8 +4,8 @@
     @onChange={{this.selectChange}}
     as |Group|
   >
-    {{#each @options as |status|}}
-      <Group.Radio @value={{status}}>{{status}}</Group.Radio>
+    {{#each @options as |value|}}
+      <Group.Radio @value={{value}}>{{value}}</Group.Radio>
     {{/each}}
   </AuRadioGroup>
 </Filters::Filter>

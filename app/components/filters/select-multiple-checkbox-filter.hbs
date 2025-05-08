@@ -1,0 +1,11 @@
+<Filters::Filter @id={{@id}} @label={{@label}} @labelHidden={{@labelHidden}}>
+  <AuCheckboxGroup
+    @selected={{this.selected}}
+    @onChange={{this.selectChange}}
+    as |Group|
+  >
+    {{#each @options as |option|}}
+      <Group.Checkbox @value={{option}}>{{option.label}}</Group.Checkbox>
+    {{/each}}
+  </AuCheckboxGroup>
+</Filters::Filter>

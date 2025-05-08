@@ -16,7 +16,6 @@
 
   // Without this `width`, the sidebar dissapears from the page on some breakpoints if the content is too wide
   width: var(--sidebar);
-  padding: $au-unit-small;
   background-color: var(--au-gray-100);
   border-bottom: 0.1rem solid var(--au-gray-200);
 
@@ -92,7 +91,7 @@
 .c-interface__sidebar-main {
   display: flex;
   flex-direction: column;
-  gap: $au-unit;
+  gap: 1rem;
   flex-grow: 1;
 }
 

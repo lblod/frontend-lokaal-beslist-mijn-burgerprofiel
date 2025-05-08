@@ -12,13 +12,11 @@
   }}
 >
   <div class="c-interface__sidebar-close-button">
-    <a
-      href="#filtercontent"
-      class="au-c-button au-c-button--naked"
-      {{on "click" @hideFilter}}
+    <div
+      class="au-u-flex au-u-flex--end au-u-padding-top-small au-u-padding-left-small au-u-padding-right-small"
     >
-      Terug
-    </a>
+      <AuButton @skin="link" {{on "click" @hideFilter}}>Annuleer</AuButton>
+    </div>
   </div>
   <div class="c-interface__sidebar-main">
     <h3 class="au-u-h4 au-u-medium">Verfijn de zoekresultaten</h3>
@@ -64,7 +62,7 @@
       @end={{this.filterService.filters.plannedStartMax}}
       @updateSelected={{this.updateSelectedDateRange}}
     />
-    <Filters::SelectFilter
+    <Filters::SelectRadioButtonFilter
       @id="status"
       @label="Status agendapunten"
       @options={{this.statusOfAgendaItemsOptions}}
@@ -75,23 +73,22 @@
       @searchEnabled={{false}}
       @placeholder="Alle agendapunten"
     />
+    <AuHr />
     <section class="c-advanced-filter-holder">
       <Accordion
         @defaultOpen={{this.showAdvancedFilters}}
         @iconOpen="nav-up"
         @iconClosed="nav-down"
-        @buttonLabel="Geavanceerde filters"
+        @buttonLabel="GEAVANCEERDE FILTERS"
       >
-        <Filters::SelectMultipleFilter
+        <Filters::SelectMultipleCheckboxFilter
           @id="governing-body"
-          @label="Kies één of meer bestuursorganen"
+          @label="Bestuursorganen"
           @options={{this.governigBodyOptions}}
           @selected={{this.governingBodyList.selected}}
           @updateSelected={{this.updateSelectedGoverningBodyClassifications}}
-          @noMatchesMessage="Geen bestuursorganen gevonden"
           @searchField="label"
           @queryParam="bestuursorganen"
-          @placeholder="Alle bestuursorganen"
         />
 
       </Accordion>
