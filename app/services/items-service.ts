@@ -31,8 +31,8 @@ export default class ItemsService extends Service {
   @tracked sessions: Session[] = [];
   @tracked totalAgendaItems = 0;
   @tracked totalSessions = 0;
+  @tracked currentAgendaItemPage = 0;
 
-  currentAgendaItemPage = 0;
   currentSessionPage = 0;
 
   get filters() {
@@ -48,6 +48,14 @@ export default class ItemsService extends Service {
 
   get canLoadMoreSessions() {
     return this.sessions.length < this.totalSessions;
+  }
+
+  get isFirstPageLoaded() {
+    if (this.currentAgendaItemPage >= 1) {
+      return true;
+    }
+
+    return this.currentAgendaItemPage === 0 && !this.loadAgendaItems.isRunning;
   }
 
   @action

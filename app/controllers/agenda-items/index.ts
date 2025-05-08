@@ -26,11 +26,6 @@ export default class AgendaItemsIndexController extends Controller {
   }
 
   @action
-  showFilter() {
-    this.hasFilter = true;
-  }
-
-  @action
   hideFilter() {
     runTask(this, () => {
       this.hasFilter = false;
