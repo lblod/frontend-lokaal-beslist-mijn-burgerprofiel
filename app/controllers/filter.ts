@@ -10,7 +10,6 @@ import type GoverningBodyListService from 'frontend-burgernabije-besluitendataba
 import type GovernmentListService from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
 import type ItemsService from 'frontend-burgernabije-besluitendatabank/services/items-service';
-
 import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import type { SortType } from './agenda-items/types';
 import { serializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
