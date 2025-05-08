@@ -9,6 +9,7 @@ import type {
   SortType,
 } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
+import type ItemsService from 'frontend-burgernabije-besluitendatabank/services/items-service';
 import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import type ThemeListService from 'frontend-burgernabije-besluitendatabank/services/theme-list';
 import type DistanceListService from 'frontend-burgernabije-besluitendatabank/services/distance-list';
@@ -32,6 +33,7 @@ export default class FilterSidebarWrapper extends Component<FilterSidebarWrapper
   @service declare router: RouterService;
   @service declare filterService: FilterService;
   @service declare distanceList: DistanceListService;
+  @service declare itemsService: ItemsService;
 
   get governigBodyOptions() {
     return this.governingBodyList.options;

@@ -15,8 +15,14 @@
     <div
       class="au-u-flex au-u-flex--end au-u-padding-top-small au-u-padding-left-small au-u-padding-right-small"
     >
-      <AuButton @skin="link" {{on "click" @hideFilter}}>Annuleer</AuButton>
+      <AuLink
+        @route="agenda-items.index"
+        @query={{hash begin=null eind=null status=null bestuursorganen=null}}
+      >
+        Reset filters
+      </AuLink>
     </div>
+    <AuHr />
   </div>
   <div class="c-interface__sidebar-main">
     <h3 class="au-u-h4 au-u-medium">Verfijn de zoekresultaten</h3>
@@ -61,6 +67,7 @@
       @start={{this.filterService.filters.plannedStartMin}}
       @end={{this.filterService.filters.plannedStartMax}}
       @updateSelected={{this.updateSelectedDateRange}}
+      @disabled={{this.itemsService.loadAgendaItems.isRunning}}
     />
     <Filters::SelectRadioButtonFilter
       @id="status"
@@ -72,6 +79,7 @@
       @allowClear={{true}}
       @searchEnabled={{false}}
       @placeholder="Alle agendapunten"
+      @disabled={{this.itemsService.loadAgendaItems.isRunning}}
     />
     <AuHr />
     <section class="c-advanced-filter-holder">
@@ -89,22 +97,18 @@
           @updateSelected={{this.updateSelectedGoverningBodyClassifications}}
           @searchField="label"
           @queryParam="bestuursorganen"
+          @disabled={{this.itemsService.loadAgendaItems.isRunning}}
         />
 
       </Accordion>
     </section>
   </div>
   <div class="c-interface__sidebar-submit-buttons">
+    <AuHr />
     <AuButton @skin="primary" @width="block" {{on "click" @hideFilter}}>
-      Zoeken
+      Toon
+      {{this.itemsService.total}}
+      resultaten
     </AuButton>
-
-    <a
-      href="#filtercontent"
-      class="au-c-button au-c-button--naked au-c-button--block"
-      {{on "click" @hideFilter}}
-    >
-      Annuleer
-    </a>
   </div>
 </FilterSidebar>

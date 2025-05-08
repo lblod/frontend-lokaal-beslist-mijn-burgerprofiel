@@ -12,6 +12,7 @@
 .c-interface__sidebar {
   --sidebar: 100%;
 
+  overflow-y: auto;
   flex-basis: var(--sidebar);
 
   // Without this `width`, the sidebar dissapears from the page on some breakpoints if the content is too wide
@@ -132,18 +133,18 @@
 }
 
 .c-interface__sidebar-submit-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: $au-unit-tiny;
-
-  @include mq(small) {
-    display: none;
-  }
+  padding: $au-unit;
+  padding-top: 0;
+  position: sticky;
+  bottom: 0;
+  background-color: var(--vl-white);
 }
 
 .c-interface__sidebar-close-button {
-  display: flex;
-  justify-content: flex-end;
+  position: sticky;
+  top: 0;
+  background-color: var(--vl-white);
+  z-index: 2;
 
   @include mq(small) {
     display: none;

@@ -2,6 +2,7 @@
   <AuFormRow>
     <AuLabel for="date-period">Selecteer een periode</AuLabel>
     <PowerSelect
+      @disabled={{@disabled}}
       @selected={{this.selectedPreset}}
       @options={{this.presets}}
       @onChange={{this.handleSelectionChange}}
@@ -24,6 +25,7 @@
   <AuFormRow>
     <AuLabel for="date-from">Startdatum</AuLabel>
     <Filters::DateRangeFilter::DateInput
+      @disabled={{@disabled}}
       @value={{this.start}}
       @max={{this.MAX}}
       @min={{this.MIN}}
@@ -38,6 +40,7 @@
     <AuFormRow>
       <AuLabel for="date-to">Einddatum</AuLabel>
       <Filters::DateRangeFilter::DateInput
+        @disabled={{@disabled}}
         @value={{this.end}}
         @onChange={{this.handleEndDateChange}}
         @max={{this.MAX}}
