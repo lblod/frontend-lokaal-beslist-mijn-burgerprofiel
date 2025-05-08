@@ -1,0 +1,11 @@
+<Filters::Filter @id={{@id}} @label={{@label}}>
+  <AuRadioGroup
+    @selected={{this.selected}}
+    @onChange={{this.selectChange}}
+    as |Group|
+  >
+    {{#each @options as |status|}}
+      <Group.Radio @value={{status}}>{{status}}</Group.Radio>
+    {{/each}}
+  </AuRadioGroup>
+</Filters::Filter>
