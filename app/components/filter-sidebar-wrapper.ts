@@ -1,6 +1,7 @@
 import { action } from '@ember/object';
 import type RouterService from '@ember/routing/router-service';
 import { service } from '@ember/service';
+import { tracked } from '@glimmer/tracking';
 import Component from '@glimmer/component';
 import type GoverningBodyListService from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
 import type GovernmentListService from 'frontend-burgernabije-besluitendatabank/services/government-list';
