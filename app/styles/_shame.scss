@@ -414,3 +414,7 @@ cursor {
     color: var(--au-gray-500);
   }
 }
+
+hr.au-c-hr.lighter {
+  border-bottom: 0.1rem solid var(--au-gray-200);
+}

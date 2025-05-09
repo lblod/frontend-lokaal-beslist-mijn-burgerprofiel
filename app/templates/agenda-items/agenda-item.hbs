@@ -60,7 +60,7 @@
           {{this.model.agendaItem.session.dateFormatted}}
         </li>
       </ul>
-      <AuHr />
+      <AuHr class="lighter" />
     </div>
     <div class="au-u-padding-left au-u-padding-right">
       <h1 class="au-u-muted">BESCHRIJVING</h1>
@@ -71,135 +71,126 @@
           We hebben geen beschrijving ontvangen voor dit agendapunt.
         {{/if}}
       </p>
-      <AuHr />
     </div>
-    <article id="detail-left-section" class="au-o-grid__item au-u-4-6@medium">
-      <AuCard class="u-color-top-border" as |c|>
-        <c.content class="content">
-          <AuContent @skin="small" />
-
-          <section class="c-accordion-holder">
-            <AuBadge @icon="report" @skin="brand" />
-            <AuAccordion
-              @reverse={{true}}
-              @iconOpen="nav-down"
-              @iconClosed="nav-right"
-              @buttonLabel="Besluit"
-            >
-              {{#let this.firstResolution as |resolution|}}
-                {{#if resolution.value}}
-                  <AuAlert
-                    @skin="success"
-                    @icon="sign"
-                    class="au-u-margin-top au-u-margin-bottom"
-                  >
-                    {{#if (is-pdf-url resolution.value)}}
-                      <AuLinkExternal
-                        href={{resolution.value}}
-                        @skin="small"
-                        @icon="pdf"
-                      >
-                        open besluit
-                      </AuLinkExternal>
-                    {{else}}
-                      {{resolution.value}}
-                    {{/if}}
-                  </AuAlert>
-                {{else}}
-                  <AuAlert
-                    @skin="warning"
-                    @title="Besluit niet beschikbaar"
-                    class="au-u-margin-top au-u-margin-bottom"
-                  >
-                    {{#if this.model.agendaItem.wasHandled}}
-                      <p>De data voor dit agendapunt is nog niet beschikbaar.</p>
-                    {{else}}
-                      <p>Dit agendapunt werd nog niet behandeld.</p>
-                    {{/if}}
-                  </AuAlert>
-                {{/if}}
-                {{#if resolution.motivation}}
-                  <div class="c-accordion-holder c-accordion-holder--top">
-                    <AuAccordion
-                      @reverse={{true}}
-                      @iconOpen="nav-down"
-                      @iconClosed="nav-right"
-                      @buttonLabel="Motivering"
-                    >
-                      <AuContent @skin="small" class="au-u-padding">
-                        <p class="au-u-muted au-u-word-break">
-                          {{resolution.motivation}}
-                        </p>
-                      </AuContent>
-                    </AuAccordion>
-                  </div>
-                {{/if}}
-              {{/let}}
-            </AuAccordion>
-          </section>
-
-          {{#if this.hasArticles}}
-            <section class="c-accordion-holder">
-              <AuBadge @icon="book" @skin="brand" />
-              <AuAccordion
-                @reverse={{true}}
-                @iconOpen="nav-down"
-                @iconClosed="nav-right"
-                @buttonLabel="Artikel"
+    <div class="au-o-box">
+      <section class="c-accordion-holder">
+        <AuBadge @icon="report" @skin="border" />
+        <AuAccordion
+          @reverse={{true}}
+          @iconOpen="nav-down"
+          @iconClosed="nav-right"
+          @buttonLabel="Besluit"
+        >
+          {{#let this.firstResolution as |resolution|}}
+            {{#if resolution.value}}
+              <AuAlert
+                @skin="success"
+                @icon="sign"
+                class="au-u-margin-top au-u-margin-bottom"
               >
-                <AuAlert
-                  @skin="success"
-                  @icon="sign"
-                  class="au-u-margin-top au-u-margin-bottom"
+                {{#if (is-pdf-url resolution.value)}}
+                  <AuLinkExternal
+                    href={{resolution.value}}
+                    @skin="small"
+                    @icon="pdf"
+                  >
+                    open besluit
+                  </AuLinkExternal>
+                {{else}}
+                  {{resolution.value}}
+                {{/if}}
+              </AuAlert>
+            {{else}}
+              <AuAlert
+                @skin="warning"
+                @title="Besluit niet beschikbaar"
+                class="au-u-margin-top au-u-margin-bottom"
+              >
+                {{#if this.model.agendaItem.wasHandled}}
+                  <p>De data voor dit agendapunt is nog niet beschikbaar.</p>
+                {{else}}
+                  <p>Dit agendapunt werd nog niet behandeld.</p>
+                {{/if}}
+              </AuAlert>
+            {{/if}}
+            {{#if resolution.motivation}}
+              <div class="c-accordion-holder c-accordion-holder--top">
+                <AuAccordion
+                  @reverse={{true}}
+                  @iconOpen="nav-down"
+                  @iconClosed="nav-right"
+                  @buttonLabel="Motivering"
                 >
-                  {{#each this.model.articles as |article|}}
-                    <section class="au-u-margin-bottom">
-                      <h6>{{article.number}}</h6>
-                      <p>{{article.value}}</p>
-                    </section>
-                  {{/each}}
-                </AuAlert>
-              </AuAccordion>
-            </section>
-          {{/if}}
+                  <AuContent @skin="small" class="au-u-padding">
+                    <p class="au-u-muted au-u-word-break">
+                      {{resolution.motivation}}
+                    </p>
+                  </AuContent>
+                </AuAccordion>
+              </div>
+            {{/if}}
+          {{/let}}
+        </AuAccordion>
+      </section>
 
-          <section class="c-accordion-holder">
-            <AuBadge @icon="vote" @skin="brand" />
-            <AuAccordion
-              @subtitle={{this.model.vote.subject}}
-              @reverse={{true}}
-              @iconOpen="nav-down"
-              @iconClosed="nav-right"
-              @buttonLabel="Stemming"
+      {{#if this.hasArticles}}
+        <section class="c-accordion-holder">
+          <AuBadge @icon="book" @skin="border" />
+          <AuAccordion
+            @reverse={{true}}
+            @iconOpen="nav-down"
+            @iconClosed="nav-right"
+            @buttonLabel="Artikel"
+          >
+            <AuAlert
+              @skin="success"
+              @icon="sign"
+              class="au-u-margin-top au-u-margin-bottom"
             >
-              {{#if this.model.vote}}
-                <VoteOverview @vote={{this.model.vote}} />
+              {{#each this.model.articles as |article|}}
+                <section class="au-u-margin-bottom">
+                  <h6>{{article.number}}</h6>
+                  <p>{{article.value}}</p>
+                </section>
+              {{/each}}
+            </AuAlert>
+          </AuAccordion>
+        </section>
+      {{/if}}
+
+      <section class="c-accordion-holder">
+        <AuBadge @icon="vote" @skin="border" />
+        <AuAccordion
+          @reverse={{true}}
+          @iconOpen="nav-down"
+          @iconClosed="nav-right"
+          @buttonLabel="Stemming"
+        >
+          {{#if this.model.vote}}
+            <VoteOverview @vote={{this.model.vote}} />
+          {{else}}
+            <AuAlert
+              @skin="warning"
+              @title="Stemming niet beschikbaar"
+              class="au-u-margin-top au-u-margin-bottom"
+            >
+              {{#if this.model.agendaItem.wasHandled}}
+                <p>De data voor dit agendapunt is nog niet beschikbaar.</p>
               {{else}}
-                <AuAlert
-                  @skin="warning"
-                  @title="Stemming niet beschikbaar"
-                  class="au-u-margin-top au-u-margin-bottom"
-                >
-                  {{#if this.model.agendaItem.wasHandled}}
-                    <p>De data voor dit agendapunt is nog niet beschikbaar.</p>
-                  {{else}}
-                    <p>Dit agendapunt werd nog niet behandeld.</p>
-                  {{/if}}
-                </AuAlert>
+                <p>Dit agendapunt werd nog niet behandeld.</p>
               {{/if}}
-            </AuAccordion>
-          </section>
-        </c.content>
-      </AuCard>
-      <AuCard class="au-u-margin-top" as |c|>
-        <c.header>
-          <div class="au-u-flex au-u-flex--between au-u-flex--column@small">
-            <AuHeading @level="1" @skin="3">
-              Bronnen &amp; kwaliteit
-            </AuHeading>
-          </div>
-        </c.header>
-        <c.content class="content">
+            </AuAlert>
+          {{/if}}
+        </AuAccordion>
+      </section>
+      <section class="c-accordion-holder">
+        <AuBadge @icon="vote" @skin="border" />
+        <AuAccordion
+          @reverse={{true}}
+          @iconOpen="nav-down"
+          @iconClosed="nav-right"
+          @buttonLabel="Bronnen &amp; kwaliteit"
+        >
           {{#if this.model.agendaItem.alternateLink}}
             <div
               class="au-u-flex au-u-flex--vertical-center au-u-flex--spaced-tiny"
@@ -272,9 +263,9 @@
             <p><AuLink @route="data-quality">Meer informatie over de data
                 kwaliteit</AuLink></p>
           </div>
-        </c.content>
-      </AuCard>
-    </article>
+        </AuAccordion>
+      </section>
+    </div>
     <aside class="au-o-grid__item au-u-2-6@medium">
       <div class="u-top-sticky">
         <div class="au-u-visible-from@medium">
