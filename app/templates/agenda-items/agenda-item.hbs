@@ -28,40 +28,42 @@
         <p>Dit werd behandeld</p>
       </div>
     {{/if}}
+    <div class="au-o-grid__item au-o-box">
+      <ul class="c-description-list">
+        {{#if this.model.agendaItem.session.hasMunicipality}}
+          <li>
+            <AuIcon @size="large" @icon="location" />
+            <span
+              class="au-u-hidden-visually"
+            >{{this.model.agendaItem.session.locationLevel}}:</span>
+            <AuLink @route="agenda-items" @query={{this.municipalityQuery}}>
+              {{#if this.model.agendaItem.session.municipality}}
+                {{this.model.agendaItem.session.locationLevel}}
+                {{this.model.agendaItem.session.municipality}}
+              {{else}}
+                Geen
+                {{lower-case this.model.agendaItem.session.locationLevel}}
+              {{/if}}
+            </AuLink>
+          </li>
+        {{/if}}
+        {{#if this.model.agendaItem.session.classification}}
+          <li>
+            <AuIcon @size="large" @icon="decided" />
+            <span class="au-u-hidden-visually">Bestuursorgaan:</span>
+            {{this.model.agendaItem.session.classification}}
+          </li>
+        {{/if}}
+        <li>
+          <AuIcon @size="large" @icon="calendar" />
+          <span class="au-u-hidden-visually">Planning:</span>
+          {{this.model.agendaItem.session.dateFormatted}}
+        </li>
+      </ul>
+    </div>
     <article id="detail-left-section" class="au-o-grid__item au-u-4-6@medium">
       <AuCard class="u-color-top-border" as |c|>
         <c.content class="content">
-          <ul class="c-description-list">
-            {{#if this.model.agendaItem.session.hasMunicipality}}
-              <li>
-                <AuIcon @size="large" @icon="location" />
-                <span
-                  class="au-u-hidden-visually"
-                >{{this.model.agendaItem.session.locationLevel}}:</span>
-                <AuLink @route="agenda-items" @query={{this.municipalityQuery}}>
-                  {{#if this.model.agendaItem.session.municipality}}
-                    {{this.model.agendaItem.session.locationLevel}}
-                    {{this.model.agendaItem.session.municipality}}
-                  {{else}}
-                    Geen
-                    {{lower-case this.model.agendaItem.session.locationLevel}}
-                  {{/if}}
-                </AuLink>
-              </li>
-            {{/if}}
-            {{#if this.model.agendaItem.session.classification}}
-              <li>
-                <AuIcon @size="large" @icon="decided" />
-                <span class="au-u-hidden-visually">Bestuursorgaan:</span>
-                {{this.model.agendaItem.session.classification}}
-              </li>
-            {{/if}}
-            <li>
-              <AuIcon @size="large" @icon="calendar" />
-              <span class="au-u-hidden-visually">Planning:</span>
-              {{this.model.agendaItem.session.dateFormatted}}
-            </li>
-          </ul>
           <AuContent @skin="small">
             <p class="au-u-muted au-u-word-break">
               {{#if this.model.agendaItem.description}}
@@ -216,7 +218,7 @@
                       >
                         <AuPill>{{document-type alternateLink}}</AuPill>
                         -
-                        {{alternateLink}}
+                        {{!-- {{alternateLink}} --}}
                       </AuLinkExternal>
                     {{/if}}
                   </Item>
