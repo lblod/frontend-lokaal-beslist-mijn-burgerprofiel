@@ -15,12 +15,9 @@
     <div
       class="au-u-flex au-u-flex--end au-u-padding-top-small au-u-padding-left-small au-u-padding-right-small"
     >
-      <AuLink
-        @route="agenda-items.index"
-        @query={{hash begin=null eind=null status=null bestuursorganen=null}}
-      >
+      <AuButton @skin="link" {{on "click" this.resetFilters}}>
         Reset filters
-      </AuLink>
+      </AuButton>
     </div>
     <AuHr />
   </div>
