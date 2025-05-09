@@ -418,3 +418,11 @@ cursor {
 hr.au-c-hr.lighter {
   border-bottom: 0.1rem solid var(--au-gray-200);
 }
+
+ol.less-margin {
+  margin-left: 0 !important;
+
+  li {
+    padding-inline-start: 0 !important;
+  }
+}

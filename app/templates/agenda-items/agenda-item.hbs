@@ -284,10 +284,10 @@
                 Volledige agenda
               </AuLink>
               van
-              {{this.model.agendaItem.session.dateFormatted}}
+              {{this.model.agendaItem.session.formattedPlannedDate}}
             </h2>
             {{#if this.model.agendaItemOnSameSession}}
-              <ol>
+              <ol class="less-margin">
                 {{#each this.model.agendaItemOnSameSession as |agendaItem|}}
                   <li>
                     {{! if the agendaItem.id is equal to the current agendaItem then display "Huidige agendapunt" }}
@@ -316,7 +316,7 @@
                   class="au-u-medium"
                 >{{this.keywordStore.keyword}}</AuLink>
               {{else}}
-                Meer agendapunten
+                Gerelateerde agendapunten
               {{/if}}
               in
               <AuLink
@@ -353,7 +353,7 @@
                     class="au-u-medium"
                   >{{this.model.agendaItem.session.municipality}}</AuLink>
                 </AuHeading>
-                <ol type="1">
+                <ol class="less-margin">
                   {{#each similarAgendaItems as |agendaItem|}}
                     <li class="au-u-margin-top-small">
                       <AuLink
