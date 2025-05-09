@@ -139,9 +139,12 @@ export default class FilterController extends Controller {
   }
 
   @action
-  resetFilters() {
+  async resetFilters() {
+    this.hackRefreshDateComponent = true;
     this.governingBodyList.selected = [];
     this.filterService.resetFiltersToInitialView();
     this.itemsService.loadAgendaItems.perform(0, false);
+    await timeout(10);
+    this.hackRefreshDateComponent = false;
   }
 }
