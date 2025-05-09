@@ -137,4 +137,11 @@ export default class FilterController extends Controller {
     this.filterService.resetFiltersToInitialView();
     this.goToAgendaItems();
   }
+
+  @action
+  resetFilters() {
+    this.governingBodyList.selected = [];
+    this.filterService.resetFiltersToInitialView();
+    this.itemsService.loadAgendaItems.perform(0, false);
+  }
 }
