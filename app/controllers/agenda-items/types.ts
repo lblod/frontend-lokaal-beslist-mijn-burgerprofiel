@@ -6,8 +6,8 @@ export interface AgendaItemsParams {
   keyword: string;
   municipalityLabels: string;
   provinceLabels: string;
-  plannedStartMin: string;
-  plannedStartMax: string;
+  plannedStartMin: string | null;
+  plannedStartMax: string | null;
   governingBodyClassifications: string;
   dataQualityList: Array<string>;
   dateSort: string;
