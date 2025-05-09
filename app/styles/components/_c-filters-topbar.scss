@@ -1,0 +1,19 @@
+.filters-topbar-go-to-filters {
+  display: flex;
+  justify-content: end;
+  padding: $au-unit;
+  border-bottom: $au-border solid var(--au-gray-300);
+}
+
+.filters-topbar-active-filters {
+  background-color: var(--au-gray-200);
+  padding: $au-unit;
+  display: flex;
+  justify-content: space-between;
+
+  .pills {
+    display: flex;
+    flex-flow: row wrap;
+    gap: 1rem;
+  }
+}

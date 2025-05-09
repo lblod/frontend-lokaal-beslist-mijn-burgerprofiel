@@ -1,16 +1,11 @@
 <AuModalContainer />
 <AuBodyContainer>
-  {{#if this.itemsService.isFirstPageLoaded}}
-    <div
-      class="au-u-flex au-u-flex--end au-u-padding-top-small au-u-padding-left-small au-u-padding-right-small"
-    >
-      <AuButton
-        @skin="link"
-        {{on "click" (fn (mut this.hasFilter) true)}}
-      >Sorteer en filter</AuButton>
-    </div>
-    <AuHr />
-  {{/if}}
+  <Agendapunten::FiltersTopbar
+    @filters={{this.filters}}
+    @keysToHide={{this.filterKeysToHide}}
+    @onShowFiltersPage={{fn (mut this.hasFilter) true}}
+    @onFiltersUpdated={{this.updateFilters}}
+  />
   <div class="c-interface">
     <InfiniteListAgendaItemWrapper />
     <FilterSidebarWrapper

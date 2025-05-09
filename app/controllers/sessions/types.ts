@@ -26,8 +26,8 @@ export type SessionsQueryArguments = {
   keyword?: string;
   locationIds?: string;
   provinceIds?: string;
-  plannedStartMin?: string;
-  plannedStartMax?: string;
+  plannedStartMin: string | null;
+  plannedStartMax: string | null;
   dateSort?: string;
   governingBodyClassificationIds?: string;
   status: string;

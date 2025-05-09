@@ -2,7 +2,7 @@ import Controller from '@ember/controller';
 import { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import type RouterService from '@ember/routing/router-service';
-import type { SortType } from './types';
+import type { AgendaItemsParams, SortType } from './types';
 import { action } from '@ember/object';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
 import type ItemsService from '../../services/items-service';
@@ -23,6 +23,26 @@ export default class AgendaItemsIndexController extends Controller {
 
   get filters() {
     return this.filterService.filters;
+  }
+
+  get filterKeysToHide(): Array<string> {
+    return ['dateSort', 'isTrusted'];
+  }
+
+  @action updateFilters(updatedFilters: AgendaItemsParams) {
+    this.filterService.updateFilters(updatedFilters);
+    this.router.transitionTo(this.router.currentRouteName, {
+      queryParams: {
+        gemeentes: updatedFilters.municipalityLabels,
+        provincies: updatedFilters.provinceLabels,
+        bestuursorganen: updatedFilters.governingBodyClassifications,
+        start: updatedFilters.plannedStartMin,
+        end: updatedFilters.plannedStartMax,
+        trefwoord: updatedFilters.keyword,
+        datumsortering: updatedFilters.dateSort,
+        status: updatedFilters.status,
+      },
+    });
   }
 
   @action
