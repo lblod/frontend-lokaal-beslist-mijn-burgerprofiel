@@ -400,3 +400,17 @@ cursor {
 .z-index-10 {
   z-index: 10;
 }
+
+.banner-decided {
+  padding: 0.5rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  background-color: var(--au-gray-100);
+  gap: 1rem;
+
+  svg {
+    color: var(--au-gray-500);
+  }
+}

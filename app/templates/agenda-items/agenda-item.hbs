@@ -18,172 +18,95 @@
       </ul>
     </Group>
   </AuToolbar>
-  <div class="au-o-box">
-    <div class="au-o-grid au-o-grid--small">
-      <div class="au-o-grid__item au-u-hidden-from@medium">
-        {{#if this.model.agendaItem.wasHandled}}
-          <AuAlert
-            @skin="info"
-            @icon="decided"
-            @title="Dit werd behandeld"
-            class="au-u-margin-bottom-none"
-          />
-        {{/if}}
+  <div class="au-o-grid au-o-grid--small">
+    {{#if this.model.agendaItem.wasHandled}}
+      <div class="banner-decided au-o-grid__item">
+        <AuIcon @icon="decided" />
+        <p>Dit werd behandeld</p>
       </div>
-      <article id="detail-left-section" class="au-o-grid__item au-u-4-6@medium">
-        <AuCard class="u-color-top-border" as |c|>
-          <c.header>
-            <div class="au-u-flex au-u-flex--between au-u-flex--column@small">
-              <AuHeading @level="1" @skin="3">
-                {{this.model.agendaItem.titleFormatted}}
-              </AuHeading>
-            </div>
-          </c.header>
-          <c.content class="content">
-            <ul class="c-description-list">
-              {{#if this.model.agendaItem.session.hasMunicipality}}
-                <li>
-                  <AuIcon @size="large" @icon="location" />
-                  <span
-                    class="au-u-hidden-visually"
-                  >{{this.model.agendaItem.session.locationLevel}}:</span>
-                  <AuLink
-                    @route="agenda-items"
-                    @query={{this.municipalityQuery}}
-                  >
-                    {{#if this.model.agendaItem.session.municipality}}
-                      {{this.model.agendaItem.session.locationLevel}}
-                      {{this.model.agendaItem.session.municipality}}
-                    {{else}}
-                      Geen
-                      {{lower-case this.model.agendaItem.session.locationLevel}}
-                    {{/if}}
-                  </AuLink>
-                </li>
-              {{/if}}
-              {{#if this.model.agendaItem.session.classification}}
-                <li>
-                  <AuIcon @size="large" @icon="decided" />
-                  <span class="au-u-hidden-visually">Bestuursorgaan:</span>
-                  {{this.model.agendaItem.session.classification}}
-                </li>
-              {{/if}}
+    {{/if}}
+    <article id="detail-left-section" class="au-o-grid__item au-u-4-6@medium">
+      <AuCard class="u-color-top-border" as |c|>
+        <c.header>
+          <div class="au-u-flex au-u-flex--between au-u-flex--column@small">
+            <AuHeading @level="1" @skin="3">
+              {{this.model.agendaItem.titleFormatted}}
+            </AuHeading>
+          </div>
+        </c.header>
+        <c.content class="content">
+          <ul class="c-description-list">
+            {{#if this.model.agendaItem.session.hasMunicipality}}
               <li>
-                <AuIcon @size="large" @icon="calendar" />
-                <span class="au-u-hidden-visually">Planning:</span>
-                {{this.model.agendaItem.session.dateFormatted}}
-              </li>
-            </ul>
-            <AuContent @skin="small">
-              <p class="au-u-muted au-u-word-break">
-                {{#if this.model.agendaItem.description}}
-                  {{this.model.agendaItem.description}}
-                {{else}}
-                  We hebben geen beschrijving ontvangen voor dit agendapunt.
-                {{/if}}
-              </p>
-            </AuContent>
-
-            <section class="c-accordion-holder">
-              <AuBadge @icon="report" @skin="brand" />
-              <AuAccordion
-                @reverse={{true}}
-                @iconOpen="nav-down"
-                @iconClosed="nav-right"
-                @buttonLabel="Besluit"
-              >
-                {{#let this.firstResolution as |resolution|}}
-                  {{#if resolution.value}}
-                    <AuAlert
-                      @skin="success"
-                      @icon="sign"
-                      class="au-u-margin-top au-u-margin-bottom"
-                    >
-                      {{#if (is-pdf-url resolution.value)}}
-                        <AuLinkExternal
-                          href={{resolution.value}}
-                          @skin="small"
-                          @icon="pdf"
-                        >
-                          open besluit
-                        </AuLinkExternal>
-                      {{else}}
-                        {{resolution.value}}
-                      {{/if}}
-                    </AuAlert>
+                <AuIcon @size="large" @icon="location" />
+                <span
+                  class="au-u-hidden-visually"
+                >{{this.model.agendaItem.session.locationLevel}}:</span>
+                <AuLink @route="agenda-items" @query={{this.municipalityQuery}}>
+                  {{#if this.model.agendaItem.session.municipality}}
+                    {{this.model.agendaItem.session.locationLevel}}
+                    {{this.model.agendaItem.session.municipality}}
                   {{else}}
-                    <AuAlert
-                      @skin="warning"
-                      @title="Besluit niet beschikbaar"
-                      class="au-u-margin-top au-u-margin-bottom"
-                    >
-                      {{#if this.model.agendaItem.wasHandled}}
-                        <p>De data voor dit agendapunt is nog niet beschikbaar.</p>
-                      {{else}}
-                        <p>Dit agendapunt werd nog niet behandeld.</p>
-                      {{/if}}
-                    </AuAlert>
+                    Geen
+                    {{lower-case this.model.agendaItem.session.locationLevel}}
                   {{/if}}
-                  {{#if resolution.motivation}}
-                    <div class="c-accordion-holder c-accordion-holder--top">
-                      <AuAccordion
-                        @reverse={{true}}
-                        @iconOpen="nav-down"
-                        @iconClosed="nav-right"
-                        @buttonLabel="Motivering"
-                      >
-                        <AuContent @skin="small" class="au-u-padding">
-                          <p class="au-u-muted au-u-word-break">
-                            {{resolution.motivation}}
-                          </p>
-                        </AuContent>
-                      </AuAccordion>
-                    </div>
-                  {{/if}}
-                {{/let}}
-              </AuAccordion>
-            </section>
+                </AuLink>
+              </li>
+            {{/if}}
+            {{#if this.model.agendaItem.session.classification}}
+              <li>
+                <AuIcon @size="large" @icon="decided" />
+                <span class="au-u-hidden-visually">Bestuursorgaan:</span>
+                {{this.model.agendaItem.session.classification}}
+              </li>
+            {{/if}}
+            <li>
+              <AuIcon @size="large" @icon="calendar" />
+              <span class="au-u-hidden-visually">Planning:</span>
+              {{this.model.agendaItem.session.dateFormatted}}
+            </li>
+          </ul>
+          <AuContent @skin="small">
+            <p class="au-u-muted au-u-word-break">
+              {{#if this.model.agendaItem.description}}
+                {{this.model.agendaItem.description}}
+              {{else}}
+                We hebben geen beschrijving ontvangen voor dit agendapunt.
+              {{/if}}
+            </p>
+          </AuContent>
 
-            {{#if this.hasArticles}}
-              <section class="c-accordion-holder">
-                <AuBadge @icon="book" @skin="brand" />
-                <AuAccordion
-                  @reverse={{true}}
-                  @iconOpen="nav-down"
-                  @iconClosed="nav-right"
-                  @buttonLabel="Artikel"
-                >
+          <section class="c-accordion-holder">
+            <AuBadge @icon="report" @skin="brand" />
+            <AuAccordion
+              @reverse={{true}}
+              @iconOpen="nav-down"
+              @iconClosed="nav-right"
+              @buttonLabel="Besluit"
+            >
+              {{#let this.firstResolution as |resolution|}}
+                {{#if resolution.value}}
                   <AuAlert
                     @skin="success"
                     @icon="sign"
                     class="au-u-margin-top au-u-margin-bottom"
                   >
-                    {{#each this.model.articles as |article|}}
-                      <section class="au-u-margin-bottom">
-                        <h6>{{article.number}}</h6>
-                        <p>{{article.value}}</p>
-                      </section>
-                    {{/each}}
+                    {{#if (is-pdf-url resolution.value)}}
+                      <AuLinkExternal
+                        href={{resolution.value}}
+                        @skin="small"
+                        @icon="pdf"
+                      >
+                        open besluit
+                      </AuLinkExternal>
+                    {{else}}
+                      {{resolution.value}}
+                    {{/if}}
                   </AuAlert>
-                </AuAccordion>
-              </section>
-            {{/if}}
-
-            <section class="c-accordion-holder">
-              <AuBadge @icon="vote" @skin="brand" />
-              <AuAccordion
-                @subtitle={{this.model.vote.subject}}
-                @reverse={{true}}
-                @iconOpen="nav-down"
-                @iconClosed="nav-right"
-                @buttonLabel="Stemming"
-              >
-                {{#if this.model.vote}}
-                  <VoteOverview @vote={{this.model.vote}} />
                 {{else}}
                   <AuAlert
                     @skin="warning"
-                    @title="Stemming niet beschikbaar"
+                    @title="Besluit niet beschikbaar"
                     class="au-u-margin-top au-u-margin-bottom"
                   >
                     {{#if this.model.agendaItem.wasHandled}}
@@ -193,208 +116,269 @@
                     {{/if}}
                   </AuAlert>
                 {{/if}}
+                {{#if resolution.motivation}}
+                  <div class="c-accordion-holder c-accordion-holder--top">
+                    <AuAccordion
+                      @reverse={{true}}
+                      @iconOpen="nav-down"
+                      @iconClosed="nav-right"
+                      @buttonLabel="Motivering"
+                    >
+                      <AuContent @skin="small" class="au-u-padding">
+                        <p class="au-u-muted au-u-word-break">
+                          {{resolution.motivation}}
+                        </p>
+                      </AuContent>
+                    </AuAccordion>
+                  </div>
+                {{/if}}
+              {{/let}}
+            </AuAccordion>
+          </section>
+
+          {{#if this.hasArticles}}
+            <section class="c-accordion-holder">
+              <AuBadge @icon="book" @skin="brand" />
+              <AuAccordion
+                @reverse={{true}}
+                @iconOpen="nav-down"
+                @iconClosed="nav-right"
+                @buttonLabel="Artikel"
+              >
+                <AuAlert
+                  @skin="success"
+                  @icon="sign"
+                  class="au-u-margin-top au-u-margin-bottom"
+                >
+                  {{#each this.model.articles as |article|}}
+                    <section class="au-u-margin-bottom">
+                      <h6>{{article.number}}</h6>
+                      <p>{{article.value}}</p>
+                    </section>
+                  {{/each}}
+                </AuAlert>
               </AuAccordion>
             </section>
-          </c.content>
-        </AuCard>
-        <AuCard class="au-u-margin-top" as |c|>
-          <c.header>
-            <div class="au-u-flex au-u-flex--between au-u-flex--column@small">
-              <AuHeading @level="1" @skin="3">
-                Bronnen &amp; kwaliteit
-              </AuHeading>
-            </div>
-          </c.header>
-          <c.content class="content">
-            {{#if this.model.agendaItem.alternateLink}}
-              <div
-                class="au-u-flex au-u-flex--vertical-center au-u-flex--spaced-tiny"
-              >
-                <AuHeading @level="2" @skin="4">
-                  Bronnen
-                </AuHeading>
-              </div>
-              <div class="au-c-content">
-                <p>De
-                  {{lower-case this.model.agendaItem.session.locationLevel}}
-                  heeft dit agendapunt vermeld op de volgende URL's:</p>
-                <AuList @divider={{true}} as |Item|>
-                  {{#each
-                    this.model.agendaItem.alternateLink
-                    as |alternateLink|
-                  }}
-                    <Item>
-                      {{#if alternateLink}}
-                        <AuLinkExternal
-                          href={{alternateLink}}
-                          class="au-u-flex--inline"
-                        >
-                          <AuPill>{{document-type alternateLink}}</AuPill>
-                          -
-                          {{alternateLink}}
-                        </AuLinkExternal>
-                      {{/if}}
-                    </Item>
-                  {{/each}}
-                </AuList>
-              </div>
-            {{/if}}
+          {{/if}}
+
+          <section class="c-accordion-holder">
+            <AuBadge @icon="vote" @skin="brand" />
+            <AuAccordion
+              @subtitle={{this.model.vote.subject}}
+              @reverse={{true}}
+              @iconOpen="nav-down"
+              @iconClosed="nav-right"
+              @buttonLabel="Stemming"
+            >
+              {{#if this.model.vote}}
+                <VoteOverview @vote={{this.model.vote}} />
+              {{else}}
+                <AuAlert
+                  @skin="warning"
+                  @title="Stemming niet beschikbaar"
+                  class="au-u-margin-top au-u-margin-bottom"
+                >
+                  {{#if this.model.agendaItem.wasHandled}}
+                    <p>De data voor dit agendapunt is nog niet beschikbaar.</p>
+                  {{else}}
+                    <p>Dit agendapunt werd nog niet behandeld.</p>
+                  {{/if}}
+                </AuAlert>
+              {{/if}}
+            </AuAccordion>
+          </section>
+        </c.content>
+      </AuCard>
+      <AuCard class="au-u-margin-top" as |c|>
+        <c.header>
+          <div class="au-u-flex au-u-flex--between au-u-flex--column@small">
+            <AuHeading @level="1" @skin="3">
+              Bronnen &amp; kwaliteit
+            </AuHeading>
+          </div>
+        </c.header>
+        <c.content class="content">
+          {{#if this.model.agendaItem.alternateLink}}
             <div
               class="au-u-flex au-u-flex--vertical-center au-u-flex--spaced-tiny"
             >
               <AuHeading @level="2" @skin="4">
-                Datakwaliteit
+                Bronnen
               </AuHeading>
             </div>
             <div class="au-c-content">
-              <p>Aanwezige elementen op deze pagina:</p>
+              <p>De
+                {{lower-case this.model.agendaItem.session.locationLevel}}
+                heeft dit agendapunt vermeld op de volgende URL's:</p>
               <AuList @divider={{true}} as |Item|>
-
-                {{#each
-                  this.model.agendaItem.agendaItemQualityMetrics
-                  as |qualityMetric|
-                }}
+                {{#each this.model.agendaItem.alternateLink as |alternateLink|}}
                   <Item>
-                    {{#if qualityMetric.value}}
-                      <AuBadge @icon="check" @skin="success" @size="small" />
-                      <p class="au-u-flex--inline">
-                        {{qualityMetric.label}}
-                        is aanwezig
-                      </p>
-                    {{else}}
-                      <AuBadge @icon="cross" @skin="error" @size="small" />
-                      <p class="au-u-flex--inline">
-                        {{qualityMetric.label}}
-                        is niet aanwezig
-                      </p>
+                    {{#if alternateLink}}
+                      <AuLinkExternal
+                        href={{alternateLink}}
+                        class="au-u-flex--inline"
+                      >
+                        <AuPill>{{document-type alternateLink}}</AuPill>
+                        -
+                        {{alternateLink}}
+                      </AuLinkExternal>
                     {{/if}}
                   </Item>
                 {{/each}}
               </AuList>
             </div>
-            <div class="au-c-content au-c-content--small">
-              <p>Om na te gaan of besturen voldoen aan de gelinkte
-                publicatieplicht, heeft ABB enkel gekeken naar de webtoepassing
-                waarop besturen gelinkte publicaties publiceren. Enkel de
-                documenten die gelinkt gepubliceerd zijn en automatisch van de
-                webtoepassing gehaald konden worden, zijn verder bekeken.</p>
-              <p><AuLink @route="data-quality">Meer informatie over de data
-                  kwaliteit</AuLink></p>
-            </div>
-          </c.content>
-        </AuCard>
-      </article>
-      <aside class="au-o-grid__item au-u-2-6@medium">
-        <div class="u-top-sticky">
-          <div class="au-u-visible-from@medium">
-            {{#if this.model.agendaItem.wasHandled}}
-              <AuAlert
-                @skin="info"
-                @icon="decided"
-                @title="Dit werd behandeld"
-              />
-            {{/if}}
+          {{/if}}
+          <div
+            class="au-u-flex au-u-flex--vertical-center au-u-flex--spaced-tiny"
+          >
+            <AuHeading @level="2" @skin="4">
+              Datakwaliteit
+            </AuHeading>
           </div>
-          <AuContent class="au-u-margin-top">
+          <div class="au-c-content">
+            <p>Aanwezige elementen op deze pagina:</p>
+            <AuList @divider={{true}} as |Item|>
+
+              {{#each
+                this.model.agendaItem.agendaItemQualityMetrics
+                as |qualityMetric|
+              }}
+                <Item>
+                  {{#if qualityMetric.value}}
+                    <AuBadge @icon="check" @skin="success" @size="small" />
+                    <p class="au-u-flex--inline">
+                      {{qualityMetric.label}}
+                      is aanwezig
+                    </p>
+                  {{else}}
+                    <AuBadge @icon="cross" @skin="error" @size="small" />
+                    <p class="au-u-flex--inline">
+                      {{qualityMetric.label}}
+                      is niet aanwezig
+                    </p>
+                  {{/if}}
+                </Item>
+              {{/each}}
+            </AuList>
+          </div>
+          <div class="au-c-content au-c-content--small">
+            <p>Om na te gaan of besturen voldoen aan de gelinkte
+              publicatieplicht, heeft ABB enkel gekeken naar de webtoepassing
+              waarop besturen gelinkte publicaties publiceren. Enkel de
+              documenten die gelinkt gepubliceerd zijn en automatisch van de
+              webtoepassing gehaald konden worden, zijn verder bekeken.</p>
+            <p><AuLink @route="data-quality">Meer informatie over de data
+                kwaliteit</AuLink></p>
+          </div>
+        </c.content>
+      </AuCard>
+    </article>
+    <aside class="au-o-grid__item au-u-2-6@medium">
+      <div class="u-top-sticky">
+        <div class="au-u-visible-from@medium">
+          {{#if this.model.agendaItem.wasHandled}}
+            <AuAlert @skin="info" @icon="decided" @title="Dit werd behandeld" />
+          {{/if}}
+        </div>
+        <AuContent class="au-u-margin-top">
+          {{#if this.model.agendaItemOnSameSession}}
+            <h2 class="au-u-h4 au-u-medium">
+              <AuLink
+                class="au-u-medium"
+                @route="agenda-items.session"
+                @model="{{this.model.agendaItem.id}}"
+              >
+                Volledige agenda
+              </AuLink>
+              van
+              {{this.model.agendaItem.session.dateFormatted}}
+            </h2>
             {{#if this.model.agendaItemOnSameSession}}
-              <h2 class="au-u-h4 au-u-medium">
+              <ol>
+                {{#each this.model.agendaItemOnSameSession as |agendaItem|}}
+                  <li>
+                    {{! if the agendaItem.id is equal to the current agendaItem then display "Huidige agendapunt" }}
+                    {{#if (eq agendaItem.id this.model.agendaItem.id)}}
+                      <p class="au-u-medium">Huidige agendapunt</p>
+                    {{else}}
+                      <AuLink
+                        @route="agenda-items.agenda-item"
+                        @model={{agendaItem.id}}
+                      >
+                        <p class="truncate">
+                          {{agendaItem.titleFormatted}}
+                        </p>
+                      </AuLink>
+                    {{/if}}
+                  </li>
+                {{/each}}
+              </ol>
+            {{/if}}
+          {{/if}}
+          {{#if (is-pending this.model.similarAgendaItemsPromise)}}
+            <AuHeading @level="2" @skin="4">
+              {{#if this.keywordStore.keyword}}
+                Meer relevante info over
                 <AuLink
                   class="au-u-medium"
-                  @route="agenda-items.session"
-                  @model="{{this.model.agendaItem.id}}"
-                >
-                  Volledige agenda
-                </AuLink>
-                van
-                {{this.model.agendaItem.session.dateFormatted}}
-              </h2>
-              {{#if this.model.agendaItemOnSameSession}}
-                <ol>
-                  {{#each this.model.agendaItemOnSameSession as |agendaItem|}}
-                    <li>
-                      {{! if the agendaItem.id is equal to the current agendaItem then display "Huidige agendapunt" }}
-                      {{#if (eq agendaItem.id this.model.agendaItem.id)}}
-                        <p class="au-u-medium">Huidige agendapunt</p>
-                      {{else}}
-                        <AuLink
-                          @route="agenda-items.agenda-item"
-                          @model={{agendaItem.id}}
-                        >
-                          <p class="truncate">
-                            {{agendaItem.titleFormatted}}
-                          </p>
-                        </AuLink>
-                      {{/if}}
+                >{{this.keywordStore.keyword}}</AuLink>
+              {{else}}
+                Meer agendapunten
+              {{/if}}
+              in
+              <AuLink
+                @route="agenda-items"
+                @query={{this.municipalityQuery}}
+                class="au-u-medium"
+              >{{this.model.agendaItem.session.municipality}}</AuLink>
+              worden geladen...
+            </AuHeading>
+          {{else}}
+            {{#let
+              (await this.model.similarAgendaItemsPromise)
+              as |similarAgendaItems|
+            }}
+              {{#if
+                (and
+                  this.model.agendaItem.session.hasMunicipality
+                  similarAgendaItems.length
+                )
+              }}
+                <AuHeading @level="2" @skin="4">
+                  {{#if this.keywordStore.keyword}}
+                    Meer relevante info over
+                    <AuLink
+                      class="au-u-medium"
+                    >{{this.keywordStore.keyword}}</AuLink>
+                  {{else}}
+                    Meer agendapunten
+                  {{/if}}
+                  in
+                  <AuLink
+                    @route="agenda-items"
+                    @query={{this.municipalityQuery}}
+                    class="au-u-medium"
+                  >{{this.model.agendaItem.session.municipality}}</AuLink>
+                </AuHeading>
+                <ol type="1">
+                  {{#each similarAgendaItems as |agendaItem|}}
+                    <li class="au-u-margin-top-small">
+                      <AuLink
+                        @model={{agendaItem.id}}
+                        @route="agenda-items.agenda-item"
+                      >
+                        <p class="truncate">
+                          {{agendaItem.titleFormatted}}
+                        </p>
+                      </AuLink>
                     </li>
                   {{/each}}
                 </ol>
               {{/if}}
-            {{/if}}
-            {{#if (is-pending this.model.similarAgendaItemsPromise)}}
-              <AuHeading @level="2" @skin="4">
-                {{#if this.keywordStore.keyword}}
-                  Meer relevante info over
-                  <AuLink
-                    class="au-u-medium"
-                  >{{this.keywordStore.keyword}}</AuLink>
-                {{else}}
-                  Meer agendapunten
-                {{/if}}
-                in
-                <AuLink
-                  @route="agenda-items"
-                  @query={{this.municipalityQuery}}
-                  class="au-u-medium"
-                >{{this.model.agendaItem.session.municipality}}</AuLink>
-                worden geladen...
-              </AuHeading>
-            {{else}}
-              {{#let
-                (await this.model.similarAgendaItemsPromise)
-                as |similarAgendaItems|
-              }}
-                {{#if
-                  (and
-                    this.model.agendaItem.session.hasMunicipality
-                    similarAgendaItems.length
-                  )
-                }}
-                  <AuHeading @level="2" @skin="4">
-                    {{#if this.keywordStore.keyword}}
-                      Meer relevante info over
-                      <AuLink
-                        class="au-u-medium"
-                      >{{this.keywordStore.keyword}}</AuLink>
-                    {{else}}
-                      Meer agendapunten
-                    {{/if}}
-                    in
-                    <AuLink
-                      @route="agenda-items"
-                      @query={{this.municipalityQuery}}
-                      class="au-u-medium"
-                    >{{this.model.agendaItem.session.municipality}}</AuLink>
-                  </AuHeading>
-                  <ol type="1">
-                    {{#each similarAgendaItems as |agendaItem|}}
-                      <li class="au-u-margin-top-small">
-                        <AuLink
-                          @model={{agendaItem.id}}
-                          @route="agenda-items.agenda-item"
-                        >
-                          <p class="truncate">
-                            {{agendaItem.titleFormatted}}
-                          </p>
-                        </AuLink>
-                      </li>
-                    {{/each}}
-                  </ol>
-                {{/if}}
-              {{/let}}
-            {{/if}}
-          </AuContent>
-        </div>
-      </aside>
-    </div>
+            {{/let}}
+          {{/if}}
+        </AuContent>
+      </div>
+    </aside>
   </div>
 </div>
