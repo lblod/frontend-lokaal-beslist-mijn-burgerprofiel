@@ -19,6 +19,9 @@
     </Group>
   </AuToolbar>
   <div class="au-o-grid au-o-grid--small">
+    <AuHeading @level="1" @skin="3" class="au-o-box au-u-padding-right-small">
+      {{this.model.agendaItem.titleFormatted}}
+    </AuHeading>
     {{#if this.model.agendaItem.wasHandled}}
       <div class="banner-decided au-o-grid__item">
         <AuIcon @icon="decided" />
@@ -27,13 +30,6 @@
     {{/if}}
     <article id="detail-left-section" class="au-o-grid__item au-u-4-6@medium">
       <AuCard class="u-color-top-border" as |c|>
-        <c.header>
-          <div class="au-u-flex au-u-flex--between au-u-flex--column@small">
-            <AuHeading @level="1" @skin="3">
-              {{this.model.agendaItem.titleFormatted}}
-            </AuHeading>
-          </div>
-        </c.header>
         <c.content class="content">
           <ul class="c-description-list">
             {{#if this.model.agendaItem.session.hasMunicipality}}
