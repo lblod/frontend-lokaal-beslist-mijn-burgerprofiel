@@ -17,7 +17,15 @@ interface Signature {
 
 export default class SelectRadioButtonFilterComponent extends FilterComponent<Signature> {
   get selected() {
-    return this.args.selected;
+    if (this.args.selected) {
+      return this.args.selected;
+    }
+
+    if (this.args.options && this.args.options.length >= 1) {
+      return this.args.options[0];
+    }
+
+    return null;
   }
 
   @action
