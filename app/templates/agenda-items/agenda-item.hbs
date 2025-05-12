@@ -63,7 +63,7 @@
       <AuHr class="lighter" />
     </div>
     <div class="au-u-padding-left au-u-padding-right">
-      <h1 class="au-u-muted">BESCHRIJVING</h1>
+      <h1 class="au-u-muted au-u-medium">BESCHRIJVING</h1>
       <p class="au-u-muted au-u-word-break">
         {{#if this.model.agendaItem.description}}
           {{this.model.agendaItem.description}}
@@ -76,9 +76,8 @@
       <section class="c-accordion-holder">
         <AuBadge @icon="report" @skin="border" />
         <AuAccordion
-          @reverse={{true}}
-          @iconOpen="nav-down"
-          @iconClosed="nav-right"
+          @iconOpen="nav-up"
+          @iconClosed="nav-down"
           @buttonLabel="Besluit"
         >
           {{#let this.firstResolution as |resolution|}}
@@ -116,9 +115,8 @@
             {{#if resolution.motivation}}
               <div class="c-accordion-holder c-accordion-holder--top">
                 <AuAccordion
-                  @reverse={{true}}
-                  @iconOpen="nav-down"
-                  @iconClosed="nav-right"
+                  @iconOpen="nav-up"
+                  @iconClosed="nav-down"
                   @buttonLabel="Motivering"
                 >
                   <AuContent @skin="small" class="au-u-padding">
@@ -137,9 +135,8 @@
         <section class="c-accordion-holder">
           <AuBadge @icon="book" @skin="border" />
           <AuAccordion
-            @reverse={{true}}
-            @iconOpen="nav-down"
-            @iconClosed="nav-right"
+            @iconOpen="nav-up"
+            @iconClosed="nav-down"
             @buttonLabel="Artikel"
           >
             <AuAlert
@@ -161,9 +158,8 @@
       <section class="c-accordion-holder">
         <AuBadge @icon="vote" @skin="border" />
         <AuAccordion
-          @reverse={{true}}
-          @iconOpen="nav-down"
-          @iconClosed="nav-right"
+          @iconOpen="nav-up"
+          @iconClosed="nav-down"
           @buttonLabel="Stemming"
         >
           {{#if this.model.vote}}
@@ -184,11 +180,10 @@
         </AuAccordion>
       </section>
       <section class="c-accordion-holder">
-        <AuBadge @icon="vote" @skin="border" />
+        <AuBadge @icon="document-added" @skin="border" />
         <AuAccordion
-          @reverse={{true}}
-          @iconOpen="nav-down"
-          @iconClosed="nav-right"
+          @iconOpen="nav-up"
+          @iconClosed="nav-down"
           @buttonLabel="Bronnen &amp; kwaliteit"
         >
           {{#if this.model.agendaItem.alternateLink}}
