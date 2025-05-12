@@ -430,3 +430,21 @@ ol.less-margin {
     padding-inline-start: 0 !important;
   }
 }
+
+.artikel-box {
+  border-radius: $au-radius;
+  border: $au-border solid var(--au-gray-300);
+}
+
+.artikel-box--title {
+  border-bottom: $au-border solid var(--au-gray-300);
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+  background-color: var(--au-gray-100);
+  padding: $au-unit-tiny $au-unit-small;
+  font-weight: $au-medium;
+}
+
+.artikel-box--value {
+  padding: $au-unit-small;
+}
