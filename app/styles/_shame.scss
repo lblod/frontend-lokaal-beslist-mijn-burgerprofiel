@@ -456,3 +456,20 @@ ol.less-margin {
     fill: var(--au-orange-600) !important;
   }
 }
+
+.cutoff-link {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1rem;
+  padding-top: 1rem;
+
+  a {
+    position: relative;
+    display: block !important;
+    width: 100% !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+}

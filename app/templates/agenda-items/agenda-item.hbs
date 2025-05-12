@@ -144,14 +144,14 @@
               heeft dit agendapunt vermeld op de volgende URL's:</p>
             <AuList @divider={{true}} as |Item|>
               {{#each this.model.agendaItem.alternateLink as |alternateLink|}}
-                <Item class="scrollable-li">
+                <Item class="cutoff-link">
                   {{#if alternateLink}}
-                    <AuPill>{{document-type alternateLink}}</AuPill>
                     <AuLinkExternal
                       href={{alternateLink}}
                       class="au-u-flex--inline"
                       {{! TODO fix the 3 dots}}
                     >
+                      <AuPill>{{document-type alternateLink}}</AuPill>
                       {{alternateLink}}
                     </AuLinkExternal>
                   {{/if}}
