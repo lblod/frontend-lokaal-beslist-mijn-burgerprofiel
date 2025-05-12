@@ -157,10 +157,10 @@
 
       <section class="c-accordion-holder">
         <AuBadge @icon="vote" @skin="border" />
-        <AuAccordion
-          @iconOpen="nav-up"
-          @iconClosed="nav-down"
+        <AccordionWithStatusPill
           @buttonLabel="Stemming"
+          @pillText={{this.stemmingStatusPillText}}
+          @pillIcon={{this.stemmingStatusPillIcon}}
         >
           {{#if this.model.vote}}
             <VoteOverview @vote={{this.model.vote}} />
@@ -177,7 +177,7 @@
               {{/if}}
             </AuAlert>
           {{/if}}
-        </AuAccordion>
+        </AccordionWithStatusPill>
       </section>
       <section class="c-accordion-holder">
         <AuBadge @icon="document-added" @skin="border" />

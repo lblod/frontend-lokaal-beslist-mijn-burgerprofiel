@@ -1,14 +1,8 @@
-<p
-  class="au-u-h6 au-u-flex au-u-flex--spaced-tiny au-u-flex--vertical-center au-u-margin-top"
->
-  {{#if @vote.secret}}
-    <AuIcon @icon="remove" @size="medium" />
-    Geheime stemming
-  {{else}}
-    <AuIcon @icon="visible" @size="medium" />
-    Openbare stemming
-  {{/if}}
-</p>
+{{#unless this.hasContentToShow}}
+  <AuAlert @skin="warning" @title="" class="au-u-margin-top au-u-margin-bottom">
+    Er is geen bijkomende informatie met betrekking tot de stemming.
+  </AuAlert>
+{{/unless}}
 
 {{! We use a style tag here since it's way simpler than the JS equivalent which provides no other benefits other than
 not triggering the linting error}}

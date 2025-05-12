@@ -1,0 +1,47 @@
+<div class="au-c-accordion {{this.skin}} {{this.reverse}}" ...attributes>
+  <AuToolbar
+    @nowrap={{true}}
+    @reverse={{@reverse}}
+    {{on "click" this.toggleAccordion}}
+    data-test-accordion-toggle
+    as |Group|
+  >
+    <Group>
+      <div>
+        <div class="au-u-flex au-u-flex--row au-u-flex--vertical-center status">
+          <AuButton
+            @skin="link"
+            aria-expanded="{{if this.isOpen 'true' 'false'}}"
+          >
+            {{@buttonLabel}}
+          </AuButton>
+          {{#if @pillText}}
+            <AuPill @icon={{@pillIcon}}>{{@pillText}}</AuPill>
+          {{/if}}
+        </div>
+        {{#if @subtitle}}
+          <p data-test-accordion-subtitle>
+            {{@subtitle}}
+          </p>
+        {{/if}}
+      </div>
+    </Group>
+    <Group>
+      <AuIcon
+        @icon={{if this.isOpen this.iconOpen this.iconClosed}}
+        @alignment="left"
+        @size="large"
+        @ariaHidden={{true}}
+      />
+    </Group>
+  </AuToolbar>
+  {{#if this.isOpen}}
+    <AuContent tabindex="0">
+      {{#if this.loading}}
+        <AuLoader />
+      {{else}}
+        {{yield}}
+      {{/if}}
+    </AuContent>
+  {{/if}}
+</div>

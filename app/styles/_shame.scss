@@ -142,6 +142,10 @@ cursor {
     margin-top: 0.85rem !important;
   }
 
+  > .au-c-accordion .status .au-c-icon {
+    margin: 0 !important;
+  }
+
   > .au-c-accordion > .au-c-content {
     margin-left: calc(7.2rem * -1);
     border-top: 0.1rem solid var(--au-gray-200);

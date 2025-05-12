@@ -80,4 +80,10 @@ export default class VoteOverview extends Component<ArgsInterface> {
       ? (this.numberOfProponents / this.totalVoters) * strokeDashArray
       : 0;
   }
+
+  get hasContentToShow() {
+    return (
+      !this.totalVoters && !this.args.vote.consequence && !this.hasVotersData
+    );
+  }
 }
