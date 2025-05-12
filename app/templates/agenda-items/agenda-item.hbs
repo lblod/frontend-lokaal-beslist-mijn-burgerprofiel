@@ -148,11 +148,7 @@
         {{#if this.model.vote}}
           <VoteOverview @vote={{this.model.vote}} />
         {{else}}
-          <AuAlert
-            @skin="warning"
-            @title="Stemming niet beschikbaar"
-            class="au-u-margin-top au-u-margin-bottom"
-          >
+          <AuAlert @skin="warning" @title="Stemming niet beschikbaar">
             {{#if this.model.agendaItem.wasHandled}}
               <p>De data voor dit agendapunt is nog niet beschikbaar.</p>
             {{else}}
@@ -167,7 +163,7 @@
         @showBottomBorder={{true}}
       >
         {{#if this.model.agendaItem.alternateLink}}
-          <div class="au-u-margin-top">
+          <div>
             <p class="au-u-muted au-u-medium">BRONNEN</p>
             <p>De
               {{lower-case this.model.agendaItem.session.locationLevel}}
@@ -207,7 +203,7 @@
                   </p>
                 {{else}}
                   <AuBadge @icon="cross" @skin="error" @size="small" />
-                  <p class="au-u-flex--inline">
+                  <p class="au-u-flex--inline au-u-padding-left-small">
                     {{qualityMetric.label}}
                   </p>
                 {{/if}}
@@ -233,7 +229,7 @@
             <AuAlert @skin="info" @icon="decided" @title="Dit werd behandeld" />
           {{/if}}
         </div>
-        <AuContent class="au-u-margin-top">
+        <AuContent>
           {{#if this.model.agendaItemOnSameSession}}
             <h2 class="au-u-h4 au-u-medium">
               <AuLink
