@@ -73,7 +73,11 @@
       </p>
     </div>
     <div class="au-o-box">
-      <AccordionWithStatusPill @buttonLabel="Besluit" @badgeIcon="report">
+      <AccordionWithStatusPill
+        @buttonLabel="Besluit"
+        @badgeIcon="report"
+        @showBottomBorder={{true}}
+      >
         {{#let this.firstResolution as |resolution|}}
           <div class="artikel-box">
             {{! TODO: This title should be the artikel mentioned int he value? + remove the artikel name from the value }}
@@ -118,7 +122,11 @@
       </AccordionWithStatusPill>
 
       {{#if this.hasArticles}}
-        <AccordionWithStatusPill @buttonLabel="Artikels" @badgeIcon="book">
+        <AccordionWithStatusPill
+          @buttonLabel="Artikels"
+          @badgeIcon="book"
+          @showBottomBorder={{true}}
+        >
           {{#each this.model.articles as |article|}}
             <div class="artikel-box">
               <div class="artikel-box--title">{{article.number}}</div>
@@ -135,6 +143,7 @@
         @badgeIcon="vote"
         @pillText={{this.stemmingStatusPillText}}
         @pillIcon={{this.stemmingStatusPillIcon}}
+        @showBottomBorder={{true}}
       >
         {{#if this.model.vote}}
           <VoteOverview @vote={{this.model.vote}} />
@@ -155,6 +164,7 @@
       <AccordionWithStatusPill
         @buttonLabel="Bronnen &amp; kwaliteit"
         @badgeIcon="document-added"
+        @showBottomBorder={{true}}
       >
         {{#if this.model.agendaItem.alternateLink}}
           <div class="au-u-margin-top">

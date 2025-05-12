@@ -78,11 +78,9 @@
     />
     <AuHr />
     <section class="c-advanced-filter-holder">
-      <Accordion
-        @defaultOpen={{this.showAdvancedFilters}}
-        @iconOpen="nav-up"
-        @iconClosed="nav-down"
+      <AccordionWithStatusPill
         @buttonLabel="GEAVANCEERDE FILTERS"
+        @showBottomBorder={{false}}
       >
         <Filters::SelectMultipleCheckboxFilter
           @id="governing-body"
@@ -94,8 +92,7 @@
           @queryParam="bestuursorganen"
           @disabled={{this.itemsService.loadAgendaItems.isRunning}}
         />
-
-      </Accordion>
+      </AccordionWithStatusPill>
     </section>
   </div>
   <div class="c-interface__sidebar-submit-buttons">
