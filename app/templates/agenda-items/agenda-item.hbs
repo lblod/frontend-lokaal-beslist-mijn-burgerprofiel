@@ -79,39 +79,39 @@
         @showBottomBorder={{true}}
       >
         {{#let this.firstResolution as |resolution|}}
-          <div class="artikel-box">
-            {{! TODO: This title should be the artikel mentioned int he value? + remove the artikel name from the value }}
-            <div class="artikel-box--title">Artikel 1</div>
-            <div class="artikel-box--value">
-              {{#if resolution.value}}
-                {{#if (is-pdf-url resolution.value)}}
-                  <AuLinkExternal
-                    href={{resolution.value}}
-                    @skin="small"
-                    @icon="pdf"
-                  >
-                    open besluit
-                  </AuLinkExternal>
-                {{else}}
+          {{#if resolution.value}}
+            {{#if (is-pdf-url resolution.value)}}
+              <AuLinkExternal
+                href={{resolution.value}}
+                @skin="small"
+                @iconAlignment="right"
+                @icon="external-link"
+              >
+                Open besluit
+              </AuLinkExternal>
+            {{else}}
+              <div class="artikel-box">
+                {{! TODO: This title should be the artikel mentioned int he value? + remove the artikel name from the value }}
+                <div class="artikel-box--title">Artikel 1</div>
+                <div class="artikel-box--value">
                   {{resolution.value}}
-                {{/if}}
+                </div>
+              </div>
+            {{/if}}
+          {{else}}
+            <AuAlert
+              @skin="warning"
+              @size="small"
+              @icon="alert-triangle"
+              @title="Besluit niet beschikbaar"
+            >
+              {{#if this.model.agendaItem.wasHandled}}
+                <p>De data voor dit agendapunt is nog niet beschikbaar.</p>
               {{else}}
-                <AuAlert
-                  @skin="warning"
-                  @size="small"
-                  @icon="alert-triangle"
-                  @title="Besluit niet beschikbaar"
-                  class="au-u-margin-top au-u-margin-bottom"
-                >
-                  {{#if this.model.agendaItem.wasHandled}}
-                    <p>De data voor dit agendapunt is nog niet beschikbaar.</p>
-                  {{else}}
-                    <p>Dit agendapunt werd nog niet behandeld.</p>
-                  {{/if}}
-                </AuAlert>
+                <p>Dit agendapunt werd nog niet behandeld.</p>
               {{/if}}
-            </div>
-          </div>
+            </AuAlert>
+          {{/if}}
           {{#if resolution.motivation}}
             <div>
               <p class="au-u-muted au-u-medium">MOTIVERING</p>
