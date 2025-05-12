@@ -41,8 +41,7 @@
       </p>
     </div>
     <div class="au-o-box">
-      {{! TODO update the icon to contact-chat }}
-      <Accordion
+      <AccordionWithStatusPill
         @buttonLabel="Besluit"
         @badgeIcon="report"
         @showBottomBorder={{true}}
@@ -90,10 +89,10 @@
             </div>
           {{/if}}
         {{/let}}
-      </Accordion>
+      </AccordionWithStatusPill>
 
       {{#if this.hasArticles}}
-        <Accordion
+        <AccordionWithStatusPill
           @buttonLabel="Artikels"
           @badgeIcon="book"
           @showBottomBorder={{true}}
@@ -106,7 +105,7 @@
               </div>
             </div>
           {{/each}}
-        </Accordion>
+        </AccordionWithStatusPill>
       {{/if}}
 
       <Accordion
