@@ -28,25 +28,8 @@
         <p>Dit werd behandeld</p>
       </div>
     {{/if}}
-    <div class="au-u-padding-left au-u-padding-right au-u-padding-top">
+    <div class="au-u-padding-left au-u-padding-right">
       <ul class="c-description-list">
-        {{#if this.model.agendaItem.session.hasMunicipality}}
-          <li>
-            <AuIcon @size="large" @icon="location" />
-            <span
-              class="au-u-hidden-visually"
-            >{{this.model.agendaItem.session.locationLevel}}:</span>
-            <AuLink @route="agenda-items" @query={{this.municipalityQuery}}>
-              {{#if this.model.agendaItem.session.municipality}}
-                {{this.model.agendaItem.session.locationLevel}}
-                {{this.model.agendaItem.session.municipality}}
-              {{else}}
-                Geen
-                {{lower-case this.model.agendaItem.session.locationLevel}}
-              {{/if}}
-            </AuLink>
-          </li>
-        {{/if}}
         {{#if this.model.agendaItem.session.classification}}
           <li>
             <AuIcon @size="large" @icon="decided" />

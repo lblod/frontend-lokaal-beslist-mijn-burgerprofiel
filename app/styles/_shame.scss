@@ -415,7 +415,7 @@ cursor {
 }
 
 hr.au-c-hr.lighter {
-  border-bottom: 0.1rem solid var(--au-gray-200);
+  border-bottom: $au-border solid var(--au-gray-300);
 }
 
 ol.less-margin {
