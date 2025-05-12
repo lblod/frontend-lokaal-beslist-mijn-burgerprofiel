@@ -10,7 +10,6 @@ export interface AccordionWithStatusPillSignature {
     iconOpen: string;
     iconClosed: string;
     skin: string;
-    reverse: boolean;
   };
 }
 
@@ -36,16 +35,6 @@ export default class AccordionWithStatusPill extends Component<AccordionWithStat
     } else {
       return 'nav-down';
     }
-  }
-
-  get skin() {
-    if (this.args.skin == 'border') return 'au-c-accordion--border';
-    return '';
-  }
-
-  get reverse() {
-    if (this.args.reverse) return 'au-c-accordion--reverse';
-    return '';
   }
 
   @action

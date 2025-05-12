@@ -73,168 +73,148 @@
       </p>
     </div>
     <div class="au-o-box">
-      <section class="c-accordion-holder">
-        <AuBadge @icon="report" @skin="border" />
-        <AuAccordion
-          @iconOpen="nav-up"
-          @iconClosed="nav-down"
-          @buttonLabel="Besluit"
-        >
-          {{#let this.firstResolution as |resolution|}}
-            <div class="artikel-box">
-              {{! TODO: This title should be the artikel mentioned int he value? + remove the artikel name from the value }}
-              <div class="artikel-box--title">Artikel 1</div>
-              <div class="artikel-box--value">
-                {{#if resolution.value}}
-                  {{#if (is-pdf-url resolution.value)}}
-                    <AuLinkExternal
-                      href={{resolution.value}}
-                      @skin="small"
-                      @icon="pdf"
-                    >
-                      open besluit
-                    </AuLinkExternal>
-                  {{else}}
-                    {{resolution.value}}
-                  {{/if}}
-                {{else}}
-                  <AuAlert
-                    @skin="warning"
-                    @title="Besluit niet beschikbaar"
-                    class="au-u-margin-top au-u-margin-bottom"
+      <AccordionWithStatusPill @buttonLabel="Besluit" @badgeIcon="report">
+        {{#let this.firstResolution as |resolution|}}
+          <div class="artikel-box">
+            {{! TODO: This title should be the artikel mentioned int he value? + remove the artikel name from the value }}
+            <div class="artikel-box--title">Artikel 1</div>
+            <div class="artikel-box--value">
+              {{#if resolution.value}}
+                {{#if (is-pdf-url resolution.value)}}
+                  <AuLinkExternal
+                    href={{resolution.value}}
+                    @skin="small"
+                    @icon="pdf"
                   >
-                    {{#if this.model.agendaItem.wasHandled}}
-                      <p>De data voor dit agendapunt is nog niet beschikbaar.</p>
-                    {{else}}
-                      <p>Dit agendapunt werd nog niet behandeld.</p>
-                    {{/if}}
-                  </AuAlert>
+                    open besluit
+                  </AuLinkExternal>
+                {{else}}
+                  {{resolution.value}}
                 {{/if}}
-              </div>
+              {{else}}
+                <AuAlert
+                  @skin="warning"
+                  @title="Besluit niet beschikbaar"
+                  class="au-u-margin-top au-u-margin-bottom"
+                >
+                  {{#if this.model.agendaItem.wasHandled}}
+                    <p>De data voor dit agendapunt is nog niet beschikbaar.</p>
+                  {{else}}
+                    <p>Dit agendapunt werd nog niet behandeld.</p>
+                  {{/if}}
+                </AuAlert>
+              {{/if}}
             </div>
-            {{#if resolution.motivation}}
-              <div>
-                <p class="au-u-muted au-u-medium">MOTIVERING</p>
-                <p class="au-u-muted au-u-word-break">
-                  {{resolution.motivation}}
-                </p>
-              </div>
-            {{/if}}
-          {{/let}}
-        </AuAccordion>
-      </section>
+          </div>
+          {{#if resolution.motivation}}
+            <div>
+              <p class="au-u-muted au-u-medium">MOTIVERING</p>
+              <p class="au-u-muted au-u-word-break">
+                {{resolution.motivation}}
+              </p>
+            </div>
+          {{/if}}
+        {{/let}}
+      </AccordionWithStatusPill>
 
       {{#if this.hasArticles}}
-        <section class="c-accordion-holder">
-          <AuBadge @icon="book" @skin="border" />
-          <AuAccordion
-            @iconOpen="nav-up"
-            @iconClosed="nav-down"
-            @buttonLabel="Artikels"
-          >
-            {{#each this.model.articles as |article|}}
-              <div class="artikel-box">
-                <div class="artikel-box--title">{{article.number}}</div>
-                <div class="artikel-box--value">
-                  <p>{{article.value}}</p>
-                </div>
+        <AccordionWithStatusPill @buttonLabel="Artikels" @badgeIcon="book">
+          {{#each this.model.articles as |article|}}
+            <div class="artikel-box">
+              <div class="artikel-box--title">{{article.number}}</div>
+              <div class="artikel-box--value">
+                <p>{{article.value}}</p>
               </div>
-            {{/each}}
-          </AuAccordion>
-        </section>
+            </div>
+          {{/each}}
+        </AccordionWithStatusPill>
       {{/if}}
 
-      <section class="c-accordion-holder">
-        <AuBadge @icon="vote" @skin="border" />
-        <AccordionWithStatusPill
-          @buttonLabel="Stemming"
-          @pillText={{this.stemmingStatusPillText}}
-          @pillIcon={{this.stemmingStatusPillIcon}}
-        >
-          {{#if this.model.vote}}
-            <VoteOverview @vote={{this.model.vote}} />
-          {{else}}
-            <AuAlert
-              @skin="warning"
-              @title="Stemming niet beschikbaar"
-              class="au-u-margin-top au-u-margin-bottom"
-            >
-              {{#if this.model.agendaItem.wasHandled}}
-                <p>De data voor dit agendapunt is nog niet beschikbaar.</p>
-              {{else}}
-                <p>Dit agendapunt werd nog niet behandeld.</p>
-              {{/if}}
-            </AuAlert>
-          {{/if}}
-        </AccordionWithStatusPill>
-      </section>
-      <section class="c-accordion-holder">
-        <AuBadge @icon="document-added" @skin="border" />
-        <AuAccordion
-          @iconOpen="nav-up"
-          @iconClosed="nav-down"
-          @buttonLabel="Bronnen &amp; kwaliteit"
-        >
-          {{#if this.model.agendaItem.alternateLink}}
-            <div class="au-u-margin-top">
-              <p class="au-u-muted au-u-medium">BRONNEN</p>
-              <p>De
-                {{lower-case this.model.agendaItem.session.locationLevel}}
-                heeft dit agendapunt vermeld op de volgende URL's:</p>
-              <AuList @divider={{true}} as |Item|>
-                {{#each this.model.agendaItem.alternateLink as |alternateLink|}}
-                  <Item>
-                    {{#if alternateLink}}
-                      <AuLinkExternal
-                        href={{alternateLink}}
-                        class="au-u-flex--inline"
-                      >
-                        <AuPill>{{document-type alternateLink}}</AuPill>
-                        -
-                        {{!-- {{alternateLink}} --}}
-                      </AuLinkExternal>
-                    {{/if}}
-                  </Item>
-                {{/each}}
-              </AuList>
-            </div>
-          {{/if}}
-          <div>
-            <p class="au-u-muted au-u-medium">DATAKWALITEIT</p>
-            <p class="au-u-margin-bottom-small">Overzicht van aanwezigheid per
-              element</p>
-            <AuList @divider={{false}} as |Item|>
-              {{#each
-                this.model.agendaItem.agendaItemQualityMetrics
-                as |qualityMetric|
-              }}
-                <Item class="au-u-padding-bottom-tiny">
-                  {{#if qualityMetric.value}}
-                    <AuBadge @icon="check" @skin="success" @size="small" />
-                    <p class="au-u-flex--inline au-u-padding-left-small">
-                      {{qualityMetric.label}}
-                    </p>
-                  {{else}}
-                    <AuBadge @icon="cross" @skin="error" @size="small" />
-                    <p class="au-u-flex--inline">
-                      {{qualityMetric.label}}
-                    </p>
+      <AccordionWithStatusPill
+        @buttonLabel="Stemming"
+        @badgeIcon="vote"
+        @pillText={{this.stemmingStatusPillText}}
+        @pillIcon={{this.stemmingStatusPillIcon}}
+      >
+        {{#if this.model.vote}}
+          <VoteOverview @vote={{this.model.vote}} />
+        {{else}}
+          <AuAlert
+            @skin="warning"
+            @title="Stemming niet beschikbaar"
+            class="au-u-margin-top au-u-margin-bottom"
+          >
+            {{#if this.model.agendaItem.wasHandled}}
+              <p>De data voor dit agendapunt is nog niet beschikbaar.</p>
+            {{else}}
+              <p>Dit agendapunt werd nog niet behandeld.</p>
+            {{/if}}
+          </AuAlert>
+        {{/if}}
+      </AccordionWithStatusPill>
+      <AccordionWithStatusPill
+        @buttonLabel="Bronnen &amp; kwaliteit"
+        @badgeIcon="document-added"
+      >
+        {{#if this.model.agendaItem.alternateLink}}
+          <div class="au-u-margin-top">
+            <p class="au-u-muted au-u-medium">BRONNEN</p>
+            <p>De
+              {{lower-case this.model.agendaItem.session.locationLevel}}
+              heeft dit agendapunt vermeld op de volgende URL's:</p>
+            <AuList @divider={{true}} as |Item|>
+              {{#each this.model.agendaItem.alternateLink as |alternateLink|}}
+                <Item>
+                  {{#if alternateLink}}
+                    <AuLinkExternal
+                      href={{alternateLink}}
+                      class="au-u-flex--inline"
+                    >
+                      <AuPill>{{document-type alternateLink}}</AuPill>
+                      -
+                      {{!-- {{alternateLink}} --}}
+                    </AuLinkExternal>
                   {{/if}}
                 </Item>
               {{/each}}
             </AuList>
           </div>
-          <div class="au-c-content au-c-content--small">
-            <p>Om na te gaan of besturen voldoen aan de gelinkte
-              publicatieplicht, heeft ABB enkel gekeken naar de webtoepassing
-              waarop besturen gelinkte publicaties publiceren. Enkel de
-              documenten die gelinkt gepubliceerd zijn en automatisch van de
-              webtoepassing gehaald konden worden, zijn verder bekeken.</p>
-            <p><AuLink @route="data-quality">Meer informatie over de data
-                kwaliteit</AuLink></p>
-          </div>
-        </AuAccordion>
-      </section>
+        {{/if}}
+        <div>
+          <p class="au-u-muted au-u-medium">DATAKWALITEIT</p>
+          <p class="au-u-margin-bottom-small">Overzicht van aanwezigheid per
+            element</p>
+          <AuList @divider={{false}} as |Item|>
+            {{#each
+              this.model.agendaItem.agendaItemQualityMetrics
+              as |qualityMetric|
+            }}
+              <Item class="au-u-padding-bottom-tiny">
+                {{#if qualityMetric.value}}
+                  <AuBadge @icon="check" @skin="success" @size="small" />
+                  <p class="au-u-flex--inline au-u-padding-left-small">
+                    {{qualityMetric.label}}
+                  </p>
+                {{else}}
+                  <AuBadge @icon="cross" @skin="error" @size="small" />
+                  <p class="au-u-flex--inline">
+                    {{qualityMetric.label}}
+                  </p>
+                {{/if}}
+              </Item>
+            {{/each}}
+          </AuList>
+        </div>
+        <div class="au-c-content au-c-content--small">
+          <p>Om na te gaan of besturen voldoen aan de gelinkte publicatieplicht,
+            heeft ABB enkel gekeken naar de webtoepassing waarop besturen
+            gelinkte publicaties publiceren. Enkel de documenten die gelinkt
+            gepubliceerd zijn en automatisch van de webtoepassing gehaald konden
+            worden, zijn verder bekeken.</p>
+          <p><AuLink @route="data-quality">Meer informatie over de data
+              kwaliteit</AuLink></p>
+        </div>
+      </AccordionWithStatusPill>
     </div>
     <aside class="au-o-grid__item au-u-2-6@medium">
       <div class="u-top-sticky">
