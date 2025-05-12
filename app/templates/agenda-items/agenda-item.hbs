@@ -170,15 +170,15 @@
               heeft dit agendapunt vermeld op de volgende URL's:</p>
             <AuList @divider={{true}} as |Item|>
               {{#each this.model.agendaItem.alternateLink as |alternateLink|}}
-                <Item>
+                <Item class="scrollable-li">
                   {{#if alternateLink}}
+                    <AuPill>{{document-type alternateLink}}</AuPill>
                     <AuLinkExternal
                       href={{alternateLink}}
                       class="au-u-flex--inline"
+                      {{! TODO fix the 3 dots}}
                     >
-                      <AuPill>{{document-type alternateLink}}</AuPill>
-                      -
-                      {{!-- {{alternateLink}} --}}
+                      {{alternateLink}}
                     </AuLinkExternal>
                   {{/if}}
                 </Item>

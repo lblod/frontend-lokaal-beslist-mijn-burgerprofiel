@@ -1,8 +1,7 @@
 .accordion {
   margin: $au-unit 0;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: auto;
+  display: flex;
+  flex-direction: column;
   padding-bottom: $au-unit-small;
 
   &.border {
@@ -29,4 +28,9 @@
 .status .au-c-icon {
   margin: 0 !important;
   color: var(--au-gray-500);
+}
+
+// TMP
+.scrollable-li {
+  overflow-x: overlay;
 }
