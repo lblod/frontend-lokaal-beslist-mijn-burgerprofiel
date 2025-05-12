@@ -98,6 +98,8 @@
               {{else}}
                 <AuAlert
                   @skin="warning"
+                  @size="small"
+                  @icon="alert-triangle"
                   @title="Besluit niet beschikbaar"
                   class="au-u-margin-top au-u-margin-bottom"
                 >
@@ -148,7 +150,12 @@
         {{#if this.model.vote}}
           <VoteOverview @vote={{this.model.vote}} />
         {{else}}
-          <AuAlert @skin="warning" @title="Stemming niet beschikbaar">
+          <AuAlert
+            @skin="warning"
+            @size="small"
+            @icon="alert-triangle"
+            @title="Stemming niet beschikbaar"
+          >
             {{#if this.model.agendaItem.wasHandled}}
               <p>De data voor dit agendapunt is nog niet beschikbaar.</p>
             {{else}}

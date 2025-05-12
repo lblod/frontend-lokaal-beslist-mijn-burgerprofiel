@@ -443,3 +443,16 @@ ol.less-margin {
 .artikel-box--value {
   padding: $au-unit-small;
 }
+
+.au-c-alert--warning {
+  border: none !important;
+  border-radius: $au-radius;
+
+  .au-c-alert__icon {
+    background-color: var(--au-orange-200) !important;
+  }
+
+  svg.au-c-icon.au-c-icon--alert-triangle {
+    fill: var(--au-orange-600) !important;
+  }
+}
