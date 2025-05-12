@@ -1,4 +1,4 @@
-<div class="accordion {{if @showBottomBorder "border" ""}}" ...attributes>
+<div class="accordion {{if @showBottomBorder 'border' ''}}" ...attributes>
   <AuToolbar
     class="accordion-toolbar"
     @nowrap={{true}}
@@ -33,8 +33,8 @@
   </AuToolbar>
   {{#if this.isOpen}}
     <AuContent tabindex="0" class="au-u-padding-top au-u-padding-left-tiny">
-      {{#if this.loading}}
-        <AuLoader />
+      {{#if @isLoading}}
+        <AuLoader @hideMessage={{true}} />
       {{else}}
         {{yield}}
       {{/if}}

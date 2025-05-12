@@ -78,7 +78,7 @@
     />
     <AuHr />
     <section class="c-advanced-filter-holder">
-      <AccordionWithStatusPill
+      <Accordion
         @buttonLabel="GEAVANCEERDE FILTERS"
         @showBottomBorder={{false}}
       >
@@ -92,7 +92,7 @@
           @queryParam="bestuursorganen"
           @disabled={{this.itemsService.loadAgendaItems.isRunning}}
         />
-      </AccordionWithStatusPill>
+      </Accordion>
     </section>
   </div>
   <div class="c-interface__sidebar-submit-buttons">

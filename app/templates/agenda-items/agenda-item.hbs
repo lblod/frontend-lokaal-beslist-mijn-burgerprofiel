@@ -73,7 +73,7 @@
       </p>
     </div>
     <div class="au-o-box">
-      <AccordionWithStatusPill
+      <Accordion
         @buttonLabel="Besluit"
         @badgeIcon="report"
         @showBottomBorder={{true}}
@@ -119,10 +119,10 @@
             </div>
           {{/if}}
         {{/let}}
-      </AccordionWithStatusPill>
+      </Accordion>
 
       {{#if this.hasArticles}}
-        <AccordionWithStatusPill
+        <Accordion
           @buttonLabel="Artikels"
           @badgeIcon="book"
           @showBottomBorder={{true}}
@@ -135,10 +135,10 @@
               </div>
             </div>
           {{/each}}
-        </AccordionWithStatusPill>
+        </Accordion>
       {{/if}}
 
-      <AccordionWithStatusPill
+      <Accordion
         @buttonLabel="Stemming"
         @badgeIcon="vote"
         @pillText={{this.stemmingStatusPillText}}
@@ -160,8 +160,8 @@
             {{/if}}
           </AuAlert>
         {{/if}}
-      </AccordionWithStatusPill>
-      <AccordionWithStatusPill
+      </Accordion>
+      <Accordion
         @buttonLabel="Bronnen &amp; kwaliteit"
         @badgeIcon="document-added"
         @showBottomBorder={{true}}
@@ -224,7 +224,7 @@
           <p><AuLink @route="data-quality">Meer informatie over de data
               kwaliteit</AuLink></p>
         </div>
-      </AccordionWithStatusPill>
+      </Accordion>
     </div>
     <aside class="au-o-grid__item au-u-2-6@medium">
       <div class="u-top-sticky">

@@ -3,23 +3,16 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 
-export interface AccordionWithStatusPillSignature {
-  // The arguments accepted by the component
+export interface AccordionSignature {
   Args: {
-    loading: boolean;
+    isLoading: boolean;
     iconOpen: string;
     iconClosed: string;
-    skin: string;
   };
 }
 
-export default class AccordionWithStatusPill extends Component<AccordionWithStatusPillSignature> {
+export default class Accordion extends Component<AccordionSignature> {
   @tracked isOpen = false;
-
-  get loading() {
-    if (this.args.loading) return 'is-loading';
-    else return '';
-  }
 
   get iconOpen() {
     if (this.args.iconOpen) {
