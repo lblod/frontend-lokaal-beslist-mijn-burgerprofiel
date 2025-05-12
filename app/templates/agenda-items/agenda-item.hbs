@@ -176,14 +176,8 @@
           @buttonLabel="Bronnen &amp; kwaliteit"
         >
           {{#if this.model.agendaItem.alternateLink}}
-            <div
-              class="au-u-flex au-u-flex--vertical-center au-u-flex--spaced-tiny"
-            >
-              <AuHeading @level="2" @skin="4">
-                Bronnen
-              </AuHeading>
-            </div>
-            <div class="au-c-content">
+            <div class="au-u-margin-top">
+              <p class="au-u-muted au-u-medium">BRONNEN</p>
               <p>De
                 {{lower-case this.model.agendaItem.session.locationLevel}}
                 heeft dit agendapunt vermeld op de volgende URL's:</p>
@@ -205,33 +199,25 @@
               </AuList>
             </div>
           {{/if}}
-          <div
-            class="au-u-flex au-u-flex--vertical-center au-u-flex--spaced-tiny"
-          >
-            <AuHeading @level="2" @skin="4">
-              Datakwaliteit
-            </AuHeading>
-          </div>
-          <div class="au-c-content">
-            <p>Aanwezige elementen op deze pagina:</p>
-            <AuList @divider={{true}} as |Item|>
-
+          <div>
+            <p class="au-u-muted au-u-medium">DATAKWALITEIT</p>
+            <p class="au-u-margin-bottom-small">Overzicht van aanwezigheid per
+              element</p>
+            <AuList @divider={{false}} as |Item|>
               {{#each
                 this.model.agendaItem.agendaItemQualityMetrics
                 as |qualityMetric|
               }}
-                <Item>
+                <Item class="au-u-padding-bottom-tiny">
                   {{#if qualityMetric.value}}
                     <AuBadge @icon="check" @skin="success" @size="small" />
-                    <p class="au-u-flex--inline">
+                    <p class="au-u-flex--inline au-u-padding-left-small">
                       {{qualityMetric.label}}
-                      is aanwezig
                     </p>
                   {{else}}
                     <AuBadge @icon="cross" @skin="error" @size="small" />
                     <p class="au-u-flex--inline">
                       {{qualityMetric.label}}
-                      is niet aanwezig
                     </p>
                   {{/if}}
                 </Item>
