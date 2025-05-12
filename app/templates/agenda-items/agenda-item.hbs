@@ -2,22 +2,6 @@
 <AuModalContainer />
 
 <div id="route-detail">
-  <AuToolbar @size="medium" @skin="tint" @border="bottom" as |Group|>
-    <Group>
-      <ul class="au-c-list-horizontal au-c-list-horizontal--small">
-        <li class="au-c-list-horizontal__item">
-          <AuLink @route="agenda-items" @icon="arrow-left">
-            Lijst
-          </AuLink>
-        </li>
-        <li class="au-c-list-horizontal__item">
-          <span
-            class="u-truncate"
-          >{{this.model.agendaItem.titleFormatted}}</span>
-        </li>
-      </ul>
-    </Group>
-  </AuToolbar>
   <div class="au-u-flex au-u-flex--column">
     <AuHeading @level="1" @skin="3" class="au-o-box au-u-padding-right-small">
       {{this.model.agendaItem.titleFormatted}}
@@ -28,7 +12,7 @@
         <p>Dit werd behandeld</p>
       </div>
     {{/if}}
-    <div class="au-u-padding-left au-u-padding-right">
+    <div class="au-u-padding-left au-u-padding-right au-u-padding-top-small">
       <ul class="c-description-list">
         {{#if this.model.agendaItem.session.classification}}
           <li>
