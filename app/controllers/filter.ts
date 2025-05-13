@@ -3,6 +3,8 @@ import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { service } from '@ember/service';
 
+import { tracked } from '@glimmer/tracking';
+
 import type RouterService from '@ember/routing/router-service';
 import type GoverningBodyListService from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
 import type GovernmentListService from 'frontend-burgernabije-besluitendatabank/services/government-list';
@@ -18,6 +20,8 @@ export default class FilterController extends Controller {
   @service declare router: RouterService;
   @service declare filterService: FilterService;
   @service declare itemsService: ItemsService;
+
+  @tracked selectedThemas: Array<string> = [];
 
   get governingBodyOptions() {
     return this.governingBodyList.options;
@@ -36,6 +40,20 @@ export default class FilterController extends Controller {
 
   get isFilterDescending() {
     return this.filterService.filters.dateSort === 'desc';
+  }
+
+  get themaOptions() {
+    // TODO: use logic of themas not this placeholder
+    return [
+      { label: 'Onderwijs' },
+      { label: 'Cultuur' },
+      { label: 'Vrije tijd' },
+    ];
+  }
+
+  @action
+  updateSelectedThemas(selected: { label: string }) {
+    console.log({ selected });
   }
 
   @action

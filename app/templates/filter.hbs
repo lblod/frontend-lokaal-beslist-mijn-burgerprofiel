@@ -21,7 +21,17 @@
     </select>
   </section>
   <AuHr />
-  {{!-- TODO: the filter is not reactive with the filters --}}
+  {{! TODO: add street inputField }}
+  <Filters::SelectMultipleCheckboxFilter
+    @id="thema"
+    @label="Thema"
+    @options={{this.themaOptions}}
+    @selected={{this.selectedThemas}}
+    @updateSelected={{this.updateSelectedThemas}}
+    @searchField="label"
+    @queryParam="thema"
+  />
+  {{! TODO: the filter is not reactive with the filters }}
   <Filters::DateRangeFilter
     @startQueryParam="begin"
     @endQueryParam="eind"
