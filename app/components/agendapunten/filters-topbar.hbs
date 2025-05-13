@@ -8,6 +8,7 @@
 {{#if this.hasFilters}}
   <div class="filters-topbar-active-filters">
     <div class="pills">
+      {{! TODO make them reactive with the filters/queryParams }}
       {{#each this.filterValues as |keyValue|}}
         <AuPill
           @icon="cross"
@@ -16,7 +17,7 @@
         >{{keyValue.value}}</AuPill>
       {{/each}}
     </div>
-    <div id='reset-button'>
+    <div id="reset-button">
       <AuButton
         @skin="link"
         {{on "click" @onFilterReset}}

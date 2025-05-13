@@ -24,6 +24,7 @@
 {{else}}
   <AuFormRow>
     <AuLabel for="date-from">Startdatum</AuLabel>
+    {{! TODO: these fields are hard to fill in => I broke it ? }}
     <Filters::DateRangeFilter::DateInput
       @disabled={{@disabled}}
       @value={{this.start}}

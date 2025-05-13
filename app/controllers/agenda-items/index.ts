@@ -4,7 +4,6 @@ import { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import { action } from '@ember/object';
 
-import type { SortType } from './types';
 import type RouterService from '@ember/routing/router-service';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
 import type ItemsService from '../../services/items-service';
@@ -15,10 +14,8 @@ export default class AgendaItemsIndexController extends Controller {
   @service declare router: RouterService;
   @tracked hasFilter = false;
 
-  @tracked dateSort: SortType = 'desc';
-
   get filters() {
-    console.log(this.filterService.filters);
+    // TODO: This is not reactive...
     return this.filterService.filters;
   }
 
