@@ -16,10 +16,12 @@
         >{{keyValue.value}}</AuPill>
       {{/each}}
     </div>
-    <AuButton
-      @skin="link"
-      {{on "click" @onFiltersUpdated}}
-      class="au-u-bold"
-    >Reset filters</AuButton>
+    <div id='reset-button'>
+      <AuButton
+        @skin="link"
+        {{on "click" @onFilterReset}}
+        class="au-u-bold"
+      >Reset filters</AuButton>
+    </div>
   </div>
 {{/if}}

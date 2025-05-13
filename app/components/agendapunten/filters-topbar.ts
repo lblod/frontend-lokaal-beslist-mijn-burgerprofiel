@@ -40,7 +40,6 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   removeFilter(filterKey: string) {
     const filters = { ...this.args.filters };
     delete filters[filterKey as keyof AgendaItemsParams];
-    console.log(filters);
 
     this.args.onFiltersUpdated?.(filters);
   }

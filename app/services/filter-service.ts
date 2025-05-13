@@ -1,13 +1,13 @@
 import Service, { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
+
+import type ItemsService from './items-service';
+import type RouterService from '@ember/routing/router-service';
+
 import type {
   AgendaItemsParams,
   SortType,
 } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
-import type ItemsService from './items-service';
-import { action } from '@ember/object';
-import type RouterService from '@ember/routing/router-service';
-import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
 import { keywordSearch } from 'frontend-burgernabije-besluitendatabank/helpers/keyword-search';
 
 export default class FilterService extends Service {
@@ -15,11 +15,11 @@ export default class FilterService extends Service {
   @service declare itemsService: ItemsService;
   @tracked keywordAdvancedSearch: { [key: string]: string[] } | null = null;
   @tracked filters: AgendaItemsParams = {
-    keyword: '',
-    municipalityLabels: '',
-    provinceLabels: '',
-    plannedStartMin: '',
-    plannedStartMax: '',
+    keyword: null,
+    municipalityLabels: null,
+    provinceLabels: null,
+    plannedStartMin: null,
+    plannedStartMax: null,
     dateSort: 'desc' as SortType,
     governingBodyClassifications: '',
     dataQualityList: [],
@@ -44,24 +44,21 @@ export default class FilterService extends Service {
     }
     this.filters = { ...this.filters, ...newFilters };
   }
-  @action
-  handleDateSortChange(event: { target: { value: SortType } }) {
-    const queryParams = { [QueryParameterKeys.dateSort]: event?.target?.value };
-    this.router.transitionTo({ queryParams });
-    this.updateFilters({ dateSort: event?.target?.value });
-  }
 
   resetFiltersToInitialView() {
     this.filters = {
-      keyword: '',
+      keyword: null,
       municipalityLabels: 'Aalter',
-      provinceLabels: '',
+      provinceLabels: null,
       plannedStartMin: null,
       plannedStartMax: null,
       dateSort: 'desc' as SortType,
-      governingBodyClassifications: '',
-      dataQualityList: [],
+      governingBodyClassifications: null,
+      dataQualityList: null,
       status: 'Alles',
+      themes: '',
+      street: '',
+      distance: undefined,
     };
   }
 }

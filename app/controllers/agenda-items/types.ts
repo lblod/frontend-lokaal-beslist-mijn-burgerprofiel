@@ -3,13 +3,13 @@ import type AgendaItem from 'frontend-burgernabije-besluitendatabank/models/mu-s
 import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 
 export interface AgendaItemsParams {
-  keyword: string;
-  municipalityLabels: string;
-  provinceLabels: string;
+  keyword: string | null;
+  municipalityLabels: string | null;
+  provinceLabels: string | null;
   plannedStartMin: string | null;
   plannedStartMax: string | null;
-  governingBodyClassifications: string;
-  dataQualityList: Array<string>;
+  governingBodyClassifications: string | null;
+  dataQualityList: Array<string> | null;
   dateSort: string;
   status: string;
   themes: string;

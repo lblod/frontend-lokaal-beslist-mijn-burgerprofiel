@@ -10,6 +10,7 @@ import type FilterService from 'frontend-burgernabije-besluitendatabank/services
 import type ItemsService from 'frontend-burgernabije-besluitendatabank/services/items-service';
 
 import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
+import type { SortType } from './agenda-items/types';
 
 export default class FilterController extends Controller {
   @service declare governingBodyList: GoverningBodyListService;
@@ -18,21 +19,23 @@ export default class FilterController extends Controller {
   @service declare filterService: FilterService;
   @service declare itemsService: ItemsService;
 
-  /** Data quality modal */
-  // @tracked modalOpen = false;
   get governingBodyOptions() {
     return this.governingBodyList.options;
   }
   get showAdvancedFilters() {
-    return this.filterService.filters.governingBodyClassifications?.length > 0;
-  }
-
-  get statusOfAgendaItemsOptions() {
-    return ['Alles', 'Behandeld', 'Niet behandeld'];
+    return this.filterService.filters.governingBodyClassifications;
   }
 
   get hasMunicipalityFilter() {
-    return this.filterService.filters.municipalityLabels.length > 0;
+    return this.filterService.filters.municipalityLabels;
+  }
+
+  get isFilterAscending() {
+    return this.filterService.filters.dateSort === 'asc';
+  }
+
+  get isFilterDescending() {
+    return this.filterService.filters.dateSort === 'desc';
   }
 
   @action
@@ -62,13 +65,20 @@ export default class FilterController extends Controller {
   get selectedMunicipality() {
     return this.filterService.filters.municipalityLabels;
   }
+
+  get statusOfAgendaItemsOptions() {
+    return ['Alles', 'Behandeld', 'Niet behandeld'];
+  }
+
   get status() {
     return this.filterService.filters.status;
   }
+
   @action
   setStatus(value: string) {
     this.filterService.updateFilters({ status: value });
   }
+
   @action
   updateSelectedGoverningBodyClassifications(
     newOptions: Array<{
@@ -87,12 +97,26 @@ export default class FilterController extends Controller {
       });
     }
   }
+
+  get startDate() {
+    return this.filterService.filters.plannedStartMin;
+  }
+
+  get endDate() {
+    return this.filterService.filters.plannedStartMax;
+  }
+
   @action
   updateSelectedDateRange(start: string, end: string) {
     this.filterService.updateFilters({
       plannedStartMin: start,
       plannedStartMax: end,
     });
+  }
+
+  @action
+  updateSorting(event: { target: { value: SortType } }) {
+    this.filterService.updateFilters({ dateSort: event?.target.value });
   }
 
   @action

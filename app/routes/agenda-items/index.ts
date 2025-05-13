@@ -1,7 +1,7 @@
 import Route from '@ember/routing/route';
 import { service } from '@ember/service';
 import { QueryParameterKeys } from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
-import type { AgendaItemsParams } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
+// import type { AgendaItemsParams } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
 import type FeaturesService from 'frontend-burgernabije-besluitendatabank/services/features';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
 import type ItemsService from 'frontend-burgernabije-besluitendatabank/services/items-service';
@@ -57,9 +57,14 @@ export default class AgendaItemsIndexRoute extends Route {
     },
   };
 
-  async model(params: AgendaItemsParams) {
+  model() {
     this.itemsService.resetAgendaItems();
-    this.filterService.updateFilters(params);
-    this.itemsService.initialAgendaItems(params);
+    this.itemsService.initialAgendaItems(this.filterService.filters);
   }
+  // TODO: let it work with the queryParams and the filters
+  // async model(params: AgendaItemsParams) {
+  //   this.itemsService.resetAgendaItems();
+  //   this.filterService.updateFilters(params);
+  //   this.itemsService.initialAgendaItems(params);
+  // }
 }
