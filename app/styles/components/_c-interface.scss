@@ -139,14 +139,3 @@
   bottom: 0;
   background-color: var(--vl-white);
 }
-
-.c-interface__sidebar-close-button {
-  position: sticky;
-  top: 0;
-  background-color: var(--vl-white);
-  z-index: 2;
-
-  @include mq(small) {
-    display: none;
-  }
-}
