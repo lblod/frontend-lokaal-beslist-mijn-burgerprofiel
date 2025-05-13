@@ -473,3 +473,7 @@ ol.less-margin {
     text-decoration: none;
   }
 }
+
+.au-c-badge--error {
+  background-color: var(--au-red-700) !important;
+}

@@ -16,6 +16,7 @@
       <ul class="c-description-list">
         {{#if this.model.agendaItem.session.classification}}
           <li>
+            {{! TODO update the icon to university }}
             <AuIcon @size="large" @icon="decided" />
             <span class="au-u-hidden-visually">Bestuursorgaan:</span>
             {{this.model.agendaItem.session.classification}}
@@ -40,6 +41,7 @@
       </p>
     </div>
     <div class="au-o-box">
+      {{! TODO update the icon to contact-chat }}
       <Accordion
         @buttonLabel="Besluit"
         @badgeIcon="report"
@@ -131,6 +133,7 @@
           </AuAlert>
         {{/if}}
       </Accordion>
+      {{! TODO update the icon to file-tasks-check }}
       <Accordion
         @buttonLabel="Bronnen &amp; kwaliteit"
         @badgeIcon="document-added"
