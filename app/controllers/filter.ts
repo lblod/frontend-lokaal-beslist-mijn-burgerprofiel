@@ -127,6 +127,11 @@ export default class FilterController extends Controller {
   }
 
   @action
+  updateSorting(event: { target: { value: SortType } }) {
+    this.filterService.updateFilters({ dateSort: event?.target.value });
+  }
+
+  @action
   goToAgendaItems() {
     this.router.transitionTo('agenda-items.index');
   }

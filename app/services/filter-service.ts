@@ -61,18 +61,4 @@ export default class FilterService extends Service {
       distance: undefined,
     };
   }
-
-  resetFiltersToInitialView() {
-    this.filters = {
-      keyword: '',
-      municipalityLabels: 'Aalter',
-      provinceLabels: '',
-      plannedStartMin: null,
-      plannedStartMax: null,
-      dateSort: 'desc' as SortType,
-      governingBodyClassifications: '',
-      dataQualityList: [],
-      status: 'Alles',
-    };
-  }
 }
