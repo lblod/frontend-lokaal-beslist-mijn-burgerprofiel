@@ -1,2 +1,74 @@
 {{page-title "Filter"}}
-{{outlet}}
+<div class="c-interface__sidebar-close-button">
+  <div class="au-u-flex au-u-flex--end au-u-padding au-u-padding-bottom-none">
+    <AuButton @skin="link" {{on "click" this.resetFilters}}>
+      Reset filters
+    </AuButton>
+  </div>
+  <AuHr />
+</div>
+<div class="c-interface__sidebar-main au-u-padding-left au-u-padding-right">
+  <section class="au-u-flex au-u-flex--column">
+    <AuLabel for="sort-on">Sorteren</AuLabel>
+    <select
+      id="sort-on"
+      type="select"
+      {{on "change" this.filterService.handleDateSortChange}}
+      disabled={{if this.itemsService.loadAgendaItems.isRunning "true" ""}}
+      class="au-c-input au-u-1-1 au-u-max-width-xsmall@small"
+    >
+      <option
+        value="desc"
+        selected={{eq this.filterService.filters.dateSort "desc"}}
+      >Nieuwste eerst</option>
+      <option
+        value="asc"
+        selected={{eq this.filterService.filters.dateSort "asc"}}
+      >Oudste eerst</option>
+    </select>
+  </section>
+  <AuHr />
+  <Filters::DateRangeFilter
+    @startQueryParam="begin"
+    @endQueryParam="eind"
+    @start={{this.filterService.filters.plannedStartMin}}
+    @end={{this.filterService.filters.plannedStartMax}}
+    @updateSelected={{this.updateSelectedDateRange}}
+    @disabled={{this.itemsService.loadAgendaItems.isRunning}}
+  />
+  <Filters::SelectRadioButtonFilter
+    @id="status"
+    @label="Status agendapunten"
+    @options={{this.statusOfAgendaItemsOptions}}
+    @selected={{this.status}}
+    @updateSelected={{this.setStatus}}
+    @queryParam="status"
+    @allowClear={{false}}
+    @searchEnabled={{false}}
+    @placeholder="Alle agendapunten"
+    @disabled={{this.itemsService.loadAgendaItems.isRunning}}
+  />
+  <AuHr />
+  <section class="c-advanced-filter-holder">
+    <Accordion @buttonLabel="GEAVANCEERDE FILTERS" @showBottomBorder={{false}}>
+      <Filters::SelectMultipleCheckboxFilter
+        @id="governing-body"
+        @label="Bestuursorganen"
+        @options={{this.governingBodyOptions}}
+        @selected={{this.governingBodyList.selected}}
+        @updateSelected={{this.updateSelectedGoverningBodyClassifications}}
+        @searchField="label"
+        @queryParam="bestuursorganen"
+        @disabled={{this.itemsService.loadAgendaItems.isRunning}}
+      />
+    </Accordion>
+  </section>
+</div>
+<div class="c-interface__sidebar-submit-buttons">
+  <AuHr />
+  <AuButton @skin="primary" @width="block" {{on "click" this.goToAgendaItems}}>
+    Toon
+    {{this.itemsService.total}}
+    resultaten
+  </AuButton>
+</div>

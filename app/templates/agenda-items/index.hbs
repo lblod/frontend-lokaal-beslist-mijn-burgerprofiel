@@ -3,14 +3,10 @@
   <Agendapunten::FiltersTopbar
     @filters={{this.filters}}
     @keysToHide={{this.filterKeysToHide}}
-    @onShowFiltersPage={{fn (mut this.hasFilter) true}}
+    @onShowFiltersPage={{this.goToFilters}}
     @onFiltersUpdated={{this.updateFilters}}
   />
   <div class="c-interface">
     <InfiniteListAgendaItemWrapper />
-    <FilterSidebarWrapper
-      @hasFilter={{this.hasFilter}}
-      @hideFilter={{this.hideFilter}}
-    />
   </div>
 </AuBodyContainer>

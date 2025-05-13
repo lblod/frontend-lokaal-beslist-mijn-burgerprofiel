@@ -44,6 +44,10 @@ export default class AgendaItemsIndexController extends Controller {
       },
     });
   }
+  @action
+  goToFilters() {
+    this.router.transitionTo('filter');
+  }
 
   @action
   hideFilter() {
