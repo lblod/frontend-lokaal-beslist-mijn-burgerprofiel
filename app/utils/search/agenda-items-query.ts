@@ -23,6 +23,7 @@ export function createAgendaItemsQuery({
   locationIds,
   plannedStartMin,
   plannedStartMax,
+  themeIds,
   dateSort,
   governingBodyClassificationIds,
   status,
@@ -40,6 +41,7 @@ export function createAgendaItemsQuery({
       plannedStartMax,
       governingBodyClassificationIds,
       status,
+      themeIds,
     }),
     dataMapping,
   };
@@ -52,6 +54,7 @@ function buildFilters({
   plannedStartMax,
   governingBodyClassificationIds,
   status,
+  themeIds,
 }: Partial<AgendaItemsQueryArguments>): Record<string, string> {
   const filters: Record<string, string> = {
     ':has:search_location_id': 't', // Ensure search_location_id is always present
@@ -63,6 +66,12 @@ function buildFilters({
   }
   if (locationIds) {
     filters[':terms:search_location_id'] = locationIds;
+  }
+  if (themeIds) {
+    filters[':query:themas.uuid'] = themeIds
+      .split(',')
+      .map((id) => `"${id}"`)
+      .join(' OR ');
   }
   if (governingBodyClassificationIds) {
     filters[':terms:search_governing_body_classification_id'] =

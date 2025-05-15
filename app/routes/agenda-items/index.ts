@@ -43,6 +43,10 @@ export default class AgendaItemsIndexRoute extends Route {
       as: QueryParameterKeys.status,
       refreshModel: true,
     },
+    themes: {
+      as: QueryParameterKeys.themes,
+      refreshModel: true,
+    },
   };
 
   async model(params: AgendaItemsParams) {

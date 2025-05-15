@@ -11,6 +11,7 @@ export interface AgendaItemsParams {
   dataQualityList: Array<string>;
   dateSort: string;
   status: string;
+  themes: string;
 }
 
 export interface AgendaItemsLoaderArgs {
@@ -26,6 +27,7 @@ export type AgendaItemsQueryArguments = {
   keyword?: string;
   locationIds?: string;
   provinceIds?: string;
+  themeIds?: string;
   plannedStartMin?: string;
   plannedStartMax?: string;
   dateSort?: string;

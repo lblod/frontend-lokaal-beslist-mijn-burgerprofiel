@@ -376,9 +376,10 @@ cursor {
   flex: 1;
 }
 
-#governing-body {
+.ember-basic-dropdown-trigger,
+.ember-power-select-trigger {
   ul {
-    margin: 0 0.6rem;
+    margin: 0 !important;
   }
 }
 
