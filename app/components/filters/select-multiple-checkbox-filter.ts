@@ -35,7 +35,6 @@ export default class SelectMultipleCheckboxFilterComponent extends FilterCompone
 
   @action
   async selectChange(selectedOptions: Option[]) {
-    console.log({ selectedOptions });
     this.onSelectedChange(selectedOptions);
 
     const emptyQueryParams: Record<string, string | undefined> =

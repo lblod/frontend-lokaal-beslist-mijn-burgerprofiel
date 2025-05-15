@@ -23,13 +23,13 @@ export type SessionsQueryArguments = {
   index: string;
   page: number;
   size?: number;
-  keyword?: string;
+  keyword: string | null;
   locationIds?: string;
   provinceIds?: string;
   plannedStartMin: string | null;
   plannedStartMax: string | null;
   dateSort?: string;
-  governingBodyClassificationIds?: string;
+  governingBodyClassificationIds: string | null;
   status: string;
 };
 
