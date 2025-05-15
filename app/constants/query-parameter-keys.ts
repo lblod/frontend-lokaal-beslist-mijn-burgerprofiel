@@ -8,6 +8,8 @@ export const QueryParameterKeys = {
   dateSort: 'datumsortering',
   status: 'status',
   themes: 'thema',
+  street: 'straat',
+  distance: 'afstand',
 };
 
 export default QueryParameterKeys;

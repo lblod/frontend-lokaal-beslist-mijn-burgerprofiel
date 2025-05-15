@@ -33,6 +33,29 @@
       @queryParam="gemeentes+provincies"
       @placeholder="Alle besturen"
     />
+    <Filters::Filter @id="street" @label="Straat">
+      <input
+        id="street-input"
+        value={{this.filterService.filters.street}}
+        class="au-c-input au-c-input--block"
+        placeholder="Typ een straatnaam"
+        {{on "input" this.updateStreet}}
+      />
+    </Filters::Filter>
+    {{#if this.filterService.filters.street}}
+      <Filters::SelectFilter
+        @id="distance"
+        @label="Afstand"
+        @options={{this.distanceList.options}}
+        @selected={{this.distanceList.selected}}
+        @updateSelected={{this.updateDistance}}
+        @queryParam="afstand"
+        @allowClear={{false}}
+        @searchEnabled={{false}}
+        @placeholder="Alle afstanden"
+        @searchField="label"
+      />
+    {{/if}}
     <Filters::SelectMultipleFilter
       @id="theme"
       @label="Kies één of meer thema's"

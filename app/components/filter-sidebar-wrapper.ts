@@ -11,6 +11,11 @@ import type {
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
 import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import type ThemeListService from 'frontend-burgernabije-besluitendatabank/services/theme-list';
+import type DistanceListService from 'frontend-burgernabije-besluitendatabank/services/distance-list';
+import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/services/distance-list';
+import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
+import { debounce } from '@ember/runloop';
+import { debounceTask } from 'ember-lifeline';
 
 interface FilterSidebarWrapperArgs {
   filters: AgendaItemsParams;
@@ -19,15 +24,15 @@ interface FilterSidebarWrapperArgs {
   hasFilter: boolean;
 }
 
+const DEBOUNCE_DELAY = 500;
+
 export default class FilterSidebarWrapper extends Component<FilterSidebarWrapperArgs> {
   @service declare governingBodyList: GoverningBodyListService;
   @service declare governmentList: GovernmentListService;
   @service declare themeList: ThemeListService;
   @service declare router: RouterService;
   @service declare filterService: FilterService;
-
-  /** Data quality modal */
-  // @tracked modalOpen = false;
+  @service declare distanceList: DistanceListService;
 
   get governigBodyOptions() {
     return this.governingBodyList.options;
@@ -45,6 +50,15 @@ export default class FilterSidebarWrapper extends Component<FilterSidebarWrapper
 
   get hasMunicipalityFilter() {
     return this.args.filters.municipalityLabels.length > 0;
+  }
+
+  private performDebouncedUpdate(value: string) {
+    this.filterService.updateFilters({
+      street: value,
+    });
+
+    const queryParams = { [QueryParameterKeys.street]: value };
+    this.router.transitionTo({ queryParams });
   }
 
   @action
@@ -117,6 +131,20 @@ export default class FilterSidebarWrapper extends Component<FilterSidebarWrapper
     this.themeList.selected = newOptions;
     this.filterService.updateFilters({
       themes: newOptions.map((o) => o.id).toString(),
+    });
+  }
+
+  @action
+  updateStreet(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    debounceTask(this, 'performDebouncedUpdate', value, DEBOUNCE_DELAY);
+  }
+
+  @action
+  updateDistance(selectedDistance: DistanceOption) {
+    this.distanceList.selected = selectedDistance;
+    this.filterService.updateFilters({
+      distance: selectedDistance,
     });
   }
 }

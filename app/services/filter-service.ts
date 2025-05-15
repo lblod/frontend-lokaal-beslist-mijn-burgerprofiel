@@ -25,6 +25,8 @@ export default class FilterService extends Service {
     dataQualityList: [],
     status: 'Alles',
     themes: '',
+    street: '',
+    distance: undefined,
   };
 
   updateFilters(newFilters: Partial<AgendaItemsParams>) {
