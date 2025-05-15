@@ -24,9 +24,6 @@ export default class FilterController extends Controller {
 
   @tracked selectedThemas: Array<string> = [];
 
-  get governingBodyOptions() {
-    return this.governingBodyList.options;
-  }
   get showAdvancedFilters() {
     return this.filterService.filters.governingBodyClassifications;
   }
@@ -45,15 +42,6 @@ export default class FilterController extends Controller {
 
   get resultCount() {
     return this.itemsService.totalAgendaItems;
-  }
-
-  get themaOptions() {
-    // TODO: use logic of themas not this placeholder
-    return [
-      { label: 'Onderwijs' },
-      { label: 'Cultuur' },
-      { label: 'Vrije tijd' },
-    ];
   }
 
   @action
@@ -89,10 +77,6 @@ export default class FilterController extends Controller {
   }
   get selectedMunicipality() {
     return this.filterService.filters.municipalityLabels;
-  }
-
-  get statusOfAgendaItemsOptions() {
-    return ['Alles', 'Behandeld', 'Niet behandeld'];
   }
 
   get status() {

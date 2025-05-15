@@ -23,7 +23,6 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   }
 
   get filterValues() {
-    console.log(this.args.filters);
     return Object.entries(this.args.filters)
       ?.map(([key, value]) => {
         return {

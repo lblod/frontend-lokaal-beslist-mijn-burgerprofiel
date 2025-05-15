@@ -25,7 +25,7 @@
   <Filters::SelectMultipleCheckboxFilter
     @id="thema"
     @label="Thema"
-    @options={{this.themaOptions}}
+    @options={{this.model.themaOptions}}
     @selected={{this.selectedThemas}}
     @updateSelected={{this.updateSelectedThemas}}
     @searchField="label"
@@ -42,7 +42,7 @@
   <Filters::SelectRadioButtonFilter
     @id="status"
     @label="Status agendapunten"
-    @options={{this.statusOfAgendaItemsOptions}}
+    @options={{this.model.agendaStatusOptions}}
     @selected={{this.status}}
     @updateSelected={{this.setStatus}}
     @queryParam="status"
@@ -56,7 +56,7 @@
       <Filters::SelectMultipleCheckboxFilter
         @id="governing-body"
         @label="Bestuursorganen"
-        @options={{this.governingBodyOptions}}
+        @options={{this.model.bestuursorgaanOptions}}
         @selected={{this.governingBodyList.selected}}
         @updateSelected={{this.updateSelectedGoverningBodyClassifications}}
         @searchField="label"
