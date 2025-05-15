@@ -2,15 +2,18 @@ import Service, { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import type FilterService from './filter-service';
 import type Store from '@ember-data/store';
+import type RouterService from '@ember/routing/router-service';
+import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
 
 export interface DistanceOption {
-  id?: string;
+  id: string;
   label: string;
 }
 
 export default class DistanceListService extends Service {
   @service declare store: Store;
   @service declare filterService: FilterService;
+  @service declare router: RouterService;
 
   @tracked selected?: DistanceOption;
   @tracked options: DistanceOption[] = [
@@ -51,9 +54,12 @@ export default class DistanceListService extends Service {
   async loadOptions() {
     if (this.filterService.filters.distance) {
       this.selected = this.options.find(
-        (option) => option.id === this.filterService.filters.distance,
+        (option) =>
+          option.id ===
+          this.router.currentRoute.queryParams[QueryParameterKeys.distance],
       );
     }
+    this.filterService.filters.distance = this.selected;
     return this.options;
   }
 }

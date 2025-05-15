@@ -14,7 +14,6 @@ import type ThemeListService from 'frontend-burgernabije-besluitendatabank/servi
 import type DistanceListService from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
-import { debounce } from '@ember/runloop';
 import { debounceTask } from 'ember-lifeline';
 
 interface FilterSidebarWrapperArgs {
@@ -45,7 +44,7 @@ export default class FilterSidebarWrapper extends Component<FilterSidebarWrapper
   }
 
   get statusOfAgendaItemsOptions() {
-    return ['Alles', 'Behandeld', 'Niet behandeld'];
+    return ['Behandeld', 'Niet behandeld'];
   }
 
   get hasMunicipalityFilter() {

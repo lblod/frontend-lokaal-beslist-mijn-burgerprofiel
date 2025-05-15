@@ -23,7 +23,7 @@ export default class FilterService extends Service {
     dateSort: 'desc' as SortType,
     governingBodyClassifications: '',
     dataQualityList: [],
-    status: 'Alles',
+    status: '',
     themes: '',
     street: '',
     distance: undefined,

@@ -27,15 +27,11 @@ export type AgendaItemsQueryArguments = {
   index: string;
   page: number;
   size?: number;
-  keyword?: string;
   locationIds?: string;
   provinceIds?: string;
   themeIds?: string;
-  plannedStartMin?: string;
-  plannedStartMax?: string;
-  dateSort?: string;
   governingBodyClassificationIds?: string;
-  status: string;
+  filters: AgendaItemsParams;
 };
 
 export type AgendaItemMuSearchEntry = {
