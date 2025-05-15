@@ -33,8 +33,9 @@ export default class ThemeListService extends Service {
 
     this.options = sortedConcepts.slice().sort(sortObjectsByLabel);
     if (this.filterService.filters.themes) {
+      const splitThemes = this.filterService.filters.themes.split('+');
       this.selected = this.options.filter((option) =>
-        this.filterService.filters.themes?.includes(option.label),
+        splitThemes.includes(option.label),
       );
     }
     return this.options;
