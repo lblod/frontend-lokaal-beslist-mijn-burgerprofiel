@@ -137,7 +137,13 @@ export default class FilterSidebarWrapper extends Component<FilterSidebarWrapper
   @action
   updateStreet(event: Event) {
     const value = (event.target as HTMLInputElement).value;
-    debounceTask(this, 'performDebouncedUpdate', value, DEBOUNCE_DELAY);
+    if (!value) {
+      this.router.transitionTo(this.router.currentRouteName, {
+        queryParams: { [QueryParameterKeys.street]: null },
+      });
+    } else {
+      debounceTask(this, 'performDebouncedUpdate', value, DEBOUNCE_DELAY);
+    }
   }
 
   @action
