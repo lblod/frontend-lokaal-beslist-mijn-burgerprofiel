@@ -42,6 +42,10 @@ export default class FilterController extends Controller {
     return this.filterService.filters.dateSort === 'desc';
   }
 
+  get resultCount() {
+    return this.itemsService.totalAgendaItems;
+  }
+
   get themaOptions() {
     // TODO: use logic of themas not this placeholder
     return [
@@ -54,6 +58,7 @@ export default class FilterController extends Controller {
   @action
   updateSelectedThemas(selected: { label: string }) {
     console.log({ selected });
+    this.itemsService.loadAgendaItems.perform(0, false);
   }
 
   @action
@@ -77,6 +82,7 @@ export default class FilterController extends Controller {
       municipalityLabels,
       provinceLabels,
     });
+    this.itemsService.loadAgendaItems.perform(0, false);
 
     await this.governingBodyList.loadOptions();
   }
@@ -95,6 +101,7 @@ export default class FilterController extends Controller {
   @action
   setStatus(value: string) {
     this.filterService.updateFilters({ status: value });
+    this.itemsService.loadAgendaItems.perform(0, false);
   }
 
   @action
@@ -113,6 +120,7 @@ export default class FilterController extends Controller {
       this.filterService.updateFilters({
         governingBodyClassifications,
       });
+      this.itemsService.loadAgendaItems.perform(0, false);
     }
   }
 
@@ -130,6 +138,7 @@ export default class FilterController extends Controller {
       plannedStartMin: start,
       plannedStartMax: end,
     });
+    this.itemsService.loadAgendaItems.perform(0, false);
   }
 
   @action
