@@ -33,10 +33,7 @@ export default class FilterSidebarWrapper extends Component<FilterSidebarWrapper
     return this.governingBodyList.options;
   }
   get showAdvancedFilters() {
-    return (
-      this.filterService.filters.governingBodyClassifications?.length > 0 ||
-      this.filterService.filters.themes?.length > 0
-    );
+    return this.filterService.filters.governingBodyClassifications.length > 0;
   }
 
   get statusOfAgendaItemsOptions() {

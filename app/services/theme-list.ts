@@ -2,7 +2,6 @@ import Service, { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import type FilterService from './filter-service';
 import type Store from '@ember-data/store';
-import { sortObjectsByLabel } from 'frontend-burgernabije-besluitendatabank/utils/array-utils';
 
 export interface ThemeOption {
   id?: string;
@@ -28,10 +27,11 @@ export default class ThemeListService extends Service {
     const sortedConcepts = await this.store.query('concept', {
       'filter[concept-schemes][:id:]': CONCEPT_SCHEME_ID,
       include: 'concept-schemes',
-      sort: 'label',
+      sort: '-:no-case:label',
+      page: { size: 100 },
     });
 
-    this.options = sortedConcepts.slice().sort(sortObjectsByLabel);
+    this.options = sortedConcepts.slice();
     if (this.filterService.filters.themes) {
       const splitThemes = this.filterService.filters.themes.split('+');
       this.selected = this.options.filter((option) =>
@@ -41,7 +41,7 @@ export default class ThemeListService extends Service {
     return this.options;
   }
   get selectedIds() {
-    return this.selected.map((option) => option.id).toString();
+    return this.selected.map((option) => option.id).join(',');
   }
 }
 
