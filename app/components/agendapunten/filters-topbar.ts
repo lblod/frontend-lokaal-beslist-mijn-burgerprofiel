@@ -3,20 +3,21 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { service } from '@ember/service';
 
-import type { AgendaItemsParams } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
+import type { FiltersAsQueryParams } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
 import type ItemsService from 'frontend-burgernabije-besluitendatabank/services/items-service';
+import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
 
 export interface AgendapuntenFiltersTopbarSignature {
   Args: {
-    filters: AgendaItemsParams;
-    keysToHide: Array<keyof AgendaItemsParams>;
-    onFiltersUpdated: (filters: Partial<AgendaItemsParams>) => void;
+    filters: FiltersAsQueryParams;
+    onFiltersUpdated: () => void;
   };
   Element: null;
 }
 
 export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFiltersTopbarSignature> {
   @service declare itemsService: ItemsService;
+  @service declare filterService: FilterService;
 
   get hasFilters() {
     return this.filterValues.length >= 1;
@@ -27,19 +28,15 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
       ?.map(([key, value]) => {
         return {
           key,
-          value: this.args.keysToHide.includes(key as keyof AgendaItemsParams)
-            ? null
-            : value,
+          value: value,
         };
       })
       .filter((kv) => kv.value && kv.value !== '');
   }
 
   @action
-  removeFilter(filterKey: string) {
-    const filters = { ...this.args.filters };
-    delete filters[filterKey as keyof AgendaItemsParams];
-
-    this.args.onFiltersUpdated?.(filters);
+  removeFilter(queryParamKey: keyof FiltersAsQueryParams) {
+    this.filterService.updateFilterFromQueryParamKey(queryParamKey, null);
+    this.args.onFiltersUpdated?.();
   }
 }

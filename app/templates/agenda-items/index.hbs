@@ -1,9 +1,9 @@
 <AuModalContainer />
 <AuBodyContainer>
   <Agendapunten::FiltersTopbar
-    @filters={{this.filters}}
-    @keysToHide={{this.filterKeysToHide}}
+    @filters={{this.model.filters}}
     @onShowFiltersPage={{this.goToFilters}}
+    @onFiltersUpdated={{this.refreshRoute}}
     @onFilterReset={{this.resetFilters}}
   />
   <InfiniteListAgendaItemWrapper />

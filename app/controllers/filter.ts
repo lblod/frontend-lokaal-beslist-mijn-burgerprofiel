@@ -10,10 +10,10 @@ import type GoverningBodyListService from 'frontend-burgernabije-besluitendataba
 import type GovernmentListService from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
 import type ItemsService from 'frontend-burgernabije-besluitendatabank/services/items-service';
-
 import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import type { SortType } from './agenda-items/types';
 import { serializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
+import type { GoverningBodyOption } from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
 
 export default class FilterController extends Controller {
   @service declare governingBodyList: GoverningBodyListService;
@@ -23,6 +23,12 @@ export default class FilterController extends Controller {
   @service declare itemsService: ItemsService;
 
   @tracked selectedThemas: Array<string> = [];
+
+  get selectedBestuursorganen() {
+    return this.governingBodyList.selected?.map(
+      (orgaan: GoverningBodyOption) => orgaan.id,
+    );
+  }
 
   get showAdvancedFilters() {
     return this.filterService.filters.governingBodyClassifications;
@@ -91,11 +97,7 @@ export default class FilterController extends Controller {
 
   @action
   updateSelectedGoverningBodyClassifications(
-    newOptions: Array<{
-      label: string;
-      id: string;
-      type: 'governing-body-classifications';
-    }>,
+    newOptions: Array<GoverningBodyOption>,
   ) {
     this.governingBodyList.selected = newOptions;
     const labels = newOptions.map((o) => o.label);
@@ -121,7 +123,6 @@ export default class FilterController extends Controller {
     });
     this.itemsService.loadAgendaItems.perform(0, false);
   }
-
   @action
   updateSorting(event: { target: { value: SortType } }) {
     this.filterService.updateFilters({ dateSort: event?.target.value });
@@ -129,7 +130,9 @@ export default class FilterController extends Controller {
 
   @action
   goToAgendaItems() {
-    this.router.transitionTo('agenda-items.index');
+    this.router.transitionTo('agenda-items.index', {
+      queryParams: this.filterService.asQueryParams,
+    });
   }
 
   @action
