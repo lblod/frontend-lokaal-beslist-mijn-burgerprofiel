@@ -4,11 +4,11 @@
     <PowerSelect
       @selected={{this.selectedAddress}}
       @onChange={{perform this.selectSuggestion}}
-      style="z-index: 10;"
+      class="z-index-10"
       @options={{this.addressSuggestion}}
       @searchEnabled={{true}}
       @searchField="fullAddress"
-      @onKeydown={{(perform this.handleKeydown)}}
+      @onKeydown={{perform this.handleKeydown}}
       @placeholder="Typ een straatnaam"
       @allowClear={{true}}
       as |name|
