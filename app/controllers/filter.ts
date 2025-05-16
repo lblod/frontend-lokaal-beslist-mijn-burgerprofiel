@@ -120,12 +120,6 @@ export default class FilterController extends Controller {
     });
     this.itemsService.loadAgendaItems.perform(0, false);
   }
-
-  @action
-  updateSorting(event: { target: { value: SortType } }) {
-    this.filterService.updateFilters({ dateSort: event?.target.value });
-  }
-
   @action
   updateSorting(event: { target: { value: SortType } }) {
     this.filterService.updateFilters({ dateSort: event?.target.value });
@@ -143,15 +137,5 @@ export default class FilterController extends Controller {
     this.governingBodyList.selected = [];
     this.filterService.resetFiltersToInitialView();
     this.goToAgendaItems();
-  }
-
-  @action
-  async resetFilters() {
-    this.hackRefreshDateComponent = true;
-    this.governingBodyList.selected = [];
-    this.filterService.resetFiltersToInitialView();
-    this.itemsService.loadAgendaItems.perform(0, false);
-    await timeout(10);
-    this.hackRefreshDateComponent = false;
   }
 }
