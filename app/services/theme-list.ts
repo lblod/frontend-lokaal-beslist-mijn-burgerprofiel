@@ -27,7 +27,7 @@ export default class ThemeListService extends Service {
     const sortedConcepts = await this.store.query('concept', {
       'filter[concept-schemes][:id:]': CONCEPT_SCHEME_ID,
       include: 'concept-schemes',
-      sort: '-:no-case:label',
+      sort: ':no-case:label',
       page: { size: 100 },
     });
 
