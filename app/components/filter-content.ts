@@ -22,14 +22,10 @@ export default class FilterContent extends Component {
   @action
   handleSubmit(event: Event) {
     event.preventDefault();
-    if (!this.value) {
-      this.router.transitionTo(this.router.currentRouteName, {
-        queryParams: { [QueryParameterKeys.keyword]: null },
-      });
-    } else {
-      const queryParams = { [QueryParameterKeys.keyword]: this.value };
-      this.router.transitionTo({ queryParams });
-    }
+    const queryParams = {
+      [QueryParameterKeys.keyword]: this.value || null,
+    };
+    this.router.transitionTo(this.router.currentRouteName, { queryParams });
   }
 
   @action

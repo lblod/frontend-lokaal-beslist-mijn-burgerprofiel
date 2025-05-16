@@ -37,7 +37,10 @@ export default class FilterSidebarWrapper extends Component<FilterSidebarWrapper
     return this.governingBodyList.options;
   }
   get showAdvancedFilters() {
-    return this.filterService.filters.governingBodyClassifications.length > 0;
+    return (
+      this.filterService.filters.governingBodyClassifications &&
+      this.filterService.filters.governingBodyClassifications.length > 0
+    );
   }
 
   get statusOfAgendaItemsOptions() {
@@ -46,15 +49,6 @@ export default class FilterSidebarWrapper extends Component<FilterSidebarWrapper
 
   get hasMunicipalityFilter() {
     return this.args.filters.municipalityLabels.length > 0;
-  }
-
-  private performDebouncedUpdate(value: string) {
-    this.filterService.updateFilters({
-      street: value,
-    });
-
-    const queryParams = { [QueryParameterKeys.street]: value };
-    this.router.transitionTo({ queryParams });
   }
 
   @action
@@ -130,13 +124,25 @@ export default class FilterSidebarWrapper extends Component<FilterSidebarWrapper
     });
   }
 
+  private updateStreetQueryParam(value: string | null) {
+    const queryParams = {
+      [QueryParameterKeys.street]: value,
+    };
+
+    this.router.transitionTo(this.router.currentRouteName, { queryParams });
+  }
+
+  private performDebouncedUpdate(value: string) {
+    this.filterService.updateFilters({ street: value });
+    this.updateStreetQueryParam(value);
+  }
+
   @action
   updateStreet(event: Event) {
-    const value = (event.target as HTMLInputElement).value;
+    const value = (event.target as HTMLInputElement).value.trim();
+
     if (!value) {
-      this.router.transitionTo(this.router.currentRouteName, {
-        queryParams: { [QueryParameterKeys.street]: null },
-      });
+      this.updateStreetQueryParam(null);
     } else {
       debounceTask(this, 'performDebouncedUpdate', value, DEBOUNCE_DELAY);
     }

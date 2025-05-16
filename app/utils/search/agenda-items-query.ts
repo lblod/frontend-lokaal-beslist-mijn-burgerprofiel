@@ -46,32 +46,31 @@ function buildFilters({
   themeIds,
   filters,
 }: Partial<AgendaItemsQueryArguments>): Record<string, string> {
-  const filterParams: Record<string, string> = {
+  const query: Record<string, string> = {
     ':has:search_location_id': 't', // Ensure search_location_id is always present
   };
 
   if (filters?.plannedStartMin) {
-    filterParams[':query:session_planned_start'] =
+    query[':query:session_planned_start'] =
       `session_planned_start:[${filters?.plannedStartMin} TO ${filters?.plannedStartMax || '*'}]`;
   }
   if (locationIds) {
-    filterParams[':terms:search_location_id'] = locationIds;
+    query[':terms:search_location_id'] = locationIds;
   }
   if (themeIds) {
-    filterParams[':query:themas.uuid'] = themeIds
+    query[':query:themas.uuid'] = themeIds
       .split(',')
       .map((id) => `"${id}"`)
       .join(' OR ');
   }
   if (filters?.street) {
-    filterParams[':query:street.name'] = filters.street;
+    query[':query:street.name'] = filters.street;
   }
   if (filters?.distance) {
-    filterParams[':query:distance.uuid'] =
-      filters.distance.id ?? filters.distance;
+    query[':query:distance.uuid'] = filters.distance.id ?? filters.distance;
   }
   if (governingBodyClassificationIds) {
-    filterParams[':terms:search_governing_body_classification_id'] =
+    query[':terms:search_governing_body_classification_id'] =
       governingBodyClassificationIds;
   }
 
@@ -81,9 +80,9 @@ function buildFilters({
       filters?.keyword === '-description*'
     ) {
       if (filters?.keyword.includes('title')) {
-        filterParams[':has-no:title'] = 't';
+        query[':has-no:title'] = 't';
       } else if (filters?.keyword.includes('description')) {
-        filterParams[':has-no:description'] = 't';
+        query[':has-no:description'] = 't';
       }
     } else {
       const parsedResults = keywordSearch([
@@ -103,21 +102,21 @@ function buildFilters({
         }
       }
       if (buildQuery.length !== 0) {
-        filterParams[':query:search_content'] = buildQuery.join(' AND ');
+        query[':query:search_content'] = buildQuery.join(' AND ');
       } else {
-        filterParams[':fuzzy:search_content'] = filters?.keyword;
+        query[':fuzzy:search_content'] = filters?.keyword;
       }
     }
   }
 
   if (filters?.status === 'Behandeld') {
-    filterParams[':has:session_started_at'] = 't';
+    query[':has:session_started_at'] = 't';
   }
   if (filters?.status === 'Niet behandeld') {
-    filterParams[':has-no:session_started_at'] = 't';
+    query[':has-no:session_started_at'] = 't';
   }
 
-  return filterParams;
+  return query;
 }
 
 const dataMapping: DataMapper<AgendaItemMuSearchEntry, AgendaItem> = (

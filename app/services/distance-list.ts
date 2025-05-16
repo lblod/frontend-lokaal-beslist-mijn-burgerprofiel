@@ -45,7 +45,7 @@ export default class DistanceListService extends Service {
       id: '6',
       label: '< 50 km',
     },
-  ];
+  ]; // This data will be replaced with a query to the API
 
   constructor(...args: []) {
     super(...args);

@@ -33,15 +33,6 @@
       @queryParam="gemeentes+provincies"
       @placeholder="Alle besturen"
     />
-    {{!-- <Filters::Filter @id="street" @label="Straat">
-      <input
-        id="street-input"
-        value={{this.filterService.filters.street}}
-        class="au-c-input au-c-input--block"
-        placeholder="Typ een straatnaam"
-        {{on "input" this.updateStreet}}
-      />
-    </Filters::Filter> --}}
     <Filters::Address::AdressenSelector @id="address-search" />
     <Filters::SelectFilter
       @id="distance"
