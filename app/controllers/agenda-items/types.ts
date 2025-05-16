@@ -30,7 +30,7 @@ export type AgendaItemsQueryArguments = {
   locationIds?: string;
   provinceIds?: string;
   themeIds?: string;
-  governingBodyClassificationIds?: string;
+  governingBodyClassificationIds: string | null;
   filters: AgendaItemsParams;
 };
 
