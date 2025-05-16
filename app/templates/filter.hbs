@@ -69,7 +69,7 @@
   <AuHr />
   <AuButton @skin="primary" @width="block" {{on "click" this.goToAgendaItems}}>
     Toon
-    {{this.resultCount}}
+    {{format-number this.resultCount 0}}
     resultaten
   </AuButton>
 </div>

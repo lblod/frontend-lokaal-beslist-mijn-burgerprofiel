@@ -41,7 +41,7 @@ export default class FilterController extends Controller {
   }
 
   get resultCount() {
-    return this.itemsService.totalAgendaItems;
+    return this.itemsService.totalAgendaItems || 0;
   }
 
   @action
