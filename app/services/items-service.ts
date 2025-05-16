@@ -114,6 +114,7 @@ export default class ItemsService extends Service {
             locationIds,
             themeIds,
             governingBodyClassificationIds,
+            filters: this.filters,
             ...this.filters,
           }),
         );
@@ -167,7 +168,7 @@ export default class ItemsService extends Service {
               locationIds,
               themeIds,
               governingBodyClassificationIds,
-              ...this.filters,
+              filters: this.filters,
             }),
           );
         this.totalAgendaItems = agendaItems.count ?? 0;

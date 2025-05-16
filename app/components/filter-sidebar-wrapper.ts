@@ -11,6 +11,10 @@ import type {
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
 import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import type ThemeListService from 'frontend-burgernabije-besluitendatabank/services/theme-list';
+import type DistanceListService from 'frontend-burgernabije-besluitendatabank/services/distance-list';
+import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/services/distance-list';
+import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
+import { task, timeout } from 'ember-concurrency';
 
 interface FilterSidebarWrapperArgs {
   filters: AgendaItemsParams;
@@ -19,15 +23,15 @@ interface FilterSidebarWrapperArgs {
   hasFilter: boolean;
 }
 
+const DEBOUNCE_DELAY = 500;
+
 export default class FilterSidebarWrapper extends Component<FilterSidebarWrapperArgs> {
   @service declare governingBodyList: GoverningBodyListService;
   @service declare governmentList: GovernmentListService;
   @service declare themeList: ThemeListService;
   @service declare router: RouterService;
   @service declare filterService: FilterService;
-
-  /** Data quality modal */
-  // @tracked modalOpen = false;
+  @service declare distanceList: DistanceListService;
 
   get governigBodyOptions() {
     return this.governingBodyList.options;
@@ -40,7 +44,7 @@ export default class FilterSidebarWrapper extends Component<FilterSidebarWrapper
   }
 
   get statusOfAgendaItemsOptions() {
-    return ['Alles', 'Behandeld', 'Niet behandeld'];
+    return ['Behandeld', 'Niet behandeld'];
   }
 
   get hasMunicipalityFilter() {
@@ -117,6 +121,38 @@ export default class FilterSidebarWrapper extends Component<FilterSidebarWrapper
     this.themeList.selected = newOptions;
     this.filterService.updateFilters({
       themes: newOptions.map((o) => o.id).toString(),
+    });
+  }
+
+  private updateStreetQueryParam(value: string | null) {
+    const queryParams = {
+      [QueryParameterKeys.street]: value,
+    };
+
+    this.router.transitionTo(this.router.currentRouteName, { queryParams });
+  }
+
+  updateStreetTask = task({ restartable: true }, async (value: string) => {
+    await timeout(DEBOUNCE_DELAY);
+    this.filterService.updateFilters({ street: value });
+    this.updateStreetQueryParam(value);
+  });
+
+  @action
+  updateStreet(event: Event) {
+    const input = (event.target as HTMLInputElement).value.trim();
+    if (input) {
+      this.updateStreetTask.perform(input);
+    } else {
+      this.updateStreetQueryParam(null);
+    }
+  }
+
+  @action
+  updateDistance(selectedDistance: DistanceOption) {
+    this.distanceList.selected = selectedDistance;
+    this.filterService.updateFilters({
+      distance: selectedDistance,
     });
   }
 }

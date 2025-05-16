@@ -19,74 +19,76 @@ import { keywordSearch } from 'frontend-burgernabije-besluitendatabank/helpers/k
 export function createAgendaItemsQuery({
   index,
   page,
-  keyword,
   locationIds,
-  plannedStartMin,
-  plannedStartMax,
   themeIds,
-  dateSort,
   governingBodyClassificationIds,
-  status,
+  filters,
   size = 15,
 }: AgendaItemsQueryArguments): AgendaItemsQueryResult {
   return {
     index,
     page,
     size,
-    sort: `${dateSort === 'asc' ? '+' : '-'}session_planned_start`,
+    sort: `${filters.dateSort === 'asc' ? '+' : '-'}session_planned_start`,
     filters: buildFilters({
-      keyword,
       locationIds,
-      plannedStartMin,
-      plannedStartMax,
       governingBodyClassificationIds,
-      status,
       themeIds,
+      filters,
     }),
     dataMapping,
   };
 }
 
 function buildFilters({
-  keyword,
   locationIds,
-  plannedStartMin,
-  plannedStartMax,
   governingBodyClassificationIds,
-  status,
   themeIds,
+  filters,
 }: Partial<AgendaItemsQueryArguments>): Record<string, string> {
-  const filters: Record<string, string> = {
+  const query: Record<string, string> = {
     ':has:search_location_id': 't', // Ensure search_location_id is always present
   };
 
-  if (plannedStartMin) {
-    filters[':query:session_planned_start'] =
-      `session_planned_start:[${plannedStartMin} TO ${plannedStartMax || '*'}]`;
+  if (filters?.plannedStartMin) {
+    query[':query:session_planned_start'] =
+      `session_planned_start:[${filters?.plannedStartMin} TO ${filters?.plannedStartMax || '*'}]`;
   }
   if (locationIds) {
-    filters[':terms:search_location_id'] = locationIds;
+    query[':terms:search_location_id'] = locationIds;
   }
   if (themeIds) {
-    filters[':query:themas.uuid'] = themeIds
+    query[':query:themas.uuid'] = themeIds
       .split(',')
       .map((id) => `"${id}"`)
       .join(' OR ');
   }
+  if (filters?.street) {
+    query[':query:street.name'] = filters.street;
+  }
+  if (filters?.distance) {
+    query[':query:distance.uuid'] = filters.distance.id ?? filters.distance;
+  }
   if (governingBodyClassificationIds) {
-    filters[':terms:search_governing_body_classification_id'] =
+    query[':terms:search_governing_body_classification_id'] =
       governingBodyClassificationIds;
   }
 
-  if (keyword) {
-    if (keyword === '-title*' || keyword === '-description*') {
-      if (keyword.includes('title')) {
-        filters[':has-no:title'] = 't';
-      } else if (keyword.includes('description')) {
-        filters[':has-no:description'] = 't';
+  if (filters?.keyword) {
+    if (
+      filters?.keyword === '-title*' ||
+      filters?.keyword === '-description*'
+    ) {
+      if (filters?.keyword.includes('title')) {
+        query[':has-no:title'] = 't';
+      } else if (filters?.keyword.includes('description')) {
+        query[':has-no:description'] = 't';
       }
     } else {
-      const parsedResults = keywordSearch([keyword, ['title', 'description']]);
+      const parsedResults = keywordSearch([
+        filters?.keyword,
+        ['title', 'description'],
+      ]);
       const buildQuery = [];
       if (parsedResults !== null) {
         if (parsedResults['must'] && parsedResults['must'].length > 0) {
@@ -100,21 +102,21 @@ function buildFilters({
         }
       }
       if (buildQuery.length !== 0) {
-        filters[':query:search_content'] = buildQuery.join(' AND ');
+        query[':query:search_content'] = buildQuery.join(' AND ');
       } else {
-        filters[':fuzzy:search_content'] = keyword;
+        query[':fuzzy:search_content'] = filters?.keyword;
       }
     }
   }
 
-  if (status === 'Behandeld') {
-    filters[':has:session_started_at'] = 't';
+  if (filters?.status === 'Behandeld') {
+    query[':has:session_started_at'] = 't';
   }
-  if (status === 'Niet behandeld') {
-    filters[':has-no:session_started_at'] = 't';
+  if (filters?.status === 'Niet behandeld') {
+    query[':has-no:session_started_at'] = 't';
   }
 
-  return filters;
+  return query;
 }
 
 const dataMapping: DataMapper<AgendaItemMuSearchEntry, AgendaItem> = (

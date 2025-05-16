@@ -33,6 +33,19 @@
       @queryParam="gemeentes+provincies"
       @placeholder="Alle besturen"
     />
+    <Filters::Address::AdressenSelector @id="address-search" />
+    <Filters::SelectFilter
+      @id="distance"
+      @label="Afstand"
+      @options={{this.distanceList.options}}
+      @selected={{this.distanceList.selected}}
+      @updateSelected={{this.updateDistance}}
+      @queryParam="afstand"
+      @allowClear={{true}}
+      @searchEnabled={{false}}
+      @placeholder="Alle afstanden"
+      @searchField="label"
+    />
     <Filters::SelectMultipleFilter
       @id="theme"
       @label="Kies één of meer thema's"
@@ -58,7 +71,7 @@
       @selected={{this.status}}
       @updateSelected={{this.setStatus}}
       @queryParam="status"
-      @allowClear={{false}}
+      @allowClear={{true}}
       @searchEnabled={{false}}
       @placeholder="Alle agendapunten"
     />

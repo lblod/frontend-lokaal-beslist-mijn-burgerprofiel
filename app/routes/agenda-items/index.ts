@@ -47,6 +47,14 @@ export default class AgendaItemsIndexRoute extends Route {
       as: QueryParameterKeys.themes,
       refreshModel: true,
     },
+    street: {
+      as: QueryParameterKeys.street,
+      refreshModel: true,
+    },
+    distance: {
+      as: QueryParameterKeys.distance,
+      refreshModel: true,
+    },
   };
 
   async model(params: AgendaItemsParams) {

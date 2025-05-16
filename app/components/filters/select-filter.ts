@@ -11,7 +11,7 @@ interface Signature {
   Args: {
     options: Promise<UnifiedOptions[]>;
     selected: string;
-    updateSelected: (selected?: string) => void;
+    updateSelected: (selected?: string | { label: string; id: string }) => void;
   } & FilterArgs;
 }
 
@@ -21,10 +21,22 @@ export default class SelectFilterComponent extends FilterComponent<Signature> {
   }
 
   @action
-  async selectChange(selectedOption: string) {
-    this.args.updateSelected(selectedOption);
-    this.updateQueryParams({
-      [this.args.queryParam]: selectedOption,
+  async selectChange(
+    selectedOption: string | { label: string; id: string } | null,
+  ) {
+    let value: string | undefined;
+
+    if (selectedOption == null) {
+      value = undefined;
+    } else if (typeof selectedOption === 'string') {
+      value = selectedOption;
+    } else {
+      value = selectedOption.id;
+    }
+
+    this.args.updateSelected(selectedOption ?? undefined);
+    return this.updateQueryParams({
+      [this.args.queryParam]: value,
     });
   }
 }
