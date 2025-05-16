@@ -14,7 +14,7 @@ import type ThemeListService from 'frontend-burgernabije-besluitendatabank/servi
 import type DistanceListService from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
-import { debounceTask } from 'ember-lifeline';
+import { task, timeout } from 'ember-concurrency';
 
 interface FilterSidebarWrapperArgs {
   filters: AgendaItemsParams;
@@ -132,19 +132,19 @@ export default class FilterSidebarWrapper extends Component<FilterSidebarWrapper
     this.router.transitionTo(this.router.currentRouteName, { queryParams });
   }
 
-  private performDebouncedUpdate(value: string) {
+  updateStreetTask = task({ restartable: true }, async (value: string) => {
+    await timeout(DEBOUNCE_DELAY);
     this.filterService.updateFilters({ street: value });
     this.updateStreetQueryParam(value);
-  }
+  });
 
   @action
   updateStreet(event: Event) {
-    const value = (event.target as HTMLInputElement).value.trim();
-
-    if (!value) {
-      this.updateStreetQueryParam(null);
+    const input = (event.target as HTMLInputElement).value.trim();
+    if (input) {
+      this.updateStreetTask.perform(input);
     } else {
-      debounceTask(this, 'performDebouncedUpdate', value, DEBOUNCE_DELAY);
+      this.updateStreetQueryParam(null);
     }
   }
 

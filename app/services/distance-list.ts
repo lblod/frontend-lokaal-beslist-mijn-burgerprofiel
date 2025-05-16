@@ -59,7 +59,6 @@ export default class DistanceListService extends Service {
           this.router.currentRoute.queryParams[QueryParameterKeys.distance],
       );
     }
-    this.filterService.filters.distance = this.selected;
     return this.options;
   }
 }
