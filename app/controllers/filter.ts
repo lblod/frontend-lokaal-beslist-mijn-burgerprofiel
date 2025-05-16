@@ -133,7 +133,9 @@ export default class FilterController extends Controller {
 
   @action
   goToAgendaItems() {
-    this.router.transitionTo('agenda-items.index');
+    this.router.transitionTo('agenda-items.index', {
+      queryParams: this.filterService.asQueryParams,
+    });
   }
 
   @action

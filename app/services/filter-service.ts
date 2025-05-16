@@ -6,6 +6,7 @@ import type RouterService from '@ember/routing/router-service';
 
 import type {
   AgendaItemsParams,
+  FiltersAsQueryParams,
   SortType,
 } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
 import { keywordSearch } from 'frontend-burgernabije-besluitendatabank/helpers/keyword-search';
@@ -60,5 +61,52 @@ export default class FilterService extends Service {
       street: '',
       distance: undefined,
     };
+  }
+
+  updateFilterFromQueryParamKey(
+    key: keyof FiltersAsQueryParams,
+    value: string | string[] | null,
+  ) {
+    const filterKey = this.getFilterKeyForQueryParamKey(key);
+    this.filters[filterKey] = value as string & string[] & null;
+  }
+
+  getFilterKeyForQueryParamKey(
+    key: keyof FiltersAsQueryParams,
+  ): keyof AgendaItemsParams {
+    const mapping = {
+      gemeentes: 'municipalityLabels',
+      provincies: 'provinceLabels',
+      bestuursorganen: 'governingBodyClassifications',
+      start: 'plannedStartMin',
+      end: 'plannedStartMax',
+      trefwoord: 'keyword',
+      datumsortering: 'dateSort',
+      status: 'status',
+    };
+
+    return mapping[key] as keyof AgendaItemsParams;
+  }
+
+  get asQueryParams() {
+    const queryParams: FiltersAsQueryParams = {
+      gemeentes: 'Aalter',
+      provincies: this.filters.provinceLabels,
+      bestuursorganen: this.filters.governingBodyClassifications,
+      start: this.filters.plannedStartMin,
+      end: this.filters.plannedStartMax,
+      trefwoord: this.filters.keyword,
+      datumsortering: this.filters.dateSort as SortType,
+      status: this.filters.status,
+    };
+    delete queryParams.gemeentes;
+    if (queryParams.status == 'Alles') {
+      delete queryParams.status;
+    }
+    if (queryParams.datumsortering == 'desc') {
+      delete queryParams.datumsortering;
+    }
+
+    return queryParams;
   }
 }

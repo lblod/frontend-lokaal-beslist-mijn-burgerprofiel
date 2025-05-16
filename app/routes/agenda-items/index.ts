@@ -60,6 +60,8 @@ export default class AgendaItemsIndexRoute extends Route {
   model() {
     this.itemsService.resetAgendaItems();
     this.itemsService.initialAgendaItems(this.filterService.filters);
+
+    return { filters: this.filterService.asQueryParams };
   }
   // TODO: let it work with the queryParams and the filters
   // async model(params: AgendaItemsParams) {

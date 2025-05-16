@@ -14,29 +14,12 @@ export default class AgendaItemsIndexController extends Controller {
   @service declare router: RouterService;
   @tracked hasFilter = false;
 
-  get filters() {
-    // TODO: This is not reactive...
-    return this.filterService.filters;
-  }
-
-  get filterKeysToHide(): Array<string> {
-    return ['isTrusted'];
-  }
-
   @action
   resetFilters() {
     this.filterService.resetFiltersToInitialView();
     this.router.transitionTo(this.router.currentRouteName, {
       queryParams: {
-        gemeentes: this.filterService.filters.municipalityLabels,
-        provincies: this.filterService.filters.provinceLabels,
-        bestuursorganen:
-          this.filterService.filters.governingBodyClassifications,
-        start: this.filterService.filters.plannedStartMin,
-        end: this.filterService.filters.plannedStartMax,
-        trefwoord: this.filterService.filters.keyword,
-        datumsortering: this.filterService.filters.dateSort,
-        status: this.filterService.filters.status,
+        gemeentes: this.filterService.asQueryParams,
       },
     });
   }
@@ -44,5 +27,10 @@ export default class AgendaItemsIndexController extends Controller {
   @action
   goToFilters() {
     this.router.transitionTo('filter');
+  }
+
+  @action
+  refreshRoute() {
+    this.router.refresh();
   }
 }

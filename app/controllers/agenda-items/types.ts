@@ -17,6 +17,17 @@ export interface AgendaItemsParams {
   distance?: DistanceOption;
 }
 
+export type FiltersAsQueryParams = {
+  gemeentes?: string;
+  provincies: string | null;
+  bestuursorganen: string | null;
+  start: string | null;
+  end: string | null;
+  trefwoord: string | null;
+  datumsortering?: SortType;
+  status?: string;
+};
+
 export interface AgendaItemsLoaderArgs {
   Named: {
     filters: AgendaItemsParams;
