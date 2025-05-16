@@ -15,12 +15,14 @@ import type { MuSearchResponse } from 'frontend-burgernabije-besluitendatabank/s
 import type { AgendaItemsParams } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
 import { action } from '@ember/object';
 import type FilterService from './filter-service';
+import type ThemeListService from './theme-list';
 
 export default class ItemsService extends Service {
   @service declare municipalityList: MunicipalityListService;
   @service declare provinceList: ProvinceListService;
   @service declare governingBodyList: GoverningBodyListService;
   @service declare governmentList: GovernmentListService;
+  @service declare themeList: ThemeListService;
   @service declare muSearch: MuSearchService;
   @service declare governingBodyDisabledList: GoverningBodyDisabledList;
   @service declare filterService: FilterService;
@@ -98,6 +100,7 @@ export default class ItemsService extends Service {
     async (page: number, loadMore = false) => {
       if (!this.filters) return;
       const locationIds = await this.fetchLocationIds();
+      const themeIds = this.themeList.selectedIds;
       const governingBodyClassificationIds =
         await this.governingBodyList.getGoverningBodyClassificationIdsFromLabels(
           this.filters.governingBodyClassifications,
@@ -109,6 +112,7 @@ export default class ItemsService extends Service {
             index: 'agenda-items',
             page,
             locationIds,
+            themeIds,
             governingBodyClassificationIds,
             ...this.filters,
           }),
@@ -148,6 +152,7 @@ export default class ItemsService extends Service {
       if (!this.filters) return;
 
       const locationIds = await this.fetchLocationIds();
+      const themeIds = this.themeList.selectedIds;
       const governingBodyClassificationIds =
         await this.governingBodyList.getGoverningBodyClassificationIdsFromLabels(
           this.filters.governingBodyClassifications,
@@ -160,6 +165,7 @@ export default class ItemsService extends Service {
               page,
               size: 1,
               locationIds,
+              themeIds,
               governingBodyClassificationIds,
               ...this.filters,
             }),

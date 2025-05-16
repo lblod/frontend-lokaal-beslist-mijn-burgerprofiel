@@ -24,6 +24,7 @@ export default class FilterService extends Service {
     governingBodyClassifications: '',
     dataQualityList: [],
     status: 'Alles',
+    themes: '',
   };
 
   updateFilters(newFilters: Partial<AgendaItemsParams>) {

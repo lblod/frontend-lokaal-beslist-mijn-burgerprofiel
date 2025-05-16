@@ -10,6 +10,7 @@ import type {
 } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
 import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
+import type ThemeListService from 'frontend-burgernabije-besluitendatabank/services/theme-list';
 
 interface FilterSidebarWrapperArgs {
   filters: AgendaItemsParams;
@@ -21,16 +22,18 @@ interface FilterSidebarWrapperArgs {
 export default class FilterSidebarWrapper extends Component<FilterSidebarWrapperArgs> {
   @service declare governingBodyList: GoverningBodyListService;
   @service declare governmentList: GovernmentListService;
+  @service declare themeList: ThemeListService;
   @service declare router: RouterService;
   @service declare filterService: FilterService;
 
   /** Data quality modal */
   // @tracked modalOpen = false;
+
   get governigBodyOptions() {
     return this.governingBodyList.options;
   }
   get showAdvancedFilters() {
-    return this.filterService.filters.governingBodyClassifications?.length > 0;
+    return this.filterService.filters.governingBodyClassifications.length > 0;
   }
 
   get statusOfAgendaItemsOptions() {
@@ -98,6 +101,19 @@ export default class FilterSidebarWrapper extends Component<FilterSidebarWrapper
     this.filterService.updateFilters({
       plannedStartMin: start,
       plannedStartMax: end,
+    });
+  }
+  @action
+  updateSelectedThemes(
+    newOptions: Array<{
+      label: string;
+      id: string;
+      type: 'concepts';
+    }>,
+  ) {
+    this.themeList.selected = newOptions;
+    this.filterService.updateFilters({
+      themes: newOptions.map((o) => o.id).toString(),
     });
   }
 }

@@ -33,6 +33,17 @@
       @queryParam="gemeentes+provincies"
       @placeholder="Alle besturen"
     />
+    <Filters::SelectMultipleFilter
+      @id="theme"
+      @label="Kies één of meer thema's"
+      @options={{this.themeList.options}}
+      @selected={{this.themeList.selected}}
+      @updateSelected={{this.updateSelectedThemes}}
+      @noMatchesMessage="Geen thema's gevonden"
+      @searchField="label"
+      @queryParam="thema"
+      @placeholder="Alle thema's"
+    />
     <Filters::DateRangeFilter
       @startQueryParam="begin"
       @endQueryParam="eind"
@@ -69,6 +80,7 @@
           @queryParam="bestuursorganen"
           @placeholder="Alle bestuursorganen"
         />
+
       </Accordion>
     </section>
   </div>
