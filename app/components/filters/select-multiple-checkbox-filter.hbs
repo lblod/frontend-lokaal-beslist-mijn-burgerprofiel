@@ -6,7 +6,7 @@
     as |Group|
   >
     {{#each @options as |option|}}
-      <Group.Checkbox @value={{option}}>{{option.label}}</Group.Checkbox>
+      <Group.Checkbox @value={{option.id}}>{{option.label}}</Group.Checkbox>
     {{/each}}
   </AuCheckboxGroup>
 </Filters::Filter>

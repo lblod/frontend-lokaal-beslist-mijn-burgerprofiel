@@ -13,6 +13,7 @@ import type ItemsService from 'frontend-burgernabije-besluitendatabank/services/
 import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import type { SortType } from './agenda-items/types';
 import { serializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
+import type { GoverningBodyOption } from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
 
 export default class FilterController extends Controller {
   @service declare governingBodyList: GoverningBodyListService;
@@ -22,6 +23,12 @@ export default class FilterController extends Controller {
   @service declare itemsService: ItemsService;
 
   @tracked selectedThemas: Array<string> = [];
+
+  get selectedBestuursorganen() {
+    return this.governingBodyList.selected?.map(
+      (orgaan: GoverningBodyOption) => orgaan.id,
+    );
+  }
 
   get showAdvancedFilters() {
     return this.filterService.filters.governingBodyClassifications;
@@ -90,11 +97,7 @@ export default class FilterController extends Controller {
 
   @action
   updateSelectedGoverningBodyClassifications(
-    newOptions: Array<{
-      label: string;
-      id: string;
-      type: 'governing-body-classifications';
-    }>,
+    newOptions: Array<GoverningBodyOption>,
   ) {
     this.governingBodyList.selected = newOptions;
     const labels = newOptions.map((o) => o.label);
