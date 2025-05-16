@@ -1,5 +1,5 @@
 import { inject as service } from '@ember/service';
-import { task, restartableTask, timeout } from 'ember-concurrency';
+import { task, timeout } from 'ember-concurrency';
 import { tracked } from '@glimmer/tracking';
 import { action } from '@ember/object';
 import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
@@ -21,37 +21,37 @@ export default class AddressRegisterSelectorComponent extends FilterComponent {
     this.getSelectedAddress.perform(address);
   }
 
-  @task
-  *getSelectedAddress(address) {
-    this.addressSuggestion = yield this.addressRegister.suggest(address);
+  getSelectedAddress = task(async (address) => {
+    this.addressSuggestion = await this.addressRegister.suggest(address);
+
     this.selectedAddress = this.addressSuggestion.find((addressSuggestion) => {
       if (addressSuggestion.fullAddress === address) {
         this.addressSuggestion = addressSuggestion;
         this.selectedAddress = addressSuggestion;
         return true;
       }
+      return false;
     });
-  }
+  });
 
-  @task
-  *selectSuggestion(addressSuggestion) {
-    this.selectedAddress = yield addressSuggestion;
+  selectSuggestion = task(async (addressSuggestion) => {
+    this.selectedAddress = await addressSuggestion;
 
     this.updateQueryParams({
       [QueryParameterKeys.street]: addressSuggestion
         ? addressSuggestion.fullAddress
         : undefined,
     });
-  }
-  @restartableTask
-  *handleKeydown(_, e) {
-    yield timeout(400);
+  });
 
-    let text = e.target.value || '';
+  handleKeydown = task({ restartable: true }, async (text) => {
+    await timeout(400);
+
     if (text.length > 0) {
-      this.addressSuggestion = yield this.addressRegister.suggest(text);
+      this.addressSuggestion = await this.addressRegister.suggest(text);
+      return this.addressSuggestion;
     }
-  }
+  });
 
   @action
   handleAddressChange(data) {
