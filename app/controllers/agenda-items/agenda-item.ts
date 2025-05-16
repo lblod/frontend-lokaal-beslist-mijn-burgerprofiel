@@ -28,6 +28,20 @@ export default class AgendaItemController extends Controller {
     return { gemeentes: this.model.agendaItem.session?.municipality };
   }
 
+  get stemmingStatusPillText() {
+    if (!this.model.vote) {
+      return null;
+    }
+    return this.model.vote.secret ? 'Gesloten' : 'Openbaar';
+  }
+
+  get stemmingStatusPillIcon() {
+    if (!this.model.vote) {
+      return null;
+    }
+    return this.model.vote.secret ? 'not-visible' : 'visible';
+  }
+
   showModal = () => {
     this.modalOpen = true;
   };

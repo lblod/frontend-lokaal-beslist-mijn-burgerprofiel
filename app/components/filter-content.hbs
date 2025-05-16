@@ -29,13 +29,13 @@
                   <AuIcon @icon="search" @alignment="right" />
                 </span>
                 <div class="au-u-hidden-from@small">
-                  <a
-                    href="#filtersidebar"
+                  <AuButton
+                    @skin="link"
                     class="au-c-button au-c-button--secondary au-c-button--block c-interface__filter-button"
                     {{on "click" @showFilter}}
                   >
                     <AuIcon @icon="filter" />
-                  </a>
+                  </AuButton>
                 </div>
               </div>
               <AuButton

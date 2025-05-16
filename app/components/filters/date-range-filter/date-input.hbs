@@ -5,6 +5,7 @@
   value={{@value}}
   min={{@min}}
   max={{@max}}
+  disabled={{if @disabled "true" ""}}
   {{on "change" this.handleChange}}
   ...attributes
 />

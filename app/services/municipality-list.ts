@@ -76,6 +76,7 @@ export default class MunicipalityListService extends Service {
   private async _loadMunicipalities() {
     const municipalities = await this.store.query('location', {
       page: { size: 600 },
+      random: 16,
       filter: {
         niveau: 'Gemeente',
       },

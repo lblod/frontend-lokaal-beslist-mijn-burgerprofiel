@@ -9,7 +9,7 @@
   gap: $au-unit;
   margin-top: $au-unit;
   align-items: center;
-  flex-direction: column;
+  flex-direction: row;
 
   @include mq(small) {
     flex-direction: row;
@@ -99,4 +99,9 @@
 
   stroke: var(--au-gray-400);
   stroke-dasharray: var(--value-abstentions) 158;
+}
+
+.c-chart > * {
+  flex-grow: 1;
+  flex-shrink: 1;
 }

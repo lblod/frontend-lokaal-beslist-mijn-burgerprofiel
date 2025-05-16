@@ -40,10 +40,10 @@ export default class GoverningBodyListService extends Service {
    **/
 
   async getGoverningBodyClassificationIdsFromLabels(
-    governingBodyLabels?: Array<string> | string,
-  ): Promise<string | undefined> {
+    governingBodyLabels: Array<string> | string | null,
+  ): Promise<string | null> {
     if (!governingBodyLabels) {
-      return undefined;
+      return null;
     }
 
     const options = await this.loadOptions();
@@ -87,7 +87,7 @@ export default class GoverningBodyListService extends Service {
           municipalityLabels?.replace(',', '+'),
         );
       const provinceIds = await this.provinceList.getProvinceIdsFromLabels(
-        provinceLabels?.replace(',', '+'),
+        provinceLabels?.replace(',', '+') || '',
       );
       const governingBodies = await this.store.query('governing-body', {
         filter: {

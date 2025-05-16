@@ -1,0 +1,36 @@
+.accordion {
+  margin: $au-unit 0;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: $au-unit-small;
+
+  &.border {
+    border-bottom: $au-border solid var(--au-gray-300);
+  }
+}
+
+.accordion .au-c-toolbar__group {
+  align-items: center;
+}
+
+.accordion-badge {
+  margin: 0 !important;
+}
+
+.accordion .au-c-button {
+  color: var(--au-select-text-color) !important;
+  text-decoration: none;
+  font-weight: var(--au-medium);
+  font-size: var(--au-h4);
+  line-height: var(--au-global-line-height);
+}
+
+.status .au-c-icon {
+  margin: 0 !important;
+  color: var(--au-gray-500);
+}
+
+// TMP
+.scrollable-li {
+  overflow-x: overlay;
+}

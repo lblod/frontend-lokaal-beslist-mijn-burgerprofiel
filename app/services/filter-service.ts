@@ -1,13 +1,14 @@
 import Service, { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
+
+import type ItemsService from './items-service';
+import type RouterService from '@ember/routing/router-service';
+
 import type {
   AgendaItemsParams,
+  FiltersAsQueryParams,
   SortType,
 } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
-import type ItemsService from './items-service';
-import { action } from '@ember/object';
-import type RouterService from '@ember/routing/router-service';
-import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
 import { keywordSearch } from 'frontend-burgernabije-besluitendatabank/helpers/keyword-search';
 
 export default class FilterService extends Service {
@@ -15,11 +16,11 @@ export default class FilterService extends Service {
   @service declare itemsService: ItemsService;
   @tracked keywordAdvancedSearch: { [key: string]: string[] } | null = null;
   @tracked filters: AgendaItemsParams = {
-    keyword: '',
-    municipalityLabels: '',
-    provinceLabels: '',
-    plannedStartMin: '',
-    plannedStartMax: '',
+    keyword: null,
+    municipalityLabels: null,
+    provinceLabels: null,
+    plannedStartMin: null,
+    plannedStartMax: null,
     dateSort: 'desc' as SortType,
     governingBodyClassifications: '',
     dataQualityList: [],
@@ -44,10 +45,68 @@ export default class FilterService extends Service {
     }
     this.filters = { ...this.filters, ...newFilters };
   }
-  @action
-  handleDateSortChange(event: { target: { value: SortType } }) {
-    const queryParams = { [QueryParameterKeys.dateSort]: event?.target?.value };
-    this.router.transitionTo({ queryParams });
-    this.updateFilters({ dateSort: event?.target?.value });
+
+  resetFiltersToInitialView() {
+    this.filters = {
+      keyword: null,
+      municipalityLabels: 'Aalter',
+      provinceLabels: null,
+      plannedStartMin: null,
+      plannedStartMax: null,
+      dateSort: 'desc' as SortType,
+      governingBodyClassifications: null,
+      dataQualityList: null,
+      status: 'Alles',
+      themes: '',
+      street: '',
+      distance: undefined,
+    };
+  }
+
+  updateFilterFromQueryParamKey(
+    key: keyof FiltersAsQueryParams,
+    value: string | string[] | null,
+  ) {
+    const filterKey = this.getFilterKeyForQueryParamKey(key);
+    this.filters[filterKey] = value as string & string[] & null;
+  }
+
+  getFilterKeyForQueryParamKey(
+    key: keyof FiltersAsQueryParams,
+  ): keyof AgendaItemsParams {
+    const mapping = {
+      gemeentes: 'municipalityLabels',
+      provincies: 'provinceLabels',
+      bestuursorganen: 'governingBodyClassifications',
+      start: 'plannedStartMin',
+      end: 'plannedStartMax',
+      trefwoord: 'keyword',
+      datumsortering: 'dateSort',
+      status: 'status',
+    };
+
+    return mapping[key] as keyof AgendaItemsParams;
+  }
+
+  get asQueryParams() {
+    const queryParams: FiltersAsQueryParams = {
+      gemeentes: 'Aalter',
+      provincies: this.filters.provinceLabels,
+      bestuursorganen: this.filters.governingBodyClassifications,
+      start: this.filters.plannedStartMin,
+      end: this.filters.plannedStartMax,
+      trefwoord: this.filters.keyword,
+      datumsortering: this.filters.dateSort as SortType,
+      status: this.filters.status,
+    };
+    delete queryParams.gemeentes;
+    if (queryParams.status == 'Alles') {
+      delete queryParams.status;
+    }
+    if (queryParams.datumsortering == 'desc') {
+      delete queryParams.datumsortering;
+    }
+
+    return queryParams;
   }
 }
