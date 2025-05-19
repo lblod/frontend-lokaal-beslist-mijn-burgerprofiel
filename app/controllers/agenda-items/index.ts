@@ -18,9 +18,7 @@ export default class AgendaItemsIndexController extends Controller {
   resetFilters() {
     this.filterService.resetFiltersToInitialView();
     this.router.transitionTo(this.router.currentRouteName, {
-      queryParams: {
-        gemeentes: this.filterService.asQueryParams,
-      },
+      queryParams: this.filterService.asQueryParams,
     });
   }
 

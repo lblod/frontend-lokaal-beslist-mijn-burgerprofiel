@@ -6,6 +6,7 @@ import { service } from '@ember/service';
 import type { FiltersAsQueryParams } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
 import type ItemsService from 'frontend-burgernabije-besluitendatabank/services/items-service';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
+import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
 
 export interface AgendapuntenFiltersTopbarSignature {
   Args: {
@@ -26,6 +27,12 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   get filterValues() {
     return Object.entries(this.args.filters)
       ?.map(([key, value]) => {
+        if (key == QueryParameterKeys.municipalities) {
+          return {
+            key: null,
+            value: null,
+          };
+        }
         return {
           key,
           value: value,

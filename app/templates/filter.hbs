@@ -21,17 +21,30 @@
     </select>
   </section>
   <AuHr />
-  {{! TODO: add street inputField }}
-  <Filters::SelectMultipleCheckboxFilter
-    @id="thema"
+  <Filters::Address::AdressenSelector @id="address-search" />
+  <Filters::SelectFilter
+    @id="distance"
+    @label="Afstand"
+    @options={{this.model.distanceOptions}}
+    @selected={{this.distanceList.selected}}
+    @updateSelected={{this.updateDistance}}
+    @queryParam="afstand"
+    @allowClear={{true}}
+    @searchEnabled={{false}}
+    @placeholder="Alle afstanden"
+    @searchField="label"
+  />
+  <Filters::SelectMultipleFilter
+    @id="theme"
     @label="Thema"
     @options={{this.model.themaOptions}}
-    @selected={{this.selectedThemas}}
-    @updateSelected={{this.updateSelectedThemas}}
+    @selected={{this.themeList.selected}}
+    @updateSelected={{this.updateSelectedThemes}}
+    @noMatchesMessage="Geen thema's gevonden"
     @searchField="label"
     @queryParam="thema"
+    @placeholder="Alle thema's"
   />
-  {{! TODO: the filter is not reactive with the filters }}
   <Filters::DateRangeFilter
     @startQueryParam="begin"
     @endQueryParam="eind"

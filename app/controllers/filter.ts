@@ -3,17 +3,17 @@ import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { service } from '@ember/service';
 
-import { tracked } from '@glimmer/tracking';
-
 import type RouterService from '@ember/routing/router-service';
 import type GoverningBodyListService from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
 import type GovernmentListService from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
 import type ItemsService from 'frontend-burgernabije-besluitendatabank/services/items-service';
+import type ThemeListService from 'frontend-burgernabije-besluitendatabank/services/theme-list';
+import type DistanceListService from 'frontend-burgernabije-besluitendatabank/services/distance-list';
+
 import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import type { SortType } from './agenda-items/types';
-import { serializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
-import type { GoverningBodyOption } from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
+import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 
 export default class FilterController extends Controller {
   @service declare governingBodyList: GoverningBodyListService;
@@ -21,13 +21,11 @@ export default class FilterController extends Controller {
   @service declare router: RouterService;
   @service declare filterService: FilterService;
   @service declare itemsService: ItemsService;
-
-  @tracked selectedThemas: Array<string> = [];
+  @service declare themeList: ThemeListService;
+  @service declare distanceList: DistanceListService;
 
   get selectedBestuursorganen() {
-    return this.governingBodyList.selected?.map(
-      (orgaan: GoverningBodyOption) => orgaan.id,
-    );
+    return this.governingBodyList.selected;
   }
 
   get showAdvancedFilters() {
@@ -51,8 +49,18 @@ export default class FilterController extends Controller {
   }
 
   @action
-  updateSelectedThemas(selected: { label: string }) {
-    console.log({ selected });
+  updateSelectedThemes(
+    newOptions: Array<{
+      label: string;
+      id: string;
+      type: 'concepts';
+    }>,
+  ) {
+    this.themeList.selected = newOptions;
+    this.filterService.updateFilters({
+      themes:
+        newOptions.length >= 1 ? newOptions.map((o) => o.id).toString() : null,
+    });
     this.itemsService.loadAgendaItems.perform(0, false);
   }
 
@@ -97,14 +105,21 @@ export default class FilterController extends Controller {
 
   @action
   updateSelectedGoverningBodyClassifications(
-    newOptions: Array<GoverningBodyOption>,
+    newOptions: Array<{
+      label: string;
+      id: string;
+      type: 'governing-body-classifications';
+    }>,
   ) {
     this.governingBodyList.selected = newOptions;
-    const labels = newOptions.map((o) => o.label);
-    this.filterService.updateFilters({
-      governingBodyClassifications: serializeArray(labels),
-    });
-    this.itemsService.loadAgendaItems.perform(0, false);
+    const governingBodyClassifications = newOptions
+      .map((o) => o.label)
+      .toString();
+    if (governingBodyClassifications != '') {
+      this.filterService.updateFilters({
+        governingBodyClassifications,
+      });
+    }
   }
 
   get startDate() {
@@ -126,6 +141,14 @@ export default class FilterController extends Controller {
   @action
   updateSorting(event: { target: { value: SortType } }) {
     this.filterService.updateFilters({ dateSort: event?.target.value });
+  }
+
+  @action
+  updateDistance(selectedDistance: DistanceOption) {
+    this.distanceList.selected = selectedDistance;
+    this.filterService.updateFilters({
+      distance: selectedDistance,
+    });
   }
 
   @action
