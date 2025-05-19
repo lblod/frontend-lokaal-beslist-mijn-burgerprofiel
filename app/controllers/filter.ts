@@ -3,8 +3,6 @@ import Controller from '@ember/controller';
 import { action } from '@ember/object';
 import { service } from '@ember/service';
 
-import { tracked } from '@glimmer/tracking';
-
 import type RouterService from '@ember/routing/router-service';
 import type GoverningBodyListService from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
 import type GovernmentListService from 'frontend-burgernabije-besluitendatabank/services/government-list';
@@ -14,8 +12,8 @@ import type ThemeListService from 'frontend-burgernabije-besluitendatabank/servi
 
 import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import type { SortType } from './agenda-items/types';
-import { serializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 import type { GoverningBodyOption } from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
+import { serializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 
 export default class FilterController extends Controller {
   @service declare governingBodyList: GoverningBodyListService;
@@ -24,8 +22,6 @@ export default class FilterController extends Controller {
   @service declare filterService: FilterService;
   @service declare itemsService: ItemsService;
   @service declare themeList: ThemeListService;
-
-  @tracked selectedThemas: Array<string> = [];
 
   get selectedBestuursorganen() {
     return this.governingBodyList.selected?.map(
@@ -53,11 +49,6 @@ export default class FilterController extends Controller {
     return this.itemsService.totalAgendaItems || 0;
   }
 
-  @action
-  updateSelectedThemas(selected: { label: string }) {
-    console.log({ selected });
-    this.itemsService.loadAgendaItems.perform(0, false);
-  }
   @action
   updateSelectedThemes(
     newOptions: Array<{

@@ -22,15 +22,6 @@
   </section>
   <AuHr />
   {{! TODO: add street inputField }}
-  <Filters::SelectMultipleCheckboxFilter
-    @id="thema"
-    @label="Thema"
-    @options={{this.model.themaOptions}}
-    @selected={{this.selectedThemas}}
-    @updateSelected={{this.updateSelectedThemas}}
-    @searchField="label"
-    @queryParam="thema"
-  />
   <Filters::SelectMultipleFilter
     @id="theme"
     @label="Kies één of meer thema's"

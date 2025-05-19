@@ -18,11 +18,6 @@ export default class ThemeListService extends Service {
   @tracked selected: ThemeOption[] = [];
   @tracked options: ThemeOption[] = [];
 
-  constructor(...args: []) {
-    super(...args);
-    this.loadOptions();
-  }
-
   async loadOptions() {
     const sortedConcepts = await this.store.query('concept', {
       'filter[concept-schemes][:id:]': CONCEPT_SCHEME_ID,
