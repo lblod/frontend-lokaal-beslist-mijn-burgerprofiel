@@ -1,12 +1,12 @@
 import Controller from '@ember/controller';
+
 import { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
-import type RouterService from '@ember/routing/router-service';
-import type { SortType } from './types';
 import { action } from '@ember/object';
+
+import type RouterService from '@ember/routing/router-service';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
 import type ItemsService from '../../services/items-service';
-import { runTask } from 'ember-lifeline';
 
 export default class AgendaItemsIndexController extends Controller {
   @service declare filterService: FilterService;
@@ -14,26 +14,23 @@ export default class AgendaItemsIndexController extends Controller {
   @service declare router: RouterService;
   @tracked hasFilter = false;
 
-  /** Controls the loading animation of the "load more" button */
-  @tracked isLoadingMore = false;
-  @tracked loading = false; // Controls the loading animation that replaces the main view
-  @tracked errorMsg = ''; // Controls whether an Oops is shown
-
-  @tracked dateSort: SortType = 'desc';
-
-  get filters() {
-    return this.filterService.filters;
+  @action
+  resetFilters() {
+    this.filterService.resetFiltersToInitialView();
+    this.router.transitionTo(this.router.currentRouteName, {
+      queryParams: this.filterService.asQueryParams,
+    });
   }
 
   @action
-  showFilter() {
-    this.hasFilter = true;
+  goToFilters() {
+    this.router.transitionTo('filter');
   }
 
   @action
-  hideFilter() {
-    runTask(this, () => {
-      this.hasFilter = false;
+  refreshRoute() {
+    this.router.transitionTo(this.router.currentRouteName, {
+      queryParams: this.filterService.asQueryParams,
     });
   }
 }

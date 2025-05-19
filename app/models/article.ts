@@ -8,6 +8,16 @@ export default class ArticleModel extends Model {
 
   @belongsTo('resolution', { async: true, inverse: null })
   declare resolution?: AsyncBelongsTo<ResolutionModel>;
+
+  get numberAsInt(): number {
+    const matches = this.number?.match(/\d+/);
+    if (!matches || matches?.length === 0) {
+      // 99 is a magic number, this for when sorting it puts the item at the end
+      return 99;
+    }
+
+    return parseInt(matches[0]);
+  }
 }
 
 declare module 'ember-data/types/registries/model' {

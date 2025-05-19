@@ -143,7 +143,6 @@ cursor {
   }
 
   > .au-c-accordion > .au-c-content {
-    margin-left: calc(7.2rem * -1);
     border-top: 0.1rem solid var(--au-gray-200);
     margin-top: $au-unit;
     padding-top: 0;
@@ -399,4 +398,82 @@ cursor {
 
 .z-index-10 {
   z-index: 10;
+}
+
+.banner-decided {
+  padding: 0.5rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  background-color: var(--au-gray-100);
+  gap: 1rem;
+
+  svg {
+    color: var(--au-gray-500);
+  }
+}
+
+hr.au-c-hr.lighter {
+  border-bottom: $au-border solid var(--au-gray-300);
+}
+
+ol.less-margin {
+  margin-left: 0 !important;
+
+  li {
+    padding-inline-start: 0 !important;
+  }
+}
+
+.artikel-box {
+  border-radius: $au-radius;
+  border: $au-border solid var(--au-gray-300);
+}
+
+.artikel-box--title {
+  border-bottom: $au-border solid var(--au-gray-300);
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+  background-color: var(--au-gray-100);
+  padding: $au-unit-tiny;
+  font-weight: $au-medium;
+}
+
+.artikel-box--value {
+  padding: $au-unit-small;
+}
+
+.au-c-alert--warning {
+  border: none !important;
+  border-radius: $au-radius;
+
+  .au-c-alert__icon {
+    background-color: var(--au-orange-200) !important;
+  }
+
+  svg.au-c-icon.au-c-icon--alert-triangle {
+    fill: var(--au-orange-600) !important;
+  }
+}
+
+.cutoff-link {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1rem;
+  padding-top: 1rem;
+
+  a {
+    position: relative;
+    display: block !important;
+    width: 100% !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+}
+
+.au-c-badge--error {
+  background-color: var(--au-red-700) !important;
 }

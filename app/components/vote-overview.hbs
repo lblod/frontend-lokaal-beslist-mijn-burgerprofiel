@@ -1,14 +1,7 @@
-<p
-  class="au-u-h6 au-u-flex au-u-flex--spaced-tiny au-u-flex--vertical-center au-u-margin-top"
->
-  {{#if @vote.secret}}
-    <AuIcon @icon="remove" @size="medium" />
-    Geheime stemming
-  {{else}}
-    <AuIcon @icon="visible" @size="medium" />
-    Openbare stemming
-  {{/if}}
-</p>
+<div>
+  <p class="au-u-muted au-u-medium">GEVOLG</p>
+  <p>{{@vote.consequence}}</p>
+</div>
 
 {{! We use a style tag here since it's way simpler than the JS equivalent which provides no other benefits other than
 not triggering the linting error}}
@@ -20,7 +13,7 @@ not triggering the linting error}}
 </style>
 
 {{#if this.totalVoters}}
-
+  <p class="au-u-muted au-u-medium">DETAILS</p>
   <div class="c-chart">
     <svg
       viewBox="0 0 100 100"
@@ -39,23 +32,6 @@ not triggering the linting error}}
         class="c-chart__legend-item c-chart__legend-item--abstentions"
       >Onthouden ({{this.numberOfAbstentions}})</li>
     </ul>
-  </div>
-{{/if}}
-
-{{#if @vote.consequence}}
-  <div class="c-accordion-holder c-accordion-holder--top">
-    <AuAccordion
-      @reverse={{true}}
-      @iconOpen="nav-down"
-      @iconClosed="nav-right"
-      @buttonLabel="Gevolg van de stemming"
-    >
-      <AuContent @skin="small" class="au-u-padding">
-        <p class="au-u-muted">
-          {{@vote.consequence}}
-        </p>
-      </AuContent>
-    </AuAccordion>
   </div>
 {{/if}}
 {{#if this.hasVotersData}}

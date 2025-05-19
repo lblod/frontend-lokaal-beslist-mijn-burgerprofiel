@@ -78,6 +78,12 @@ export default class SessionModel extends Model {
     return 'Geen Datum';
   }
 
+  get formattedPlannedDate() {
+    return this.plannedStart
+      ? getFormattedDate(this.plannedStart)
+      : 'Geen datum';
+  }
+
   get agendaItemCount() {
     const count = this.agendaItems?.length ?? 0;
 

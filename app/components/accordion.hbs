@@ -1,51 +1,40 @@
-<div class="au-c-accordion {{this.skin}} {{this.reverse}}" ...attributes>
+<div class="accordion {{if @showBottomBorder 'border' ''}}" ...attributes>
   <AuToolbar
+    class="accordion-toolbar"
     @nowrap={{true}}
     @reverse={{@reverse}}
     {{on "click" this.toggleAccordion}}
-    data-test-accordion-toggle
     as |Group|
   >
     <Group>
-      <div>
+      {{#if @badgeIcon}}
+        <AuBadge @icon={{@badgeIcon}} @skin="border" class="accordion-badge" />
+      {{/if}}
+      <div class="au-u-flex au-u-flex--row au-u-flex--vertical-center status">
         <AuButton
           @skin="link"
           aria-expanded="{{if this.isOpen 'true' 'false'}}"
-          data-test-accordion-button
         >
           {{@buttonLabel}}
         </AuButton>
-        {{#if @subtitle}}
-          <p data-test-accordion-subtitle>
-            {{@subtitle}}
-          </p>
+        {{#if @pillText}}
+          <AuPill @icon={{@pillIcon}}>{{@pillText}}</AuPill>
         {{/if}}
       </div>
     </Group>
     <Group>
-      {{#if this.isOpen}}
-        <AuIcon
-          @icon={{this.iconOpen}}
-          @alignment="left"
-          @size="large"
-          @ariaHidden={{true}}
-          data-test-accordion-icon-open={{this.iconOpen}}
-        />
-      {{else}}
-        <AuIcon
-          @icon={{this.iconClosed}}
-          @alignment="left"
-          @size="large"
-          @ariaHidden={{true}}
-          data-test-accordion-icon-closed={{this.iconClosed}}
-        />
-      {{/if}}
+      <AuIcon
+        @icon={{if this.isOpen this.iconOpen this.iconClosed}}
+        @alignment="left"
+        @size="large"
+        @ariaHidden={{true}}
+      />
     </Group>
   </AuToolbar>
   {{#if this.isOpen}}
-    <AuContent tabindex="0" data-test-accordion-content>
-      {{#if this.loading}}
-        <AuLoader @hideMessage={{true}} data-test-accordion-loader>Aan het laden</AuLoader>
+    <AuContent tabindex="0" class="au-u-padding-top au-u-padding-left-tiny">
+      {{#if @isLoading}}
+        <AuLoader @hideMessage={{true}} />
       {{else}}
         {{yield}}
       {{/if}}

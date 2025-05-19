@@ -1,54 +1,67 @@
+import Controller from '@ember/controller';
+
 import { action } from '@ember/object';
-import type RouterService from '@ember/routing/router-service';
 import { service } from '@ember/service';
-import Component from '@glimmer/component';
+
+import type RouterService from '@ember/routing/router-service';
 import type GoverningBodyListService from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
 import type GovernmentListService from 'frontend-burgernabije-besluitendatabank/services/government-list';
-import type {
-  AgendaItemsParams,
-  SortType,
-} from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
-import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
+import type ItemsService from 'frontend-burgernabije-besluitendatabank/services/items-service';
 import type ThemeListService from 'frontend-burgernabije-besluitendatabank/services/theme-list';
 import type DistanceListService from 'frontend-burgernabije-besluitendatabank/services/distance-list';
+
+import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
+import type { SortType } from './agenda-items/types';
 import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/services/distance-list';
-import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
-import { task, timeout } from 'ember-concurrency';
 
-interface FilterSidebarWrapperArgs {
-  filters: AgendaItemsParams;
-  onFiltersChange: (filters: AgendaItemsParams) => void;
-  dateSort: SortType;
-  hasFilter: boolean;
-}
-
-const DEBOUNCE_DELAY = 500;
-
-export default class FilterSidebarWrapper extends Component<FilterSidebarWrapperArgs> {
+export default class FilterController extends Controller {
   @service declare governingBodyList: GoverningBodyListService;
   @service declare governmentList: GovernmentListService;
-  @service declare themeList: ThemeListService;
   @service declare router: RouterService;
   @service declare filterService: FilterService;
+  @service declare itemsService: ItemsService;
+  @service declare themeList: ThemeListService;
   @service declare distanceList: DistanceListService;
 
-  get governigBodyOptions() {
-    return this.governingBodyList.options;
-  }
-  get showAdvancedFilters() {
-    return (
-      this.filterService.filters.governingBodyClassifications &&
-      this.filterService.filters.governingBodyClassifications.length > 0
-    );
+  get selectedBestuursorganen() {
+    return this.governingBodyList.selected;
   }
 
-  get statusOfAgendaItemsOptions() {
-    return ['Behandeld', 'Niet behandeld'];
+  get showAdvancedFilters() {
+    return this.filterService.filters.governingBodyClassifications;
   }
 
   get hasMunicipalityFilter() {
-    return this.args.filters.municipalityLabels.length > 0;
+    return this.filterService.filters.municipalityLabels;
+  }
+
+  get isFilterAscending() {
+    return this.filterService.filters.dateSort === 'asc';
+  }
+
+  get isFilterDescending() {
+    return this.filterService.filters.dateSort === 'desc';
+  }
+
+  get resultCount() {
+    return this.itemsService.totalAgendaItems || 0;
+  }
+
+  @action
+  updateSelectedThemes(
+    newOptions: Array<{
+      label: string;
+      id: string;
+      type: 'concepts';
+    }>,
+  ) {
+    this.themeList.selected = newOptions;
+    this.filterService.updateFilters({
+      themes:
+        newOptions.length >= 1 ? newOptions.map((o) => o.id).toString() : null,
+    });
+    this.itemsService.loadAgendaItems.perform(0, false);
   }
 
   @action
@@ -72,19 +85,24 @@ export default class FilterSidebarWrapper extends Component<FilterSidebarWrapper
       municipalityLabels,
       provinceLabels,
     });
+    this.itemsService.loadAgendaItems.perform(0, false);
 
     await this.governingBodyList.loadOptions();
   }
   get selectedMunicipality() {
     return this.filterService.filters.municipalityLabels;
   }
+
   get status() {
     return this.filterService.filters.status;
   }
+
   @action
   setStatus(value: string) {
     this.filterService.updateFilters({ status: value });
+    this.itemsService.loadAgendaItems.perform(0, false);
   }
+
   @action
   updateSelectedGoverningBodyClassifications(
     newOptions: Array<{
@@ -103,49 +121,26 @@ export default class FilterSidebarWrapper extends Component<FilterSidebarWrapper
       });
     }
   }
+
+  get startDate() {
+    return this.filterService.filters.plannedStartMin;
+  }
+
+  get endDate() {
+    return this.filterService.filters.plannedStartMax;
+  }
+
   @action
   updateSelectedDateRange(start: string, end: string) {
     this.filterService.updateFilters({
       plannedStartMin: start,
       plannedStartMax: end,
     });
+    this.itemsService.loadAgendaItems.perform(0, false);
   }
   @action
-  updateSelectedThemes(
-    newOptions: Array<{
-      label: string;
-      id: string;
-      type: 'concepts';
-    }>,
-  ) {
-    this.themeList.selected = newOptions;
-    this.filterService.updateFilters({
-      themes: newOptions.map((o) => o.id).toString(),
-    });
-  }
-
-  private updateStreetQueryParam(value: string | null) {
-    const queryParams = {
-      [QueryParameterKeys.street]: value,
-    };
-
-    this.router.transitionTo(this.router.currentRouteName, { queryParams });
-  }
-
-  updateStreetTask = task({ restartable: true }, async (value: string) => {
-    await timeout(DEBOUNCE_DELAY);
-    this.filterService.updateFilters({ street: value });
-    this.updateStreetQueryParam(value);
-  });
-
-  @action
-  updateStreet(event: Event) {
-    const input = (event.target as HTMLInputElement).value.trim();
-    if (input) {
-      this.updateStreetTask.perform(input);
-    } else {
-      this.updateStreetQueryParam(null);
-    }
+  updateSorting(event: { target: { value: SortType } }) {
+    this.filterService.updateFilters({ dateSort: event?.target.value });
   }
 
   @action
@@ -154,5 +149,19 @@ export default class FilterSidebarWrapper extends Component<FilterSidebarWrapper
     this.filterService.updateFilters({
       distance: selectedDistance,
     });
+  }
+
+  @action
+  goToAgendaItems() {
+    this.router.transitionTo('agenda-items.index', {
+      queryParams: this.filterService.asQueryParams,
+    });
+  }
+
+  @action
+  async resetFilters() {
+    this.governingBodyList.selected = [];
+    this.filterService.resetFiltersToInitialView();
+    this.goToAgendaItems();
   }
 }
