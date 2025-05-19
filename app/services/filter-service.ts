@@ -57,7 +57,7 @@ export default class FilterService extends Service {
       governingBodyClassifications: null,
       dataQualityList: null,
       status: 'Alles',
-      themes: '',
+      themes: null,
       street: null,
       distance: null,
     });
@@ -113,7 +113,6 @@ export default class FilterService extends Service {
     if (queryParams.datumsortering == 'desc') {
       delete queryParams.datumsortering;
     }
-
     return queryParams;
   }
 }

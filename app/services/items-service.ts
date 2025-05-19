@@ -108,7 +108,7 @@ export default class ItemsService extends Service {
     async (page: number, loadMore = false) => {
       if (!this.filters) return;
       const locationIds = await this.fetchLocationIds();
-      const themeIds = this.themeList.selectedIds;
+      const themeIds = this.filterService.asQueryParams.thema || undefined;
       const governingBodyClassificationIds =
         await this.governingBodyList.getGoverningBodyClassificationIdsFromLabels(
           this.filters.governingBodyClassifications,
@@ -161,7 +161,7 @@ export default class ItemsService extends Service {
       if (!this.filters) return;
 
       const locationIds = await this.fetchLocationIds();
-      const themeIds = this.themeList.selectedIds;
+      const themeIds = this.filterService.asQueryParams.thema || undefined;
       const governingBodyClassificationIds =
         await this.governingBodyList.getGoverningBodyClassificationIdsFromLabels(
           this.filters.governingBodyClassifications,

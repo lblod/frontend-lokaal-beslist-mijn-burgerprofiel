@@ -58,8 +58,10 @@ export default class FilterController extends Controller {
   ) {
     this.themeList.selected = newOptions;
     this.filterService.updateFilters({
-      themes: newOptions.map((o) => o.id).toString(),
+      themes:
+        newOptions.length >= 1 ? newOptions.map((o) => o.id).toString() : null,
     });
+    this.itemsService.loadAgendaItems.perform(0, false);
   }
 
   @action

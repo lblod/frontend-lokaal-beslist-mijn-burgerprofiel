@@ -36,8 +36,8 @@
   />
   <Filters::SelectMultipleFilter
     @id="theme"
-    @label="Kies één of meer thema's"
-    @options={{this.themeList.options}}
+    @label="Thema"
+    @options={{this.model.themaOptions}}
     @selected={{this.themeList.selected}}
     @updateSelected={{this.updateSelectedThemes}}
     @noMatchesMessage="Geen thema's gevonden"
