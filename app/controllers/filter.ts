@@ -10,6 +10,8 @@ import type GoverningBodyListService from 'frontend-burgernabije-besluitendataba
 import type GovernmentListService from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
 import type ItemsService from 'frontend-burgernabije-besluitendatabank/services/items-service';
+import type ThemeListService from 'frontend-burgernabije-besluitendatabank/services/theme-list';
+
 import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import type { SortType } from './agenda-items/types';
 import { serializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
@@ -21,6 +23,7 @@ export default class FilterController extends Controller {
   @service declare router: RouterService;
   @service declare filterService: FilterService;
   @service declare itemsService: ItemsService;
+  @service declare themeList: ThemeListService;
 
   @tracked selectedThemas: Array<string> = [];
 
@@ -54,6 +57,19 @@ export default class FilterController extends Controller {
   updateSelectedThemas(selected: { label: string }) {
     console.log({ selected });
     this.itemsService.loadAgendaItems.perform(0, false);
+  }
+  @action
+  updateSelectedThemes(
+    newOptions: Array<{
+      label: string;
+      id: string;
+      type: 'concepts';
+    }>,
+  ) {
+    this.themeList.selected = newOptions;
+    this.filterService.updateFilters({
+      themes: newOptions.map((o) => o.id).toString(),
+    });
   }
 
   @action

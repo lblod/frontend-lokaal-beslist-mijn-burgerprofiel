@@ -31,6 +31,17 @@
     @searchField="label"
     @queryParam="thema"
   />
+  <Filters::SelectMultipleFilter
+    @id="theme"
+    @label="Kies één of meer thema's"
+    @options={{this.themeList.options}}
+    @selected={{this.themeList.selected}}
+    @updateSelected={{this.updateSelectedThemes}}
+    @noMatchesMessage="Geen thema's gevonden"
+    @searchField="label"
+    @queryParam="thema"
+    @placeholder="Alle thema's"
+  />
   {{! TODO: the filter is not reactive with the filters }}
   <Filters::DateRangeFilter
     @startQueryParam="begin"
