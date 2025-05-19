@@ -9,11 +9,13 @@ import type GovernmentListService from 'frontend-burgernabije-besluitendatabank/
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
 import type ItemsService from 'frontend-burgernabije-besluitendatabank/services/items-service';
 import type ThemeListService from 'frontend-burgernabije-besluitendatabank/services/theme-list';
+import type DistanceListService from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 
 import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import type { SortType } from './agenda-items/types';
 import type { GoverningBodyOption } from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
 import { serializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
+import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 
 export default class FilterController extends Controller {
   @service declare governingBodyList: GoverningBodyListService;
@@ -22,6 +24,7 @@ export default class FilterController extends Controller {
   @service declare filterService: FilterService;
   @service declare itemsService: ItemsService;
   @service declare themeList: ThemeListService;
+  @service declare distanceList: DistanceListService;
 
   get selectedBestuursorganen() {
     return this.governingBodyList.selected?.map(
@@ -133,6 +136,14 @@ export default class FilterController extends Controller {
   @action
   updateSorting(event: { target: { value: SortType } }) {
     this.filterService.updateFilters({ dateSort: event?.target.value });
+  }
+
+  @action
+  updateDistance(selectedDistance: DistanceOption) {
+    this.distanceList.selected = selectedDistance;
+    this.filterService.updateFilters({
+      distance: selectedDistance,
+    });
   }
 
   @action

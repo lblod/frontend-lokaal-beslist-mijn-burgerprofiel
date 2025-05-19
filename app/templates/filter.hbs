@@ -21,7 +21,19 @@
     </select>
   </section>
   <AuHr />
-  {{! TODO: add street inputField }}
+  <Filters::Address::AdressenSelector @id="address-search" />
+  <Filters::SelectFilter
+    @id="distance"
+    @label="Afstand"
+    @options={{this.model.distanceOptions}}
+    @selected={{this.distanceList.selected}}
+    @updateSelected={{this.updateDistance}}
+    @queryParam="afstand"
+    @allowClear={{true}}
+    @searchEnabled={{false}}
+    @placeholder="Alle afstanden"
+    @searchField="label"
+  />
   <Filters::SelectMultipleFilter
     @id="theme"
     @label="Kies één of meer thema's"
