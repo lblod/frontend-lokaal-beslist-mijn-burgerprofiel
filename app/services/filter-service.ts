@@ -26,7 +26,7 @@ export default class FilterService extends Service {
     dataQualityList: [],
     status: '',
     themes: '',
-    street: '',
+    street: null,
     distance: null,
   };
 
@@ -47,7 +47,7 @@ export default class FilterService extends Service {
   }
 
   resetFiltersToInitialView() {
-    this.filters = {
+    this.updateFilters({
       keyword: null,
       municipalityLabels: 'Aalter',
       provinceLabels: null,
@@ -58,9 +58,9 @@ export default class FilterService extends Service {
       dataQualityList: null,
       status: 'Alles',
       themes: '',
-      street: '',
+      street: null,
       distance: null,
-    };
+    });
   }
 
   updateFilterFromQueryParamKey(
@@ -74,7 +74,7 @@ export default class FilterService extends Service {
   getFilterKeyForQueryParamKey(
     key: keyof FiltersAsQueryParams,
   ): keyof AgendaItemsParams {
-    // TODO combine QueryParameterKeys with these, QueryParameterKeys are the starting point
+    // TODO: combine QueryParameterKeys with these, QueryParameterKeys are the starting point
     const mapping = {
       gemeentes: 'municipalityLabels',
       provincies: 'provinceLabels',
@@ -106,7 +106,7 @@ export default class FilterService extends Service {
       straat: null, // this.filters.street TODO: once backend is ok
       afstand: null, // this.filters.distance?.label || null TODO: once backend is ok
     };
-    delete queryParams.gemeentes;
+
     if (queryParams.status == 'Alles') {
       delete queryParams.status;
     }

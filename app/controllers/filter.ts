@@ -13,8 +13,6 @@ import type DistanceListService from 'frontend-burgernabije-besluitendatabank/se
 
 import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import type { SortType } from './agenda-items/types';
-import type { GoverningBodyOption } from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
-import { serializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 
 export default class FilterController extends Controller {
@@ -27,13 +25,11 @@ export default class FilterController extends Controller {
   @service declare distanceList: DistanceListService;
 
   get selectedBestuursorganen() {
-    return this.governingBodyList.selected?.map(
-      (orgaan: GoverningBodyOption) => orgaan.id,
-    );
+    return this.governingBodyList.selected?.map((id: string) => id);
   }
 
   get showAdvancedFilters() {
-    return this.filterService.filters.governingBodyClassifications;
+    return this.filterService.filters.governingBodyClassificationIds;
   }
 
   get hasMunicipalityFilter() {
@@ -106,13 +102,10 @@ export default class FilterController extends Controller {
   }
 
   @action
-  updateSelectedGoverningBodyClassifications(
-    newOptions: Array<GoverningBodyOption>,
-  ) {
-    this.governingBodyList.selected = newOptions;
-    const labels = newOptions.map((o) => o.label);
+  updateSelectedGoverningBodyClassifications(ids: Array<string> | null) {
+    this.governingBodyList.selected = ids;
     this.filterService.updateFilters({
-      governingBodyClassifications: serializeArray(labels),
+      governingBodyClassificationIds: ids,
     });
     this.itemsService.loadAgendaItems.perform(0, false);
   }
@@ -155,7 +148,7 @@ export default class FilterController extends Controller {
 
   @action
   async resetFilters() {
-    this.governingBodyList.selected = [];
+    this.governingBodyList.selected = null;
     this.filterService.resetFiltersToInitialView();
     this.goToAgendaItems();
   }
