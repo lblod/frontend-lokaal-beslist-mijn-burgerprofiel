@@ -14,7 +14,7 @@ export interface AgendaItemsParams {
   status: string;
   themes: string;
   street: string;
-  distance?: DistanceOption;
+  distance: DistanceOption | null;
 }
 
 export type FiltersAsQueryParams = {
@@ -26,6 +26,9 @@ export type FiltersAsQueryParams = {
   trefwoord: string | null;
   datumsortering?: SortType;
   status?: string;
+  thema: string;
+  straat: string | null;
+  afstand: string | null;
 };
 
 export interface AgendaItemsLoaderArgs {

@@ -11,6 +11,7 @@
       {{! TODO make them reactive with the filters/queryParams }}
       {{#each this.filterValues as |keyValue|}}
         <AuPill
+          id={{keyValue.key}}
           @icon="cross"
           @iconAlignment="right"
           {{on "click" (fn this.removeFilter keyValue.key)}}

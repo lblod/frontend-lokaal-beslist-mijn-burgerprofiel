@@ -27,7 +27,7 @@ export default class FilterService extends Service {
     status: '',
     themes: '',
     street: '',
-    distance: undefined,
+    distance: null,
   };
 
   updateFilters(newFilters: Partial<AgendaItemsParams>) {
@@ -59,7 +59,7 @@ export default class FilterService extends Service {
       status: 'Alles',
       themes: '',
       street: '',
-      distance: undefined,
+      distance: null,
     };
   }
 
@@ -74,6 +74,7 @@ export default class FilterService extends Service {
   getFilterKeyForQueryParamKey(
     key: keyof FiltersAsQueryParams,
   ): keyof AgendaItemsParams {
+    // TODO combine QueryParameterKeys with these, QueryParameterKeys are the starting point
     const mapping = {
       gemeentes: 'municipalityLabels',
       provincies: 'provinceLabels',
@@ -83,6 +84,9 @@ export default class FilterService extends Service {
       trefwoord: 'keyword',
       datumsortering: 'dateSort',
       status: 'status',
+      thema: 'themes',
+      straat: 'street',
+      afstand: 'distance',
     };
 
     return mapping[key] as keyof AgendaItemsParams;
@@ -98,6 +102,9 @@ export default class FilterService extends Service {
       trefwoord: this.filters.keyword,
       datumsortering: this.filters.dateSort as SortType,
       status: this.filters.status,
+      thema: this.filters.themes,
+      straat: null, // this.filters.street TODO: once backend is ok
+      afstand: null, // this.filters.distance?.label || null TODO: once backend is ok
     };
     delete queryParams.gemeentes;
     if (queryParams.status == 'Alles') {
