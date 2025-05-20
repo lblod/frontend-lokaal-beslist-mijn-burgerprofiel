@@ -129,6 +129,28 @@ export default class GoverningBodyListService extends Service {
     return this.options;
   }
 
+  async fetchBestuursorgaanOptions(
+    gemeenteLabel: string,
+  ): Promise<Array<GoverningBodyOption>> {
+    const municipalityIds =
+      await this.municipalityList.getLocationIdsFromLabels(gemeenteLabel);
+    const governingBodies = await this.store.query('governing-body', {
+      filter: {
+        'administrative-unit': {
+          location: {
+            ':id:': municipalityIds.join(','),
+          },
+        },
+      },
+      include: 'classification',
+    });
+    this.options = this.sortOptions(
+      this.getUniqueGoverningBodies(governingBodies),
+    );
+
+    return this.options;
+  }
+
   sortOptions(options: GoverningBodyOption[]): GoverningBodyOption[] {
     return options.sort((a, b) => a.label.localeCompare(b.label));
   }
