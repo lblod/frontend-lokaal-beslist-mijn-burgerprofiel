@@ -139,6 +139,6 @@ export default class FilterController extends Controller {
   async resetFilters() {
     this.governingBodyList.selectedIds = [];
     this.filterService.resetFiltersToInitialView();
-    this.goToAgendaItems();
+    this.itemsService.loadAgendaItems.perform(0, false);
   }
 }

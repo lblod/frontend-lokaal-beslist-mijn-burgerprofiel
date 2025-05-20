@@ -130,4 +130,20 @@ export default class FilterService extends Service {
     }
     return queryParams;
   }
+
+  get resetQueryParams() {
+    return {
+      gemeentes: null,
+      provincies: null,
+      bestuursorganen: null,
+      start: null,
+      end: null,
+      trefwoord: null,
+      datumsortering: null,
+      status: null,
+      thema: null,
+      straat: null,
+      afstand: null,
+    };
+  }
 }
