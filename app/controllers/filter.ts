@@ -11,7 +11,6 @@ import type ItemsService from 'frontend-burgernabije-besluitendatabank/services/
 import type ThemeListService from 'frontend-burgernabije-besluitendatabank/services/theme-list';
 import type DistanceListService from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 
-import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import type { SortType } from './agenda-items/types';
 import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 import { formatNumber } from 'frontend-burgernabije-besluitendatabank/helpers/format-number';
@@ -81,31 +80,6 @@ export default class FilterController extends Controller {
     this.itemsService.loadAgendaItems.perform(0, false);
   }
 
-  @action
-  async updateSelectedGovernment(
-    newOptions: Array<{
-      label: string;
-      id: string;
-      type: LocalGovernmentType;
-    }>,
-  ) {
-    this.governmentList.selected = newOptions;
-    const municipalityLabels = newOptions
-      .filter((o) => o.type === LocalGovernmentType.Municipality)
-      .map((o) => o.label)
-      .toString();
-    const provinceLabels = newOptions
-      .filter((o) => o.type === LocalGovernmentType.Province)
-      .map((o) => o.label)
-      .toString();
-    this.filterService.updateFilters({
-      municipalityLabels,
-      provinceLabels,
-    });
-    this.itemsService.loadAgendaItems.perform(0, false);
-
-    await this.governingBodyList.loadOptions();
-  }
   get selectedMunicipality() {
     return this.filterService.filters.municipalityLabels;
   }
