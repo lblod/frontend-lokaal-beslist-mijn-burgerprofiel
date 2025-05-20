@@ -9,6 +9,7 @@ import type {
   SortType,
 } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
 import { keywordSearch } from 'frontend-burgernabije-besluitendatabank/helpers/keyword-search';
+import { serializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 
 export default class FilterService extends Service {
   @service declare router: RouterService;
@@ -21,7 +22,7 @@ export default class FilterService extends Service {
     plannedStartMin: null,
     plannedStartMax: null,
     dateSort: 'desc' as SortType,
-    governingBodyClassifications: '',
+    governingBodyClassificationIds: [],
     dataQualityList: [],
     status: '',
     themes: '',
@@ -53,7 +54,7 @@ export default class FilterService extends Service {
       plannedStartMin: null,
       plannedStartMax: null,
       dateSort: 'desc' as SortType,
-      governingBodyClassifications: null,
+      governingBodyClassificationIds: [],
       dataQualityList: null,
       status: 'Alles',
       themes: null,
@@ -96,10 +97,18 @@ export default class FilterService extends Service {
   }
 
   get asQueryParams() {
+    let governingBodyClassificationIds = null;
+
+    if (this.filters.governingBodyClassificationIds.length >= 1) {
+      governingBodyClassificationIds = serializeArray(
+        this.filters.governingBodyClassificationIds,
+      );
+    }
+
     const queryParams: FiltersAsQueryParams = {
       gemeentes: 'Aalter',
       provincies: this.filters.provinceLabels,
-      bestuursorganen: this.filters.governingBodyClassifications,
+      bestuursorganen: governingBodyClassificationIds,
       start: this.filters.plannedStartMin,
       end: this.filters.plannedStartMax,
       trefwoord: this.filters.keyword,

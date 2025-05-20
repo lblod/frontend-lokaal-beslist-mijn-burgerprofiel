@@ -24,12 +24,8 @@ export default class FilterController extends Controller {
   @service declare themeList: ThemeListService;
   @service declare distanceList: DistanceListService;
 
-  get selectedBestuursorganen() {
-    return this.governingBodyList.selected;
-  }
-
-  get showAdvancedFilters() {
-    return this.filterService.filters.governingBodyClassifications;
+  get selectedBestuursorgaanIds() {
+    return this.filterService.filters.governingBodyClassificationIds;
   }
 
   get hasMunicipalityFilter() {
@@ -95,22 +91,12 @@ export default class FilterController extends Controller {
   }
 
   @action
-  updateSelectedGoverningBodyClassifications(
-    newOptions: Array<{
-      label: string;
-      id: string;
-      type: 'governing-body-classifications';
-    }>,
-  ) {
-    this.governingBodyList.selected = newOptions;
-    const governingBodyClassifications = newOptions
-      .map((o) => o.label)
-      .toString();
-    if (governingBodyClassifications != '') {
-      this.filterService.updateFilters({
-        governingBodyClassifications,
-      });
-    }
+  updateSelectedGoverningBodyClassifications(selectedIds: Array<string>) {
+    this.governingBodyList.selectedIds = selectedIds;
+    this.filterService.updateFilters({
+      governingBodyClassificationIds: selectedIds,
+    });
+    this.itemsService.loadAgendaItems.perform(0, false);
   }
 
   get startDate() {
@@ -151,7 +137,7 @@ export default class FilterController extends Controller {
 
   @action
   async resetFilters() {
-    this.governingBodyList.selected = [];
+    this.governingBodyList.selectedIds = [];
     this.filterService.resetFiltersToInitialView();
     this.goToAgendaItems();
   }
