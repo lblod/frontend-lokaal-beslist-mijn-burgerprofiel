@@ -53,7 +53,7 @@ export default class FilterController extends Controller {
       return 'Geen resultaten';
     }
     if (this.filterService.hasActiveUserFilters) {
-      const countAsString = parseInt(formatNumber([this.resultCount, 0]));
+      const countAsString = formatNumber([this.resultCount, 0]);
 
       return `Toon ${countAsString} resultaten`;
     }

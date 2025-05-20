@@ -93,7 +93,10 @@ export default class FilterService extends Service {
   }
 
   get hasActiveUserFilters() {
-    return !Object.values(this.asQueryParams).every((param) => !param);
+    const withoutMunicipality = { ...this.asQueryParams };
+    delete withoutMunicipality.gemeentes;
+
+    return !Object.values(withoutMunicipality).every((param) => !param);
   }
 
   get asQueryParams() {
