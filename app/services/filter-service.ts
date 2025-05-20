@@ -1,7 +1,6 @@
 import Service, { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 
-import type ItemsService from './items-service';
 import type RouterService from '@ember/routing/router-service';
 
 import type {
@@ -13,7 +12,7 @@ import { keywordSearch } from 'frontend-burgernabije-besluitendatabank/helpers/k
 
 export default class FilterService extends Service {
   @service declare router: RouterService;
-  @service declare itemsService: ItemsService;
+
   @tracked keywordAdvancedSearch: { [key: string]: string[] } | null = null;
   @tracked filters: AgendaItemsParams = {
     keyword: null,
@@ -90,6 +89,10 @@ export default class FilterService extends Service {
     };
 
     return mapping[key] as keyof AgendaItemsParams;
+  }
+
+  get hasActiveUserFilters() {
+    return !Object.values(this.asQueryParams).every((param) => !param);
   }
 
   get asQueryParams() {

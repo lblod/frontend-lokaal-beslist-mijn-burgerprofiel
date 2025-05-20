@@ -14,6 +14,7 @@ import type DistanceListService from 'frontend-burgernabije-besluitendatabank/se
 import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import type { SortType } from './agenda-items/types';
 import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/services/distance-list';
+import { formatNumber } from 'frontend-burgernabije-besluitendatabank/helpers/format-number';
 
 export default class FilterController extends Controller {
   @service declare governingBodyList: GoverningBodyListService;
@@ -46,6 +47,22 @@ export default class FilterController extends Controller {
 
   get resultCount() {
     return this.itemsService.totalAgendaItems || 0;
+  }
+
+  get isApplyingFilters() {
+    return this.itemsService.loadAgendaItems.isRunning;
+  }
+
+  get showResultsText() {
+    if (this.resultCount === 0) {
+      return 'Geen resultaten';
+    }
+    if (this.filterService.hasActiveUserFilters) {
+      const countAsString = parseInt(formatNumber([this.resultCount, 0]));
+
+      return `Toon ${countAsString} resultaten`;
+    }
+    return 'Toon resultaten';
   }
 
   @action
