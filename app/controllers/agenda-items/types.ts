@@ -8,7 +8,7 @@ export interface AgendaItemsParams {
   provinceLabels: string | null;
   plannedStartMin: string | null;
   plannedStartMax: string | null;
-  governingBodyClassifications: string | null;
+  governingBodyClassificationIds: Array<string>;
   dataQualityList: Array<string> | null;
   dateSort: string;
   status: string;

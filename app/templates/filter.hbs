@@ -70,7 +70,7 @@
         @id="governing-body"
         @label="Bestuursorganen"
         @options={{this.model.bestuursorgaanOptions}}
-        @selected={{this.selectedBestuursorganen}}
+        @selected={{this.selectedBestuursorgaanIds}}
         @updateSelected={{this.updateSelectedGoverningBodyClassifications}}
         @searchField="label"
         @queryParam="bestuursorganen"
@@ -80,9 +80,15 @@
 </div>
 <div class="c-interface__sidebar-submit-buttons">
   <AuHr />
-  <AuButton @skin="primary" @width="block" {{on "click" this.goToAgendaItems}}>
-    Toon
-    {{format-number this.resultCount 0}}
-    resultaten
+  <AuButton
+    @skin="primary"
+    @width="block"
+    @disabled={{this.isApplyingFilters}}
+    @loading={{this.isApplyingFilters}}
+    @loadingMessage="hidden"
+    @hideText={{this.isApplyingFilters}}
+    {{on "click" this.goToAgendaItems}}
+  >
+    {{this.showResultsText}}
   </AuButton>
 </div>

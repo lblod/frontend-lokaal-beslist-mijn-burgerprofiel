@@ -1,7 +1,6 @@
 import Service, { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 
-import type ItemsService from './items-service';
 import type RouterService from '@ember/routing/router-service';
 
 import type {
@@ -10,10 +9,11 @@ import type {
   SortType,
 } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
 import { keywordSearch } from 'frontend-burgernabije-besluitendatabank/helpers/keyword-search';
+import { serializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 
 export default class FilterService extends Service {
   @service declare router: RouterService;
-  @service declare itemsService: ItemsService;
+
   @tracked keywordAdvancedSearch: { [key: string]: string[] } | null = null;
   @tracked filters: AgendaItemsParams = {
     keyword: null,
@@ -22,7 +22,7 @@ export default class FilterService extends Service {
     plannedStartMin: null,
     plannedStartMax: null,
     dateSort: 'desc' as SortType,
-    governingBodyClassifications: '',
+    governingBodyClassificationIds: [],
     dataQualityList: [],
     status: '',
     themes: '',
@@ -54,7 +54,7 @@ export default class FilterService extends Service {
       plannedStartMin: null,
       plannedStartMax: null,
       dateSort: 'desc' as SortType,
-      governingBodyClassifications: null,
+      governingBodyClassificationIds: [],
       dataQualityList: null,
       status: 'Alles',
       themes: null,
@@ -92,11 +92,26 @@ export default class FilterService extends Service {
     return mapping[key] as keyof AgendaItemsParams;
   }
 
+  get hasActiveUserFilters() {
+    const withoutMunicipality = { ...this.asQueryParams };
+    delete withoutMunicipality.gemeentes;
+
+    return !Object.values(withoutMunicipality).every((param) => !param);
+  }
+
   get asQueryParams() {
+    let governingBodyClassificationIds = null;
+
+    if (this.filters.governingBodyClassificationIds.length >= 1) {
+      governingBodyClassificationIds = serializeArray(
+        this.filters.governingBodyClassificationIds,
+      );
+    }
+
     const queryParams: FiltersAsQueryParams = {
       gemeentes: 'Aalter',
       provincies: this.filters.provinceLabels,
-      bestuursorganen: this.filters.governingBodyClassifications,
+      bestuursorganen: governingBodyClassificationIds,
       start: this.filters.plannedStartMin,
       end: this.filters.plannedStartMax,
       trefwoord: this.filters.keyword,
@@ -114,5 +129,21 @@ export default class FilterService extends Service {
       delete queryParams.datumsortering;
     }
     return queryParams;
+  }
+
+  get resetQueryParams() {
+    return {
+      gemeentes: null,
+      provincies: null,
+      bestuursorganen: null,
+      start: null,
+      end: null,
+      trefwoord: null,
+      datumsortering: null,
+      status: null,
+      thema: null,
+      straat: null,
+      afstand: null,
+    };
   }
 }

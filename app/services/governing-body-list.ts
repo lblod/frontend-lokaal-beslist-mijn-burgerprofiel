@@ -26,13 +26,8 @@ export default class GoverningBodyListService extends Service {
   @service declare governmentList: GovernmentListService;
   @service declare filterService: FilterService;
 
-  @tracked selected: GoverningBodyOption[] = [];
+  @tracked selectedIds: Array<string> = [];
   @tracked options: GoverningBodyOption[] = [];
-
-  constructor(...args: []) {
-    super(...args);
-    this.loadOptions();
-  }
 
   /**
    * Get the governing body classification ids from the given labels.
@@ -65,8 +60,11 @@ export default class GoverningBodyListService extends Service {
   }
 
   async loadOptions() {
-    const { municipalityLabels, governingBodyClassifications, provinceLabels } =
-      this.filterService.filters;
+    const {
+      municipalityLabels,
+      governingBodyClassificationIds,
+      provinceLabels,
+    } = this.filterService.filters;
     if (
       (municipalityLabels == undefined || municipalityLabels == '') &&
       (provinceLabels == undefined || provinceLabels == '')
@@ -104,18 +102,29 @@ export default class GoverningBodyListService extends Service {
         this.getUniqueGoverningBodies(governingBodies),
       );
     }
-    if (governingBodyClassifications != null) {
-      this.selected = this.options.filter((option) =>
-        governingBodyClassifications.split('+').includes(option.label),
-      );
-      if (this.selected.length == 0) {
-        this.router.transitionTo({
-          queryParams: {
-            bestuursorganen: null,
+    this.selectedIds = governingBodyClassificationIds;
+
+    return this.options;
+  }
+
+  async fetchBestuursorgaanOptions(
+    gemeenteLabel: string,
+  ): Promise<Array<GoverningBodyOption>> {
+    const municipalityIds =
+      await this.municipalityList.getLocationIdsFromLabels(gemeenteLabel);
+    const governingBodies = await this.store.query('governing-body', {
+      filter: {
+        'administrative-unit': {
+          location: {
+            ':id:': municipalityIds.join(','),
           },
-        });
-      }
-    }
+        },
+      },
+      include: 'classification',
+    });
+    this.options = this.sortOptions(
+      this.getUniqueGoverningBodies(governingBodies),
+    );
 
     return this.options;
   }

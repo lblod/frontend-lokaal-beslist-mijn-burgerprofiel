@@ -11,9 +11,9 @@ import type ItemsService from 'frontend-burgernabije-besluitendatabank/services/
 import type ThemeListService from 'frontend-burgernabije-besluitendatabank/services/theme-list';
 import type DistanceListService from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 
-import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import type { SortType } from './agenda-items/types';
 import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/services/distance-list';
+import { formatNumber } from 'frontend-burgernabije-besluitendatabank/helpers/format-number';
 
 export default class FilterController extends Controller {
   @service declare governingBodyList: GoverningBodyListService;
@@ -24,12 +24,8 @@ export default class FilterController extends Controller {
   @service declare themeList: ThemeListService;
   @service declare distanceList: DistanceListService;
 
-  get selectedBestuursorganen() {
-    return this.governingBodyList.selected;
-  }
-
-  get showAdvancedFilters() {
-    return this.filterService.filters.governingBodyClassifications;
+  get selectedBestuursorgaanIds() {
+    return this.filterService.filters.governingBodyClassificationIds;
   }
 
   get hasMunicipalityFilter() {
@@ -48,6 +44,22 @@ export default class FilterController extends Controller {
     return this.itemsService.totalAgendaItems || 0;
   }
 
+  get isApplyingFilters() {
+    return this.itemsService.loadAgendaItems.isRunning;
+  }
+
+  get showResultsText() {
+    if (this.resultCount === 0) {
+      return 'Geen resultaten';
+    }
+    if (this.filterService.hasActiveUserFilters) {
+      const countAsString = formatNumber([this.resultCount, 0]);
+
+      return `Toon ${countAsString} resultaten`;
+    }
+    return 'Toon resultaten';
+  }
+
   @action
   updateSelectedThemes(
     newOptions: Array<{
@@ -64,31 +76,6 @@ export default class FilterController extends Controller {
     this.itemsService.loadAgendaItems.perform(0, false);
   }
 
-  @action
-  async updateSelectedGovernment(
-    newOptions: Array<{
-      label: string;
-      id: string;
-      type: LocalGovernmentType;
-    }>,
-  ) {
-    this.governmentList.selected = newOptions;
-    const municipalityLabels = newOptions
-      .filter((o) => o.type === LocalGovernmentType.Municipality)
-      .map((o) => o.label)
-      .toString();
-    const provinceLabels = newOptions
-      .filter((o) => o.type === LocalGovernmentType.Province)
-      .map((o) => o.label)
-      .toString();
-    this.filterService.updateFilters({
-      municipalityLabels,
-      provinceLabels,
-    });
-    this.itemsService.loadAgendaItems.perform(0, false);
-
-    await this.governingBodyList.loadOptions();
-  }
   get selectedMunicipality() {
     return this.filterService.filters.municipalityLabels;
   }
@@ -104,22 +91,12 @@ export default class FilterController extends Controller {
   }
 
   @action
-  updateSelectedGoverningBodyClassifications(
-    newOptions: Array<{
-      label: string;
-      id: string;
-      type: 'governing-body-classifications';
-    }>,
-  ) {
-    this.governingBodyList.selected = newOptions;
-    const governingBodyClassifications = newOptions
-      .map((o) => o.label)
-      .toString();
-    if (governingBodyClassifications != '') {
-      this.filterService.updateFilters({
-        governingBodyClassifications,
-      });
-    }
+  updateSelectedGoverningBodyClassifications(selectedIds: Array<string>) {
+    this.governingBodyList.selectedIds = selectedIds;
+    this.filterService.updateFilters({
+      governingBodyClassificationIds: selectedIds,
+    });
+    this.itemsService.loadAgendaItems.perform(0, false);
   }
 
   get startDate() {
@@ -160,8 +137,8 @@ export default class FilterController extends Controller {
 
   @action
   async resetFilters() {
-    this.governingBodyList.selected = [];
+    this.governingBodyList.selectedIds = [];
     this.filterService.resetFiltersToInitialView();
-    this.goToAgendaItems();
+    this.itemsService.loadAgendaItems.perform(0, false);
   }
 }

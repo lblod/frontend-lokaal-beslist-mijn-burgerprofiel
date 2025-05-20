@@ -47,6 +47,5 @@ export default class SessionsIndexRoute extends Route {
   async model(params: AgendaItemsParams) {
     this.itemsService.resetSessions();
     this.filterService.updateFilters(params);
-    this.itemsService.initialSessions(params);
   }
 }

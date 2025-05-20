@@ -59,7 +59,7 @@ export default class AgendaItemsIndexRoute extends Route {
     },
   };
 
-  model(params: AgendaItemsParams) {
+  model(params: Partial<AgendaItemsParams>) {
     this.filterService.updateFilters(params);
     this.itemsService.resetAgendaItems();
     this.itemsService.initialAgendaItems(this.filterService.filters);
