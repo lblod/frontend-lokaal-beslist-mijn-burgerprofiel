@@ -83,7 +83,7 @@
   <AuButton
     @skin="primary"
     @width="block"
-    @disabled={{or (eq this.resultCount 0) this.isApplyingFilters}}
+    @disabled={{this.isApplyingFilters}}
     @loading={{this.isApplyingFilters}}
     @loadingMessage="hidden"
     @hideText={{this.isApplyingFilters}}
