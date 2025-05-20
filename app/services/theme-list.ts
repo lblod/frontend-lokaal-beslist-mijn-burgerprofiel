@@ -2,12 +2,8 @@ import Service, { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import type FilterService from './filter-service';
 import type Store from '@ember-data/store';
-
-export interface ThemeOption {
-  id?: string;
-  label: string;
-  type: string;
-}
+import type ConceptModel from 'frontend-burgernabije-besluitendatabank/models/concept';
+import type { SelectOption } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
 
 const CONCEPT_SCHEME_ID = '37c887b0-136c-42bd-9292-355d3186efa9';
 
@@ -15,28 +11,29 @@ export default class ThemeListService extends Service {
   @service declare store: Store;
   @service declare filterService: FilterService;
 
-  @tracked selected: ThemeOption[] = [];
-  @tracked options: ThemeOption[] = [];
+  @tracked themes: Array<ConceptModel> = [];
 
-  async loadOptions() {
-    const sortedConcepts = await this.store.query('concept', {
+  async fetchThemes() {
+    const concepts = await this.store.query('concept', {
       'filter[concept-schemes][:id:]': CONCEPT_SCHEME_ID,
       include: 'concept-schemes',
       sort: ':no-case:label',
-      page: { size: 100 },
     });
 
-    this.options = sortedConcepts.slice();
-    if (this.filterService.filters.themes) {
-      const splitThemes = this.filterService.filters.themes.split('+');
-      this.selected = this.options.filter((option) =>
-        splitThemes.includes(option.label),
-      );
-    }
-    return this.options;
+    this.themes = concepts.slice();
   }
-  get selectedIds() {
-    return this.selected.map((option) => option.id).join(',');
+
+  get asOptions(): Array<SelectOption> {
+    return this.themes.map((concept) => {
+      return {
+        id: concept.id,
+        label: concept.label || concept.id,
+      };
+    });
+  }
+
+  getOptionsForIds(ids: Array<string>) {
+    return this.asOptions.filter((option) => ids.includes(option.id));
   }
 }
 
