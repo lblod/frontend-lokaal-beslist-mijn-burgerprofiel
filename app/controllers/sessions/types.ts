@@ -7,7 +7,7 @@ export interface SessionsParams {
   plannedStartMin: string;
   plannedStartMax: string;
   keyword: string;
-  governingBodyClassifications: string;
+  governingBodyClassificationIds: Array<string>;
   dataQualityList: Array<string>;
   dateSort: string;
   status: string;
