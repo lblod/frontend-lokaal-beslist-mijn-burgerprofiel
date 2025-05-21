@@ -60,6 +60,9 @@ export default class AgendaItemsIndexRoute extends Route {
   };
 
   model(params: Partial<AgendaItemsParams>) {
+    this.filterService.setMunicipalityInStorage(
+      params.municipalityLabels || null,
+    );
     this.filterService.updateFiltersFromParams(params);
     this.itemsService.resetAgendaItems();
     this.itemsService.initialAgendaItems(this.filterService.filters);

@@ -108,8 +108,12 @@ export default class GoverningBodyListService extends Service {
   }
 
   async fetchBestuursorgaanOptions(
-    gemeenteLabel: string,
+    gemeenteLabel?: string,
   ): Promise<Array<GoverningBodyOption>> {
+    if (!gemeenteLabel) {
+      return [];
+    }
+
     const municipalityIds =
       await this.municipalityList.getLocationIdsFromLabels(gemeenteLabel);
     const governingBodies = await this.store.query('governing-body', {

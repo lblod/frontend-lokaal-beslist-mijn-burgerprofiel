@@ -84,7 +84,7 @@ export default class ItemsService extends Service {
   async fetchLocationIds() {
     const municipalityIds =
       await this.municipalityList.getLocationIdsFromLabels(
-        this.filters?.municipalityLabels || [],
+        this.filterService.municipalityLabels,
       );
     const provinceIds = await this.provinceList.getProvinceIdsFromLabels(
       this.filters?.provinceLabels || [],
@@ -109,7 +109,7 @@ export default class ItemsService extends Service {
     async (page: number, loadMore = false) => {
       if (!this.filters) return;
       const locationIds = await this.fetchLocationIds();
-      const themeIds = this.filterService.asQueryParams.thema || undefined;
+      const themeIds = this.filterService.asQueryParams.thema;
       const governingBodyClassificationIds = serializeArray(
         this.filters.governingBodyClassificationIds,
       );

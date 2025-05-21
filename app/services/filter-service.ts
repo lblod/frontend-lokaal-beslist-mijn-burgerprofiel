@@ -14,13 +14,14 @@ import {
   serializeArray,
 } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 
+const MUNICIPALITY_SESSION_KEY = 'municipality-labels';
 export default class FilterService extends Service {
   @service declare router: RouterService;
 
   @tracked keywordAdvancedSearch: { [key: string]: string[] } | null = null;
   @tracked filters: AgendaItemsParams = {
     keyword: null,
-    municipalityLabels: null,
+    municipalityLabels: this.municipalityLabels || null,
     provinceLabels: null,
     plannedStartMin: null,
     plannedStartMax: null,
@@ -68,7 +69,7 @@ export default class FilterService extends Service {
   resetFiltersToInitialView() {
     this.updateFilters({
       keyword: null,
-      municipalityLabels: 'Aalter',
+      municipalityLabels: this.municipalityLabels,
       provinceLabels: null,
       plannedStartMin: null,
       plannedStartMax: null,
@@ -132,7 +133,7 @@ export default class FilterService extends Service {
     }
 
     const queryParams: FiltersAsQueryParams = {
-      gemeentes: 'Aalter',
+      gemeentes: this.municipalityLabels,
       provincies: this.filters.provinceLabels,
       bestuursorganen: governingBodyClassificationIds,
       begin: this.filters.plannedStartMin,
@@ -156,7 +157,6 @@ export default class FilterService extends Service {
 
   get resetQueryParams() {
     return {
-      gemeentes: null,
       provincies: null,
       bestuursorganen: null,
       begin: null,
@@ -168,5 +168,15 @@ export default class FilterService extends Service {
       straat: null,
       afstand: null,
     };
+  }
+
+  get municipalityLabels() {
+    return sessionStorage.getItem(MUNICIPALITY_SESSION_KEY) || undefined;
+  }
+
+  setMunicipalityInStorage(municipalityLabels: string | null) {
+    if (!this.municipalityLabels && municipalityLabels) {
+      sessionStorage.setItem(MUNICIPALITY_SESSION_KEY, municipalityLabels);
+    }
   }
 }

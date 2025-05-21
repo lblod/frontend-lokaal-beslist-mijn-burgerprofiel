@@ -17,7 +17,9 @@ export default class FilterRoute extends Route {
     await this.themeList.fetchThemes();
     const distanceOptions = await this.distanceList.loadOptions();
     const bestuursorgaanOptions =
-      await this.governingBodyList.fetchBestuursorgaanOptions('Aalter'); // TODO: Not sure yet how we are going to FIX this value | SessionStorage?
+      await this.governingBodyList.fetchBestuursorgaanOptions(
+        this.filterService.municipalityLabels,
+      );
 
     return {
       bestuursorgaanOptions: bestuursorgaanOptions,

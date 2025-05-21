@@ -72,10 +72,6 @@ export default class FilterController extends Controller {
     this.itemsService.loadAgendaItems.perform(0, false);
   }
 
-  get selectedMunicipality() {
-    return this.filterService.filters.municipalityLabels;
-  }
-
   get status() {
     return this.filterService.filters.status;
   }
