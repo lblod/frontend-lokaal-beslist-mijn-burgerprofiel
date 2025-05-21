@@ -21,7 +21,7 @@ export default class AgendaItemsIndexRoute extends Route {
       as: QueryParameterKeys.provinces,
       refreshModel: true,
     },
-    governingBodyClassifications: {
+    governingBodyClassificationIds: {
       as: QueryParameterKeys.governingBodies,
       refreshModel: true,
     },
@@ -45,7 +45,7 @@ export default class AgendaItemsIndexRoute extends Route {
       as: QueryParameterKeys.status,
       refreshModel: true,
     },
-    themes: {
+    themeIds: {
       as: QueryParameterKeys.themes,
       refreshModel: true,
     },
@@ -60,7 +60,10 @@ export default class AgendaItemsIndexRoute extends Route {
   };
 
   model(params: Partial<AgendaItemsParams>) {
-    this.filterService.updateFilters(params);
+    this.filterService.setMunicipalityInStorage(
+      params.municipalityLabels || null,
+    );
+    this.filterService.updateFiltersFromParams(params);
     this.itemsService.resetAgendaItems();
     this.itemsService.initialAgendaItems(this.filterService.filters);
 

@@ -32,8 +32,8 @@ export default class FilterController extends Controller {
     return this.themeList.getOptionsForIds(this.filterService.filters.themeIds);
   }
 
-  get hasMunicipalityFilter() {
-    return this.filterService.filters.municipalityLabels;
+  get hasSelectedAdvancedFilters() {
+    return this.selectedBestuursorgaanIds.length >= 1;
   }
 
   get isFilterAscending() {
@@ -70,10 +70,6 @@ export default class FilterController extends Controller {
       themeIds: selected.map((theme) => theme.id),
     });
     this.itemsService.loadAgendaItems.perform(0, false);
-  }
-
-  get selectedMunicipality() {
-    return this.filterService.filters.municipalityLabels;
   }
 
   get status() {

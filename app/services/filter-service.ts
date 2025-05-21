@@ -9,15 +9,19 @@ import type {
   SortType,
 } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
 import { keywordSearch } from 'frontend-burgernabije-besluitendatabank/helpers/keyword-search';
-import { serializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
+import {
+  deserializeArray,
+  serializeArray,
+} from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 
+const MUNICIPALITY_SESSION_KEY = 'municipality-labels';
 export default class FilterService extends Service {
   @service declare router: RouterService;
 
   @tracked keywordAdvancedSearch: { [key: string]: string[] } | null = null;
   @tracked filters: AgendaItemsParams = {
     keyword: null,
-    municipalityLabels: null,
+    municipalityLabels: this.municipalityLabels || null,
     provinceLabels: null,
     plannedStartMin: null,
     plannedStartMax: null,
@@ -46,10 +50,26 @@ export default class FilterService extends Service {
     this.filters = { ...this.filters, ...newFilters };
   }
 
+  updateFiltersFromParams(params: Partial<AgendaItemsParams>) {
+    // Mismatch in type as these are + separated strings here and not an array of string
+    const bestuursorgaanIdsAsString =
+      params.governingBodyClassificationIds as unknown as string;
+    const themeIdsAsString = params.themeIds as unknown as string;
+    delete params.governingBodyClassificationIds;
+    delete params.themeIds;
+    this.updateFilters({
+      ...params,
+      governingBodyClassificationIds: deserializeArray(
+        bestuursorgaanIdsAsString,
+      ),
+      themeIds: deserializeArray(themeIdsAsString),
+    });
+  }
+
   resetFiltersToInitialView() {
     this.updateFilters({
       keyword: null,
-      municipalityLabels: 'Aalter',
+      municipalityLabels: this.municipalityLabels,
       provinceLabels: null,
       plannedStartMin: null,
       plannedStartMax: null,
@@ -79,8 +99,8 @@ export default class FilterService extends Service {
       gemeentes: 'municipalityLabels',
       provincies: 'provinceLabels',
       bestuursorganen: 'governingBodyClassifications',
-      start: 'plannedStartMin',
-      end: 'plannedStartMax',
+      begin: 'plannedStartMin',
+      eind: 'plannedStartMax',
       trefwoord: 'keyword',
       datumsortering: 'dateSort',
       status: 'status',
@@ -113,14 +133,14 @@ export default class FilterService extends Service {
     }
 
     const queryParams: FiltersAsQueryParams = {
-      gemeentes: 'Aalter',
+      gemeentes: this.municipalityLabels,
       provincies: this.filters.provinceLabels,
       bestuursorganen: governingBodyClassificationIds,
-      start: this.filters.plannedStartMin,
-      end: this.filters.plannedStartMax,
+      begin: this.filters.plannedStartMin,
+      eind: this.filters.plannedStartMax,
       trefwoord: this.filters.keyword,
       datumsortering: this.filters.dateSort as SortType,
-      status: this.filters.status,
+      status: this.filters.status !== '' ? this.filters.status : undefined,
       thema: themeIds,
       straat: null, // this.filters.street TODO: once backend is ok
       afstand: null, // this.filters.distance?.label || null TODO: once backend is ok
@@ -137,11 +157,10 @@ export default class FilterService extends Service {
 
   get resetQueryParams() {
     return {
-      gemeentes: null,
       provincies: null,
       bestuursorganen: null,
-      start: null,
-      end: null,
+      begin: null,
+      eind: null,
       trefwoord: null,
       datumsortering: null,
       status: null,
@@ -149,5 +168,15 @@ export default class FilterService extends Service {
       straat: null,
       afstand: null,
     };
+  }
+
+  get municipalityLabels() {
+    return sessionStorage.getItem(MUNICIPALITY_SESSION_KEY) || undefined;
+  }
+
+  setMunicipalityInStorage(municipalityLabels: string | null) {
+    if (!this.municipalityLabels && municipalityLabels) {
+      sessionStorage.setItem(MUNICIPALITY_SESSION_KEY, municipalityLabels);
+    }
   }
 }
