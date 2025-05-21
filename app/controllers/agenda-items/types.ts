@@ -21,8 +21,8 @@ export type FiltersAsQueryParams = {
   gemeentes?: string;
   provincies: string | null;
   bestuursorganen: string | null;
-  start: string | null;
-  end: string | null;
+  begin: string | null;
+  eind: string | null;
   trefwoord: string | null;
   datumsortering?: SortType;
   status?: string;
