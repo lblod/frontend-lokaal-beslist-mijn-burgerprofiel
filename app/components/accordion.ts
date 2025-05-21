@@ -8,11 +8,19 @@ export interface AccordionSignature {
     isLoading: boolean;
     iconOpen: string;
     iconClosed: string;
+    isInitiallyOpen: boolean;
   };
 }
 
 export default class Accordion extends Component<AccordionSignature> {
   @tracked isOpen = false;
+
+  constructor(owner: unknown, args: AccordionSignature['Args']) {
+    super(owner, args);
+    if (this.args.isInitiallyOpen) {
+      this.isOpen = true;
+    }
+  }
 
   get iconOpen() {
     if (this.args.iconOpen) {

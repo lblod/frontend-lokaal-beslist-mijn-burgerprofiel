@@ -65,7 +65,11 @@
   />
   <AuHr />
   <section class="c-advanced-filter-holder">
-    <Accordion @buttonLabel="GEAVANCEERDE FILTERS" @showBottomBorder={{false}}>
+    <Accordion
+      @buttonLabel="GEAVANCEERDE FILTERS"
+      @showBottomBorder={{false}}
+      @isInitiallyOpen={{this.hasSelectedAdvancedFilters}}
+    >
       <Filters::SelectMultipleCheckboxFilter
         @id="governing-body"
         @label="Bestuursorganen"

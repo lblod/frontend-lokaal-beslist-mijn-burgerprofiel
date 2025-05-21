@@ -32,8 +32,8 @@ export default class FilterController extends Controller {
     return this.themeList.getOptionsForIds(this.filterService.filters.themeIds);
   }
 
-  get hasMunicipalityFilter() {
-    return this.filterService.filters.municipalityLabels;
+  get hasSelectedAdvancedFilters() {
+    return this.selectedBestuursorgaanIds.length >= 1;
   }
 
   get isFilterAscending() {
