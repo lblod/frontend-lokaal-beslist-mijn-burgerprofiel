@@ -6,7 +6,7 @@ import { QueryParameterKeys } from 'frontend-burgernabije-besluitendatabank/cons
 import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 import type MunicipalityListService from './municipality-list';
 import type GoverningBodyModel from 'frontend-burgernabije-besluitendatabank/models/governing-body';
-import type GoverningBodyClasssificationCodeModel from 'frontend-burgernabije-besluitendatabank/models/governing-body-classification-code';
+import type GoverningBodyClassificationCodeModel from 'frontend-burgernabije-besluitendatabank/models/governing-body-classification-code';
 import type { AdapterPopulatedRecordArrayWithMeta } from 'frontend-burgernabije-besluitendatabank/utils/ember-data';
 import type GovernmentListService from './government-list';
 import type FilterService from './filter-service';
@@ -31,7 +31,7 @@ export default class GoverningBodyListService extends Service {
 
   /**
    * Get the governing body classification ids from the given labels.
-   * @returns The governing body classifcation ids.
+   * @returns The governing body classification ids.
    **/
 
   async getGoverningBodyClassificationIdsFromLabels(
@@ -155,7 +155,7 @@ export default class GoverningBodyListService extends Service {
   }
 
   getUniqueClassifications(
-    classifications: AdapterPopulatedRecordArrayWithMeta<GoverningBodyClasssificationCodeModel>,
+    classifications: AdapterPopulatedRecordArrayWithMeta<GoverningBodyClassificationCodeModel>,
   ) {
     const uniqueLabels = new Set();
 
