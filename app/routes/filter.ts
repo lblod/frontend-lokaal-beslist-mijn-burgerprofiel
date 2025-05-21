@@ -2,8 +2,6 @@ import Route from '@ember/routing/route';
 
 import { service } from '@ember/service';
 
-import type { GoverningBodyOption } from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
-
 import type DistanceListService from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
 import type GoverningBodyListService from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
@@ -16,16 +14,15 @@ export default class FilterRoute extends Route {
   @service declare filterService: FilterService;
 
   async model() {
-    const themaOptions = await this.themeList.loadOptions();
+    await this.themeList.fetchThemes();
     const distanceOptions = await this.distanceList.loadOptions();
     const bestuursorgaanOptions =
-      await this.governingBodyList.fetchBestuursorgaanOptions('Aalter'); // TODO: Not sure yet how we are going to FIX this value
+      await this.governingBodyList.fetchBestuursorgaanOptions('Aalter'); // TODO: Not sure yet how we are going to FIX this value | SessionStorage?
 
     return {
-      bestuursorgaanOptions:
-        bestuursorgaanOptions as Array<GoverningBodyOption>,
+      bestuursorgaanOptions: bestuursorgaanOptions,
       agendaStatusOptions: ['Alles', 'Behandeld', 'Niet behandeld'],
-      themaOptions,
+      themaOptions: this.themeList.asOptions,
       distanceOptions,
     };
   }

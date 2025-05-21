@@ -11,7 +11,7 @@ import type ItemsService from 'frontend-burgernabije-besluitendatabank/services/
 import type ThemeListService from 'frontend-burgernabije-besluitendatabank/services/theme-list';
 import type DistanceListService from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 
-import type { SortType } from './agenda-items/types';
+import type { SelectOption, SortType } from './agenda-items/types';
 import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 import { formatNumber } from 'frontend-burgernabije-besluitendatabank/helpers/format-number';
 
@@ -26,6 +26,10 @@ export default class FilterController extends Controller {
 
   get selectedBestuursorgaanIds() {
     return this.filterService.filters.governingBodyClassificationIds;
+  }
+
+  get selectedThemes() {
+    return this.themeList.getOptionsForIds(this.filterService.filters.themeIds);
   }
 
   get hasMunicipalityFilter() {
@@ -61,17 +65,9 @@ export default class FilterController extends Controller {
   }
 
   @action
-  updateSelectedThemes(
-    newOptions: Array<{
-      label: string;
-      id: string;
-      type: 'concepts';
-    }>,
-  ) {
-    this.themeList.selected = newOptions;
+  updateSelectedThemes(selected: Array<SelectOption>) {
     this.filterService.updateFilters({
-      themes:
-        newOptions.length >= 1 ? newOptions.map((o) => o.id).toString() : null,
+      themeIds: selected.map((theme) => theme.id),
     });
     this.itemsService.loadAgendaItems.perform(0, false);
   }

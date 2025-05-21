@@ -12,7 +12,7 @@ export interface AgendaItemsParams {
   dataQualityList: Array<string> | null;
   dateSort: string;
   status: string;
-  themes: string | null;
+  themeIds: Array<string>;
   street: string | null;
   distance: DistanceOption | null;
 }
@@ -43,7 +43,7 @@ export type AgendaItemsQueryArguments = {
   size?: number;
   locationIds?: string;
   provinceIds?: string;
-  themeIds?: string;
+  themeIds: string | null;
   governingBodyClassificationIds: string | null;
   filters: AgendaItemsParams;
 };
@@ -73,3 +73,8 @@ export type AgendaItemsQueryResult = PageableRequest<
   AgendaItem
 >;
 export type SortType = 'asc' | 'desc';
+
+export type SelectOption = {
+  id: string;
+  label: string;
+};

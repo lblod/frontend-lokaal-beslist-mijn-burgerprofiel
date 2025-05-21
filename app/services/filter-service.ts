@@ -25,7 +25,7 @@ export default class FilterService extends Service {
     governingBodyClassificationIds: [],
     dataQualityList: [],
     status: '',
-    themes: '',
+    themeIds: [],
     street: null,
     distance: null,
   };
@@ -57,7 +57,7 @@ export default class FilterService extends Service {
       governingBodyClassificationIds: [],
       dataQualityList: null,
       status: 'Alles',
-      themes: null,
+      themeIds: [],
       street: null,
       distance: null,
     });
@@ -101,11 +101,15 @@ export default class FilterService extends Service {
 
   get asQueryParams() {
     let governingBodyClassificationIds = null;
+    let themeIds = null;
 
     if (this.filters.governingBodyClassificationIds.length >= 1) {
       governingBodyClassificationIds = serializeArray(
         this.filters.governingBodyClassificationIds,
       );
+    }
+    if (this.filters.themeIds.length >= 1) {
+      themeIds = serializeArray(this.filters.themeIds);
     }
 
     const queryParams: FiltersAsQueryParams = {
@@ -117,7 +121,7 @@ export default class FilterService extends Service {
       trefwoord: this.filters.keyword,
       datumsortering: this.filters.dateSort as SortType,
       status: this.filters.status,
-      thema: this.filters.themes,
+      thema: themeIds,
       straat: null, // this.filters.street TODO: once backend is ok
       afstand: null, // this.filters.distance?.label || null TODO: once backend is ok
     };
