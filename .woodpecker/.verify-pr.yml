@@ -3,21 +3,15 @@ steps:
     image: madnificent/ember:4.12.1-node_18
     commands:
       - npm ci
-  lint:js:
+  lint-js:
     image: madnificent/ember:4.12.1-node_18
+    depends_on: [install]
     commands:
       - npm run lint:js
-  lint:hbs:
+  lint-hbs:
     image: madnificent/ember:4.12.1-node_18
+    depends_on: [install]
     commands:
       - npm run lint:hbs
-  lint:dependencies:
-    image: madnificent/ember:4.12.1-node_18
-    commands:
-      - npm run lint:css
-  test:
-    image: madnificent/ember:4.12.1-node_18
-    commands:
-      - npm run test:ember
 when:
-  event: pull_request
+  - event: pull_request

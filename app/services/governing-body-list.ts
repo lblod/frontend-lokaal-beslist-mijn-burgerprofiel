@@ -6,7 +6,7 @@ import { QueryParameterKeys } from 'frontend-burgernabije-besluitendatabank/cons
 import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 import type MunicipalityListService from './municipality-list';
 import type GoverningBodyModel from 'frontend-burgernabije-besluitendatabank/models/governing-body';
-import type GoverningBodyClasssificationCodeModel from 'frontend-burgernabije-besluitendatabank/models/governing-body-classification-code';
+import type GoverningBodyClassificationCodeModel from 'frontend-burgernabije-besluitendatabank/models/governing-body-classification-code';
 import type { AdapterPopulatedRecordArrayWithMeta } from 'frontend-burgernabije-besluitendatabank/utils/ember-data';
 import type GovernmentListService from './government-list';
 import type FilterService from './filter-service';
@@ -26,24 +26,19 @@ export default class GoverningBodyListService extends Service {
   @service declare governmentList: GovernmentListService;
   @service declare filterService: FilterService;
 
-  @tracked selected: GoverningBodyOption[] = [];
+  @tracked selectedIds: Array<string> = [];
   @tracked options: GoverningBodyOption[] = [];
-
-  constructor(...args: []) {
-    super(...args);
-    this.loadOptions();
-  }
 
   /**
    * Get the governing body classification ids from the given labels.
-   * @returns The governing body classifcation ids.
+   * @returns The governing body classification ids.
    **/
 
   async getGoverningBodyClassificationIdsFromLabels(
-    governingBodyLabels?: Array<string> | string,
-  ): Promise<string | undefined> {
+    governingBodyLabels: Array<string> | string | null,
+  ): Promise<string | null> {
     if (!governingBodyLabels) {
-      return undefined;
+      return null;
     }
 
     const options = await this.loadOptions();
@@ -65,8 +60,11 @@ export default class GoverningBodyListService extends Service {
   }
 
   async loadOptions() {
-    const { municipalityLabels, governingBodyClassifications, provinceLabels } =
-      this.filterService.filters;
+    const {
+      municipalityLabels,
+      governingBodyClassificationIds,
+      provinceLabels,
+    } = this.filterService.filters;
     if (
       (municipalityLabels == undefined || municipalityLabels == '') &&
       (provinceLabels == undefined || provinceLabels == '')
@@ -87,7 +85,7 @@ export default class GoverningBodyListService extends Service {
           municipalityLabels?.replace(',', '+'),
         );
       const provinceIds = await this.provinceList.getProvinceIdsFromLabels(
-        provinceLabels?.replace(',', '+'),
+        provinceLabels?.replace(',', '+') || '',
       );
       const governingBodies = await this.store.query('governing-body', {
         filter: {
@@ -104,18 +102,33 @@ export default class GoverningBodyListService extends Service {
         this.getUniqueGoverningBodies(governingBodies),
       );
     }
-    if (governingBodyClassifications != null) {
-      this.selected = this.options.filter((option) =>
-        governingBodyClassifications.split('+').includes(option.label),
-      );
-      if (this.selected.length == 0) {
-        this.router.transitionTo({
-          queryParams: {
-            bestuursorganen: null,
-          },
-        });
-      }
+    this.selectedIds = governingBodyClassificationIds;
+
+    return this.options;
+  }
+
+  async fetchBestuursorgaanOptions(
+    gemeenteLabel?: string,
+  ): Promise<Array<GoverningBodyOption>> {
+    if (!gemeenteLabel) {
+      return [];
     }
+
+    const municipalityIds =
+      await this.municipalityList.getLocationIdsFromLabels(gemeenteLabel);
+    const governingBodies = await this.store.query('governing-body', {
+      filter: {
+        'administrative-unit': {
+          location: {
+            ':id:': municipalityIds.join(','),
+          },
+        },
+      },
+      include: 'classification',
+    });
+    this.options = this.sortOptions(
+      this.getUniqueGoverningBodies(governingBodies),
+    );
 
     return this.options;
   }
@@ -146,7 +159,7 @@ export default class GoverningBodyListService extends Service {
   }
 
   getUniqueClassifications(
-    classifications: AdapterPopulatedRecordArrayWithMeta<GoverningBodyClasssificationCodeModel>,
+    classifications: AdapterPopulatedRecordArrayWithMeta<GoverningBodyClassificationCodeModel>,
   ) {
     const uniqueLabels = new Set();
 

@@ -22,7 +22,10 @@ interface Signature {
     endQueryParam: string;
     start?: ISODateString;
     end?: ISODateString;
-    updateSelected: (start: string | null, end: string | null) => void;
+    updateSelected: (
+      start: ISODateString | null,
+      end: ISODateString | null,
+    ) => void;
   };
 }
 
@@ -43,8 +46,8 @@ export default class DateRangeFilterComponent extends Component<Signature> {
   readonly MAX_DATE = new Date(this.MAX);
 
   @service declare router: RouterService;
-  @tracked start: string | null;
-  @tracked end: string | null;
+  @tracked start: ISODateString | null;
+  @tracked end: ISODateString | null;
   @tracked selectedPreset: Preset | null = null;
   @tracked isChoosingPresets = true;
   @tracked endDateError?: string[];
@@ -133,7 +136,7 @@ export default class DateRangeFilterComponent extends Component<Signature> {
     }
   }
 
-  @action handleStartDateChange(newDate: string | null): void {
+  @action handleStartDateChange(newDate: ISODateString | null): void {
     this.start = newDate;
 
     if (this.isDateComplete(newDate)) {
@@ -141,7 +144,7 @@ export default class DateRangeFilterComponent extends Component<Signature> {
     }
   }
 
-  @action handleEndDateChange(newDate: string | null): void {
+  @action handleEndDateChange(newDate: ISODateString | null): void {
     this.end = newDate;
 
     if (this.isDateComplete(newDate)) {
@@ -149,7 +152,7 @@ export default class DateRangeFilterComponent extends Component<Signature> {
     }
   }
 
-  isDateComplete(date: string | null): boolean {
+  isDateComplete(date: ISODateString | null): boolean {
     return date === null || date.length === 10;
   }
 

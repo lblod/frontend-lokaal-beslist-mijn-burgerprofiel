@@ -1,19 +1,10 @@
 <AuModalContainer />
 <AuBodyContainer>
-  <div class="c-interface">
-    <div
-      id="filtercontent"
-      class="c-interface__content c-interface__content--fixed au-u-flex au-u-flex--column"
-    >
-      <FilterContent
-        @keyword={{this.keyword}}
-        @showFilter={{this.showFilter}}
-      />
-      <InfiniteListAgendaItemWrapper />
-    </div>
-    <FilterSidebarWrapper
-      @hasFilter={{this.hasFilter}}
-      @hideFilter={{this.hideFilter}}
-    />
-  </div>
+  <Agendapunten::FiltersTopbar
+    @filters={{this.model.filters}}
+    @onShowFiltersPage={{this.goToFilters}}
+    @onFiltersUpdated={{this.refreshRoute}}
+    @onFilterReset={{this.resetFilters}}
+  />
+  <InfiniteListAgendaItemWrapper />
 </AuBodyContainer>

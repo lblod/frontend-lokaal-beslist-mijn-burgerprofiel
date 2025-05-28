@@ -12,6 +12,8 @@ Router.map(function () {
     this.route('session', { path: '/:id/zitting' });
   });
 
+  this.route('filter', { path: 'filters' });
+
   this.route('sessions', { path: '/zittingen' }, function () {
     this.route('session', { path: '/:session_id' });
   });

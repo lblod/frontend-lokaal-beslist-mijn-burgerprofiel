@@ -78,7 +78,7 @@ export default class AgendaItemRoute extends Route {
       )
     )
       .flat()
-      .sort((a, b) => (a.number || '').localeCompare(b.number || ''));
+      .sort((a, b) => a.numberAsInt - b.numberAsInt);
 
     const locationId = agendaItem.session?.municipalityId;
 

@@ -1,0 +1,98 @@
+{{page-title "Filter"}}
+<div class="filters-topbar-go-to-filters au-u-margin-bottom">
+  <div class="au-u-flex au-u-flex--end">
+    <AuButton @skin="link" {{on "click" this.resetFilters}}>
+      Reset filters
+    </AuButton>
+  </div>
+  <AuHr />
+</div>
+<div class="c-interface__sidebar-main au-u-padding-left au-u-padding-right">
+  <section class="au-u-flex au-u-flex--column">
+    <AuLabel for="sort-on">Sorteren</AuLabel>
+    <select
+      id="sort-on"
+      type="select"
+      {{on "change" this.updateSorting}}
+      class="au-c-input au-u-1-1 au-u-max-width-xsmall@small"
+    >
+      <option value="desc" selected={{this.isFilterDescending}}>Nieuwste eerst</option>
+      <option value="asc" selected={{this.isFilterAscending}}>Oudste eerst</option>
+    </select>
+  </section>
+  <AuHr />
+  <Filters::Address::AdressenSelector @id="address-search" />
+  <Filters::SelectFilter
+    @id="distance"
+    @label="Afstand"
+    @options={{this.model.distanceOptions}}
+    @selected={{this.distanceList.selected}}
+    @updateSelected={{this.updateDistance}}
+    @queryParam="afstand"
+    @allowClear={{true}}
+    @searchEnabled={{false}}
+    @placeholder="Alle afstanden"
+    @searchField="label"
+  />
+  <Filters::SelectMultipleFilter
+    @id="theme"
+    @label="Thema"
+    @options={{this.model.themaOptions}}
+    @selected={{this.selectedThemes}}
+    @updateSelected={{this.updateSelectedThemes}}
+    @noMatchesMessage="Geen thema's gevonden"
+    @searchField="label"
+    @queryParam="thema"
+    @placeholder="Alle thema's"
+  />
+  <Filters::DateRangeFilter
+    @startQueryParam="begin"
+    @endQueryParam="eind"
+    @start={{this.startDate}}
+    @end={{this.endDate}}
+    @updateSelected={{this.updateSelectedDateRange}}
+  />
+  <Filters::SelectRadioButtonFilter
+    @id="status"
+    @label="Status agendapunten"
+    @options={{this.model.agendaStatusOptions}}
+    @selected={{this.status}}
+    @updateSelected={{this.setStatus}}
+    @queryParam="status"
+    @allowClear={{false}}
+    @searchEnabled={{false}}
+    @placeholder="Alle agendapunten"
+  />
+  <AuHr />
+  <section class="c-advanced-filter-holder">
+    <Accordion
+      @buttonLabel="GEAVANCEERDE FILTERS"
+      @showBottomBorder={{false}}
+      @isInitiallyOpen={{this.hasSelectedAdvancedFilters}}
+    >
+      <Filters::SelectMultipleCheckboxFilter
+        @id="governing-body"
+        @label="Bestuursorganen"
+        @options={{this.model.bestuursorgaanOptions}}
+        @selected={{this.selectedBestuursorgaanIds}}
+        @updateSelected={{this.updateSelectedGoverningBodyClassifications}}
+        @searchField="label"
+        @queryParam="bestuursorganen"
+      />
+    </Accordion>
+  </section>
+</div>
+<div class="c-interface__sidebar-submit-buttons">
+  <AuHr />
+  <AuButton
+    @skin="primary"
+    @width="block"
+    @disabled={{this.isApplyingFilters}}
+    @loading={{this.isApplyingFilters}}
+    @loadingMessage="hidden"
+    @hideText={{this.isApplyingFilters}}
+    {{on "click" this.goToAgendaItems}}
+  >
+    {{this.showResultsText}}
+  </AuButton>
+</div>

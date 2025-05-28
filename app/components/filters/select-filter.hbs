@@ -14,6 +14,10 @@
     @searchEnabled={{@searchEnabled}}
     as |value|
   >
-    {{value}}
+    {{#if @searchField}}
+      {{get value @searchField}}
+    {{else}}
+      {{value}}
+    {{/if}}
   </PowerSelect>
 </Filters::Filter>

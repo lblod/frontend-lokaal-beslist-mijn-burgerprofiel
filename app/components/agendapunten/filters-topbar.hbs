@@ -1,0 +1,29 @@
+<div class="filters-topbar-go-to-filters">
+  <AuButton
+    @skin="link"
+    @disabled={{not this.itemsService.isFirstPageLoaded}}
+    {{on "click" @onShowFiltersPage}}
+  >Sorteer en filter</AuButton>
+</div>
+{{#if this.hasFilters}}
+  <div class="filters-topbar-active-filters">
+    <div class="pills">
+      {{! TODO make them reactive with the filters/queryParams }}
+      {{#each this.filterValues as |keyValue|}}
+        <AuPill
+          id={{keyValue.key}}
+          @icon="cross"
+          @iconAlignment="right"
+          {{on "click" (fn this.removeFilter keyValue.key)}}
+        >{{keyValue.value}}</AuPill>
+      {{/each}}
+    </div>
+    <div id="reset-button">
+      <AuButton
+        @skin="link"
+        {{on "click" @onFilterReset}}
+        class="au-u-bold"
+      >Reset filters</AuButton>
+    </div>
+  </div>
+{{/if}}

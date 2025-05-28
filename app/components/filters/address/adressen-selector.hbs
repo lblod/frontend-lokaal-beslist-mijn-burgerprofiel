@@ -1,0 +1,23 @@
+<div ...attributes>
+  <div class={{if @hasErrors "ember-power-select--error"}}>
+    <AuLabel for="address">Straat</AuLabel>
+    <PowerSelect
+      @selected={{this.selectedAddress}}
+      @onChange={{perform this.selectSuggestion}}
+      class="z-index-10"
+      @options={{this.addressSuggestion}}
+      @searchEnabled={{true}}
+      @searchField="fullAddress"
+      @search={{perform this.handleKeydown}}
+      @placeholder="Typ een straatnaam"
+      @allowClear={{true}}
+      as |name|
+    >
+      {{name.fullAddress}}
+    </PowerSelect>
+    {{#each @errors as |error|}}
+      <AuHelpText @error={{true}}>{{error.resultMessage}}</AuHelpText>
+    {{/each}}
+  </div>
+
+</div>

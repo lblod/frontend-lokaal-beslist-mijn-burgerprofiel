@@ -15,12 +15,15 @@ import type { MuSearchResponse } from 'frontend-burgernabije-besluitendatabank/s
 import type { AgendaItemsParams } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
 import { action } from '@ember/object';
 import type FilterService from './filter-service';
+import type ThemeListService from './theme-list';
+import { serializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 
 export default class ItemsService extends Service {
   @service declare municipalityList: MunicipalityListService;
   @service declare provinceList: ProvinceListService;
   @service declare governingBodyList: GoverningBodyListService;
   @service declare governmentList: GovernmentListService;
+  @service declare themeList: ThemeListService;
   @service declare muSearch: MuSearchService;
   @service declare governingBodyDisabledList: GoverningBodyDisabledList;
   @service declare filterService: FilterService;
@@ -29,8 +32,8 @@ export default class ItemsService extends Service {
   @tracked sessions: Session[] = [];
   @tracked totalAgendaItems = 0;
   @tracked totalSessions = 0;
+  @tracked currentAgendaItemPage = 0;
 
-  currentAgendaItemPage = 0;
   currentSessionPage = 0;
 
   get filters() {
@@ -46,6 +49,14 @@ export default class ItemsService extends Service {
 
   get canLoadMoreSessions() {
     return this.sessions.length < this.totalSessions;
+  }
+
+  get isFirstPageLoaded() {
+    if (this.currentAgendaItemPage >= 1) {
+      return true;
+    }
+
+    return this.currentAgendaItemPage === 0 && !this.loadAgendaItems.isRunning;
   }
 
   @action
@@ -73,7 +84,7 @@ export default class ItemsService extends Service {
   async fetchLocationIds() {
     const municipalityIds =
       await this.municipalityList.getLocationIdsFromLabels(
-        this.filters?.municipalityLabels || [],
+        this.filterService.municipalityLabels,
       );
     const provinceIds = await this.provinceList.getProvinceIdsFromLabels(
       this.filters?.provinceLabels || [],
@@ -98,34 +109,21 @@ export default class ItemsService extends Service {
     async (page: number, loadMore = false) => {
       if (!this.filters) return;
       const locationIds = await this.fetchLocationIds();
-      const governingBodyClassificationIds =
-        await this.governingBodyList.getGoverningBodyClassificationIdsFromLabels(
-          this.filters.governingBodyClassifications,
-        );
-
+      const themeIds = this.filterService.asQueryParams.thema;
+      const governingBodyClassificationIds = serializeArray(
+        this.filters.governingBodyClassificationIds,
+      );
       const agendaItems: MuSearchResponse<AgendaItem> =
         await this.muSearch.search(
           createAgendaItemsQuery({
             index: 'agenda-items',
             page,
             locationIds,
+            themeIds,
             governingBodyClassificationIds,
-            ...this.filters,
+            filters: this.filters,
           }),
         );
-      if (loadMore === false) {
-        const sessions: MuSearchResponse<Session> = await this.muSearch.search(
-          createSessionsQuery({
-            index: 'sessions',
-            page,
-            size: 1,
-            locationIds,
-            governingBodyClassificationIds,
-            ...this.filters,
-          }),
-        );
-        this.totalSessions = sessions.count ?? 0;
-      }
       const filteredAgendaItems = agendaItems.items.filter(
         (item) =>
           !this.governingBodyDisabledList.disabledList.some((disabled) =>
@@ -148,32 +146,20 @@ export default class ItemsService extends Service {
       if (!this.filters) return;
 
       const locationIds = await this.fetchLocationIds();
-      const governingBodyClassificationIds =
-        await this.governingBodyList.getGoverningBodyClassificationIdsFromLabels(
-          this.filters.governingBodyClassifications,
-        );
-      if (loadMore === false) {
-        const agendaItems: MuSearchResponse<AgendaItem> =
-          await this.muSearch.search(
-            createAgendaItemsQuery({
-              index: 'agenda-items',
-              page,
-              size: 1,
-              locationIds,
-              governingBodyClassificationIds,
-              ...this.filters,
-            }),
-          );
-        this.totalAgendaItems = agendaItems.count ?? 0;
-      }
-
+      const governingBodyClassificationIds = serializeArray(
+        this.filters.governingBodyClassificationIds,
+      );
       const sessions: MuSearchResponse<Session> = await this.muSearch.search(
         createSessionsQuery({
           index: 'sessions',
           page,
           locationIds,
           governingBodyClassificationIds,
-          ...this.filters,
+          plannedStartMin: this.filters.plannedStartMin,
+          plannedStartMax: this.filters.plannedStartMax,
+          dateSort: this.filters.dateSort,
+          status: this.filters.status,
+          keyword: this.filters.keyword,
         }),
       );
       this.sessions = loadMore

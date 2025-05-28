@@ -46,6 +46,7 @@ export default class SelectMultipleFilterComponent extends FilterComponent<Signa
       }, {});
 
     const queryParams = selectedOptions.reduce((acc, { label, type }) => {
+      type ??= this.args.queryParam;
       return {
         ...acc,
         ...(type && { [type]: acc[type] ? `${acc[type]}+${label}` : label }),

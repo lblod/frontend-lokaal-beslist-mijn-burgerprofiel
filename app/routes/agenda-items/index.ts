@@ -1,7 +1,9 @@
 import Route from '@ember/routing/route';
 import { service } from '@ember/service';
+
 import { QueryParameterKeys } from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
 import type { AgendaItemsParams } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
+
 import type FeaturesService from 'frontend-burgernabije-besluitendatabank/services/features';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
 import type ItemsService from 'frontend-burgernabije-besluitendatabank/services/items-service';
@@ -19,7 +21,7 @@ export default class AgendaItemsIndexRoute extends Route {
       as: QueryParameterKeys.provinces,
       refreshModel: true,
     },
-    governingBodyClassifications: {
+    governingBodyClassificationIds: {
       as: QueryParameterKeys.governingBodies,
       refreshModel: true,
     },
@@ -43,11 +45,28 @@ export default class AgendaItemsIndexRoute extends Route {
       as: QueryParameterKeys.status,
       refreshModel: true,
     },
+    themeIds: {
+      as: QueryParameterKeys.themes,
+      refreshModel: true,
+    },
+    street: {
+      as: QueryParameterKeys.street,
+      refreshModel: true,
+    },
+    distance: {
+      as: QueryParameterKeys.distance,
+      refreshModel: true,
+    },
   };
 
-  async model(params: AgendaItemsParams) {
+  model(params: Partial<AgendaItemsParams>) {
+    this.filterService.setMunicipalityInStorage(
+      params.municipalityLabels || null,
+    );
+    this.filterService.updateFiltersFromParams(params);
     this.itemsService.resetAgendaItems();
-    this.filterService.updateFilters(params);
-    this.itemsService.initialAgendaItems(params);
+    this.itemsService.initialAgendaItems(this.filterService.filters);
+
+    return { filters: this.filterService.asQueryParams };
   }
 }

@@ -1,29 +1,37 @@
 import Service, { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
+
+import type RouterService from '@ember/routing/router-service';
+
 import type {
   AgendaItemsParams,
+  FiltersAsQueryParams,
   SortType,
 } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
-import type ItemsService from './items-service';
-import { action } from '@ember/object';
-import type RouterService from '@ember/routing/router-service';
-import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
 import { keywordSearch } from 'frontend-burgernabije-besluitendatabank/helpers/keyword-search';
+import {
+  deserializeArray,
+  serializeArray,
+} from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 
+const MUNICIPALITY_SESSION_KEY = 'municipality-labels';
 export default class FilterService extends Service {
   @service declare router: RouterService;
-  @service declare itemsService: ItemsService;
+
   @tracked keywordAdvancedSearch: { [key: string]: string[] } | null = null;
   @tracked filters: AgendaItemsParams = {
-    keyword: '',
-    municipalityLabels: '',
-    provinceLabels: '',
-    plannedStartMin: '',
-    plannedStartMax: '',
+    keyword: null,
+    municipalityLabels: this.municipalityLabels || null,
+    provinceLabels: null,
+    plannedStartMin: null,
+    plannedStartMax: null,
     dateSort: 'desc' as SortType,
-    governingBodyClassifications: '',
+    governingBodyClassificationIds: [],
     dataQualityList: [],
-    status: 'Alles',
+    status: '',
+    themeIds: [],
+    street: null,
+    distance: null,
   };
 
   updateFilters(newFilters: Partial<AgendaItemsParams>) {
@@ -41,10 +49,134 @@ export default class FilterService extends Service {
     }
     this.filters = { ...this.filters, ...newFilters };
   }
-  @action
-  handleDateSortChange(event: { target: { value: SortType } }) {
-    const queryParams = { [QueryParameterKeys.dateSort]: event?.target?.value };
-    this.router.transitionTo({ queryParams });
-    this.updateFilters({ dateSort: event?.target?.value });
+
+  updateFiltersFromParams(params: Partial<AgendaItemsParams>) {
+    // Mismatch in type as these are + separated strings here and not an array of string
+    const bestuursorgaanIdsAsString =
+      params.governingBodyClassificationIds as unknown as string;
+    const themeIdsAsString = params.themeIds as unknown as string;
+    delete params.governingBodyClassificationIds;
+    delete params.themeIds;
+    this.updateFilters({
+      ...params,
+      governingBodyClassificationIds: deserializeArray(
+        bestuursorgaanIdsAsString,
+      ),
+      themeIds: deserializeArray(themeIdsAsString),
+    });
+  }
+
+  resetFiltersToInitialView() {
+    this.updateFilters({
+      keyword: null,
+      municipalityLabels: this.municipalityLabels,
+      provinceLabels: null,
+      plannedStartMin: null,
+      plannedStartMax: null,
+      dateSort: 'desc' as SortType,
+      governingBodyClassificationIds: [],
+      dataQualityList: null,
+      status: 'Alles',
+      themeIds: [],
+      street: null,
+      distance: null,
+    });
+  }
+
+  updateFilterFromQueryParamKey(
+    key: keyof FiltersAsQueryParams,
+    value: string | string[] | null,
+  ) {
+    const filterKey = this.getFilterKeyForQueryParamKey(key);
+    this.filters[filterKey] = value as string & string[] & null;
+  }
+
+  getFilterKeyForQueryParamKey(
+    key: keyof FiltersAsQueryParams,
+  ): keyof AgendaItemsParams {
+    // TODO: combine QueryParameterKeys with these, QueryParameterKeys are the starting point
+    const mapping = {
+      gemeentes: 'municipalityLabels',
+      provincies: 'provinceLabels',
+      bestuursorganen: 'governingBodyClassifications',
+      begin: 'plannedStartMin',
+      eind: 'plannedStartMax',
+      trefwoord: 'keyword',
+      datumsortering: 'dateSort',
+      status: 'status',
+      thema: 'themes',
+      straat: 'street',
+      afstand: 'distance',
+    };
+
+    return mapping[key] as keyof AgendaItemsParams;
+  }
+
+  get hasActiveUserFilters() {
+    const withoutMunicipality = { ...this.asQueryParams };
+    delete withoutMunicipality.gemeentes;
+
+    return !Object.values(withoutMunicipality).every((param) => !param);
+  }
+
+  get asQueryParams() {
+    let governingBodyClassificationIds = null;
+    let themeIds = null;
+
+    if (this.filters.governingBodyClassificationIds.length >= 1) {
+      governingBodyClassificationIds = serializeArray(
+        this.filters.governingBodyClassificationIds,
+      );
+    }
+    if (this.filters.themeIds.length >= 1) {
+      themeIds = serializeArray(this.filters.themeIds);
+    }
+
+    const queryParams: FiltersAsQueryParams = {
+      gemeentes: this.municipalityLabels,
+      provincies: this.filters.provinceLabels,
+      bestuursorganen: governingBodyClassificationIds,
+      begin: this.filters.plannedStartMin,
+      eind: this.filters.plannedStartMax,
+      trefwoord: this.filters.keyword,
+      datumsortering: this.filters.dateSort as SortType,
+      status: this.filters.status !== '' ? this.filters.status : undefined,
+      thema: themeIds,
+      straat: null, // this.filters.street TODO: once backend is ok
+      afstand: null, // this.filters.distance?.label || null TODO: once backend is ok
+    };
+
+    if (queryParams.status == 'Alles') {
+      delete queryParams.status;
+    }
+    if (queryParams.datumsortering == 'desc') {
+      delete queryParams.datumsortering;
+    }
+    return queryParams;
+  }
+
+  get resetQueryParams() {
+    return {
+      provincies: null,
+      bestuursorganen: null,
+      begin: null,
+      eind: null,
+      trefwoord: null,
+      datumsortering: null,
+      status: null,
+      thema: null,
+      straat: null,
+      afstand: null,
+    };
+  }
+
+  get municipalityLabels() {
+    return sessionStorage.getItem(MUNICIPALITY_SESSION_KEY) || undefined;
+  }
+
+  setMunicipalityInStorage(municipalityLabels: string | null) {
+    if (!this.municipalityLabels && municipalityLabels) {
+      sessionStorage.setItem(MUNICIPALITY_SESSION_KEY, municipalityLabels);
+    }
   }
 }
