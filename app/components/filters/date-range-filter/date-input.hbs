@@ -1,14 +1,14 @@
-<input
-  {{! class="au-c-input au-c-input--block" }}
-  class="au-c-input au-c-input--block {{if @errorMessage 'au-c-input--error'}}"
-  type="date"
-  value={{@value}}
-  min={{@min}}
-  max={{@max}}
-  disabled={{if @disabled "true" ""}}
-  {{on "change" this.handleChange}}
-  ...attributes
+<AuDatePicker
+  @alignment={{this.alignment}}
+  @id={{this.id}}
+  @value={{@value}}
+  @min={{@min}}
+  @max={{@max}}
+  @error={{gt @errorMessage.length 0}}
+  @disabled={{@disabled}}
+  @onChange={{@onChange}}
 />
+
 {{#if @errorMessage}}
   {{#each @errorMessage as |message|}}
     <AuHelpText @error={{true}}>{{message}}</AuHelpText>

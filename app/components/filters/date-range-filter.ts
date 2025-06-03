@@ -138,7 +138,6 @@ export default class DateRangeFilterComponent extends Component<Signature> {
 
   @action handleStartDateChange(newDate: ISODateString | null): void {
     this.start = newDate;
-
     if (this.isDateComplete(newDate)) {
       this.updateQueryParamsIfValid();
     }
