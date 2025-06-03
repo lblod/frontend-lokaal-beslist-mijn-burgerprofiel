@@ -25,6 +25,7 @@ interface Signature {
     updateSelected: (
       start: ISODateString | null,
       end: ISODateString | null,
+      hasErrors: boolean,
     ) => void;
   };
 }
@@ -129,7 +130,7 @@ export default class DateRangeFilterComponent extends Component<Signature> {
         this.start = presetStart;
         this.end = presetEnd;
         this.updateQueryParams();
-        this.args.updateSelected(presetStart, presetEnd);
+        this.args.updateSelected(presetStart, presetEnd, false);
       }
     } else {
       this.resetQueryParams();
@@ -242,13 +243,23 @@ export default class DateRangeFilterComponent extends Component<Signature> {
     this.start = null;
     this.end = null;
     this.updateQueryParams();
-    this.args.updateSelected(null, null);
+    this.args.updateSelected(null, null, false);
+  }
+
+  get hasErrors() {
+    const start = this.startDateError?.length || 0;
+    const end = this.endDateError?.length || 0;
+    if (start === 0 && end === 0) {
+      return false;
+    }
+
+    return true;
   }
 
   updateQueryParams(): void {
     const start = !this.startDateError?.length ? this.start : null;
     const end = !this.endDateError?.length ? this.end : null;
-    this.args.updateSelected(start, end);
+    this.args.updateSelected(start, end, this.hasErrors);
   }
 }
 
