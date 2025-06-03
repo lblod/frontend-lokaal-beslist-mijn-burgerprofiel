@@ -246,16 +246,9 @@ export default class DateRangeFilterComponent extends Component<Signature> {
   }
 
   updateQueryParams(): void {
-    this.router.transitionTo({
-      queryParams: {
-        [this.args.startQueryParam || 'start']: !this.startDateError?.length
-          ? this.start
-          : null,
-        [this.args.endQueryParam || 'end']: !this.endDateError?.length
-          ? this.end
-          : null,
-      },
-    });
+    const start = !this.startDateError?.length ? this.start : null;
+    const end = !this.endDateError?.length ? this.end : null;
+    this.args.updateSelected(start, end);
   }
 }
 
