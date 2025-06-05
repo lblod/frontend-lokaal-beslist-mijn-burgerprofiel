@@ -17,6 +17,8 @@ import { action } from '@ember/object';
 import type FilterService from './filter-service';
 import type ThemeListService from './theme-list';
 import { serializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
+import type DistanceListService from './distance-list';
+import type AddressService from './address';
 
 export default class ItemsService extends Service {
   @service declare municipalityList: MunicipalityListService;
@@ -24,7 +26,9 @@ export default class ItemsService extends Service {
   @service declare governingBodyList: GoverningBodyListService;
   @service declare governmentList: GovernmentListService;
   @service declare themeList: ThemeListService;
+  @service declare distanceList: DistanceListService;
   @service declare muSearch: MuSearchService;
+  @service declare address: AddressService;
   @service declare governingBodyDisabledList: GoverningBodyDisabledList;
   @service declare filterService: FilterService;
 
@@ -110,6 +114,13 @@ export default class ItemsService extends Service {
       if (!this.filters) return;
       const locationIds = await this.fetchLocationIds();
       const themeIds = this.filterService.asQueryParams.thema;
+      const distance = this.distanceList.getSelectedDistance(
+        this.filterService.asQueryParams.afstand ?? '',
+      );
+      const address = await this.address.getSelectedAddress.perform(
+        this.filterService.asQueryParams.straat ?? '',
+      );
+
       const governingBodyClassificationIds = serializeArray(
         this.filters.governingBodyClassificationIds,
       );
@@ -121,7 +132,8 @@ export default class ItemsService extends Service {
             locationIds,
             themeIds,
             governingBodyClassificationIds,
-            filters: this.filters,
+            address,
+            filters: { ...this.filters, distance: distance?.value ?? null },
           }),
         );
       const filteredAgendaItems = agendaItems.items.filter(

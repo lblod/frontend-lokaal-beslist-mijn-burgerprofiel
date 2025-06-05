@@ -22,6 +22,7 @@ export function createAgendaItemsQuery({
   locationIds,
   themeIds,
   governingBodyClassificationIds,
+  address,
   filters,
   size = 15,
 }: AgendaItemsQueryArguments): AgendaItemsQueryResult {
@@ -34,6 +35,7 @@ export function createAgendaItemsQuery({
       locationIds,
       governingBodyClassificationIds,
       themeIds,
+      address,
       filters,
     }),
     dataMapping,
@@ -44,6 +46,7 @@ function buildFilters({
   locationIds,
   governingBodyClassificationIds,
   themeIds,
+  address,
   filters,
 }: Partial<AgendaItemsQueryArguments>): Record<string, string> {
   const query: Record<string, string> = {
@@ -59,15 +62,13 @@ function buildFilters({
   }
   if (themeIds) {
     query[':query:themas.uuid'] = themeIds
-      .split(',')
+      .split('+')
       .map((id) => `"${id}"`)
       .join(' OR ');
   }
-  if (filters?.street) {
-    query[':query:street.name'] = filters.street;
-  }
-  if (filters?.distance) {
-    query[':query:distance.uuid'] = filters.distance.id ?? filters.distance;
+  if (filters?.distance || address) {
+    query[':geo:address_geometry_coord'] =
+      `${address?.location.lat}, ${address?.location.lon},${filters?.distance ?? 100}km`;
   }
   if (governingBodyClassificationIds) {
     query[':terms:search_governing_body_classification_id'] =

@@ -21,7 +21,10 @@
     </select>
   </section>
   <AuHr />
-  <Filters::Address::AdressenSelector @id="address-search" />
+  <Filters::Address::AdressenSelector
+    @id="address-search"
+    @selected={{this.distanceList.selected}}
+  />
   <Filters::SelectFilter
     @id="distance"
     @label="Afstand"
