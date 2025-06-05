@@ -8,10 +8,7 @@ export default modifier(function initializeMbpSdk(
 ) {
   (async () => {
     const client: MbpEmbedClient = createMbpEmbedClient(clientId, {
-      allowedHosts: [
-        'https://*.burgerprofiel.be/*',
-        'https://admin.vlaanderen.be/*',
-      ],
+      allowedHosts: ['https://mbp.lokaalbeslist.lblod.info/'],
       element,
     });
 
