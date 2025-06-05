@@ -17,7 +17,7 @@ module.exports = function (environment) {
       domain: '{{PLAUSIBLE_DOMAIN}}',
     },
     APP: {
-      MBP_CLIENT_ID: process.env.MBP_CLIENT_ID,
+      MBP_CLIENT_ID: '{{MBP_CLIENT_ID}}',
     },
     features: {
       // define feature flags here
