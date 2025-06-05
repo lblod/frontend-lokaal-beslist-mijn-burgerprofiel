@@ -1,1 +1,3 @@
-<div {{initialize-mbp-sdk "your-client-id"}}></div>
+{{#if this.clientId}}
+  <div {{initialize-mbp-sdk this.clientId}}></div>
+{{/if}}
