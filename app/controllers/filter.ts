@@ -2,6 +2,7 @@ import Controller from '@ember/controller';
 
 import { action } from '@ember/object';
 import { service } from '@ember/service';
+import { tracked } from '@glimmer/tracking';
 
 import type RouterService from '@ember/routing/router-service';
 import type GoverningBodyListService from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
@@ -23,6 +24,8 @@ export default class FilterController extends Controller {
   @service declare itemsService: ItemsService;
   @service declare themeList: ThemeListService;
   @service declare distanceList: DistanceListService;
+
+  @tracked dateRangeHasErrors = false;
 
   get selectedBestuursorgaanIds() {
     return this.filterService.filters.governingBodyClassificationIds;
@@ -50,6 +53,10 @@ export default class FilterController extends Controller {
 
   get isApplyingFilters() {
     return this.itemsService.loadAgendaItems.isRunning;
+  }
+
+  get filtersHaveErrors() {
+    return this.dateRangeHasErrors;
   }
 
   get showResultsText() {
@@ -100,7 +107,11 @@ export default class FilterController extends Controller {
   }
 
   @action
-  updateSelectedDateRange(start: string, end: string) {
+  updateSelectedDateRange(start: string, end: string, hasErrors = false) {
+    this.dateRangeHasErrors = hasErrors;
+    if (this.dateRangeHasErrors) {
+      return;
+    }
     this.filterService.updateFilters({
       plannedStartMin: start,
       plannedStartMax: end,

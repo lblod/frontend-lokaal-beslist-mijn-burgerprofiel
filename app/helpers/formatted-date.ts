@@ -1,8 +1,8 @@
 import { helper } from '@ember/component/helper';
-import { lightFormat } from 'date-fns';
+import { getFormattedDate } from 'frontend-burgernabije-besluitendatabank/utils/get-formatted-date';
 
 export function formattedDate([date]: [Date]): string {
-  return date ? lightFormat(date, 'dd/MM/yyyy') : '';
+  return getFormattedDate(date);
 }
 
 export default helper(formattedDate);
