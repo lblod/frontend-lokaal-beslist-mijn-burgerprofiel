@@ -8,7 +8,9 @@ declare const config: {
   podModulePrefix: string;
   locationType: 'history' | 'none';
   rootURL: string;
-  APP: Record<string, unknown>;
+  APP: {
+    MBP_CLIENT_ID?: string;
+  };
   plausible: {
     apiHost: string;
     domain: string;

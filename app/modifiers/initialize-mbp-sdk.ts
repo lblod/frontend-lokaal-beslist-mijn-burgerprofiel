@@ -11,6 +11,7 @@ export default modifier(function initializeMbpSdk(
       allowedHosts: [
         'https://*.burgerprofiel.be/*',
         'https://admin.vlaanderen.be/*',
+        'https://mbp.lokaalbeslist.lblod.info/',
       ],
       element,
     });
