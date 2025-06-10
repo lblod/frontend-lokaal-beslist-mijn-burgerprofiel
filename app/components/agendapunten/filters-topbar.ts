@@ -27,7 +27,7 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   }
 
   get filterValues() {
-    const test = Object.entries(this.args.filters)
+    return Object.entries(this.args.filters)
       ?.map(([key, value]) => {
         if (key == QueryParameterKeys.municipalities) {
           return {
@@ -54,7 +54,6 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
         };
       })
       .filter((kv) => kv.value && kv.value !== '');
-    return test;
   }
 
   @action
