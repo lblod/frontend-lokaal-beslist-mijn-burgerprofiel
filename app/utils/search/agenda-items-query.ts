@@ -68,7 +68,7 @@ function buildFilters({
   }
   if (filters?.distance || address) {
     query[':geo:address_geometry_coord'] =
-      `${address?.location.lat}, ${address?.location.lon},${filters?.distance ?? 100}km`;
+      `${address?.location.lat}, ${address?.location.lon},${filters?.distance ?? 50}km`;
   }
   if (governingBodyClassificationIds) {
     query[':terms:search_governing_body_classification_id'] =
