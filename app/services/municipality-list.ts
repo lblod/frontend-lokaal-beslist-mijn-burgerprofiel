@@ -108,9 +108,12 @@ export default class MunicipalityListService extends Service {
     if (!labels || !municipalities) {
       return [];
     }
-
     const locationIds: Array<string> = municipalities
-      .filter(({ label }) => labels?.includes(label))
+      .filter(({ label }) =>
+        labels?.some(
+          (l) => l.trim().toLowerCase() === label.trim().toLowerCase(),
+        ),
+      )
       .map(({ id }) => id);
 
     return locationIds;

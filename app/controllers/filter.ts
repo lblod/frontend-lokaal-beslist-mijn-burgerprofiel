@@ -15,6 +15,7 @@ import type DistanceListService from 'frontend-burgernabije-besluitendatabank/se
 import type { SelectOption, SortType } from './agenda-items/types';
 import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 import { formatNumber } from 'frontend-burgernabije-besluitendatabank/helpers/format-number';
+import type AddressService from 'frontend-burgernabije-besluitendatabank/services/address';
 
 export default class FilterController extends Controller {
   @service declare governingBodyList: GoverningBodyListService;
@@ -24,6 +25,7 @@ export default class FilterController extends Controller {
   @service declare itemsService: ItemsService;
   @service declare themeList: ThemeListService;
   @service declare distanceList: DistanceListService;
+  @service declare address: AddressService;
 
   @tracked dateRangeHasErrors = false;
 
@@ -127,8 +129,9 @@ export default class FilterController extends Controller {
   updateDistance(selectedDistance: DistanceOption) {
     this.distanceList.selected = selectedDistance;
     this.filterService.updateFilters({
-      distance: selectedDistance,
+      distance: selectedDistance?.id,
     });
+    this.itemsService.loadAgendaItems.perform(0, false);
   }
 
   @action
@@ -141,6 +144,8 @@ export default class FilterController extends Controller {
   @action
   async resetFilters() {
     this.governingBodyList.selectedIds = [];
+    this.address.selectedAddress = null;
+    this.distanceList.selected = null;
     this.filterService.resetFiltersToInitialView();
     this.itemsService.loadAgendaItems.perform(0, false);
   }

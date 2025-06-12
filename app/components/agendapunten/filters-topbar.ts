@@ -7,6 +7,7 @@ import type { FiltersAsQueryParams } from 'frontend-burgernabije-besluitendataba
 import type ItemsService from 'frontend-burgernabije-besluitendatabank/services/items-service';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
 import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
+import type DistanceListService from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 
 export interface AgendapuntenFiltersTopbarSignature {
   Args: {
@@ -19,6 +20,7 @@ export interface AgendapuntenFiltersTopbarSignature {
 export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFiltersTopbarSignature> {
   @service declare itemsService: ItemsService;
   @service declare filterService: FilterService;
+  @service declare distanceList: DistanceListService;
 
   get hasFilters() {
     return this.filterValues.length >= 1;
@@ -28,6 +30,19 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
     return Object.entries(this.args.filters)
       ?.map(([key, value]) => {
         if (key == QueryParameterKeys.municipalities) {
+          return {
+            key: null,
+            value: null,
+          };
+        }
+        if (key == QueryParameterKeys.distance && value) {
+          const distanceOption = this.distanceList.getSelectedDistance(value);
+          if (distanceOption) {
+            return {
+              key,
+              value: distanceOption.label,
+            };
+          }
           return {
             key: null,
             value: null,

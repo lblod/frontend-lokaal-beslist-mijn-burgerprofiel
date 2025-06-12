@@ -131,7 +131,6 @@ export default class FilterService extends Service {
     if (this.filters.themeIds.length >= 1) {
       themeIds = serializeArray(this.filters.themeIds);
     }
-
     const queryParams: FiltersAsQueryParams = {
       gemeentes: this.municipalityLabels,
       provincies: this.filters.provinceLabels,
@@ -142,8 +141,8 @@ export default class FilterService extends Service {
       datumsortering: this.filters.dateSort as SortType,
       status: this.filters.status !== '' ? this.filters.status : undefined,
       thema: themeIds,
-      straat: null, // this.filters.street TODO: once backend is ok
-      afstand: null, // this.filters.distance?.label || null TODO: once backend is ok
+      straat: this.filters.street,
+      afstand: this.filters.distance ?? null,
     };
 
     if (queryParams.status == 'Alles') {

@@ -1,6 +1,5 @@
 import type { PageableRequest } from 'frontend-burgernabije-besluitendatabank/services/mu-search';
 import type AgendaItem from 'frontend-burgernabije-besluitendatabank/models/mu-search/agenda-item';
-import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 
 export interface AgendaItemsParams {
   keyword: string | null;
@@ -14,7 +13,7 @@ export interface AgendaItemsParams {
   status: string;
   themeIds: Array<string>;
   street: string | null;
-  distance: DistanceOption | null;
+  distance: string | null;
 }
 
 export type FiltersAsQueryParams = {
@@ -44,6 +43,7 @@ export type AgendaItemsQueryArguments = {
   locationIds?: string;
   provinceIds?: string;
   themeIds: string | null;
+  address?: Address | null;
   governingBodyClassificationIds: string | null;
   filters: AgendaItemsParams;
 };
@@ -77,4 +77,45 @@ export type SortType = 'asc' | 'desc';
 export type SelectOption = {
   id: string;
   label: string;
+};
+
+export interface Address {
+  addressRegisterId: number;
+  street: string;
+  housenumber: string;
+  zipCode: string;
+  municipality: string;
+  fullAddress: string;
+  country: string;
+  location: {
+    lat: number;
+    lon: number;
+  };
+}
+
+type Coordinate = {
+  Lat_WGS84: number;
+  Lon_WGS84: number;
+  X_Lambert72: number;
+  Y_Lambert72: number;
+  X_Lambert2008: number;
+  Y_Lambert2008: number;
+};
+
+type BoundingBox = {
+  LowerLeft: Coordinate;
+  UpperRight: Coordinate;
+};
+
+export type RawAddressResult = {
+  Municipality: string;
+  Zipcode: string;
+  Thoroughfarename: string;
+  Housenumber: string;
+  ID: number;
+  FormattedAddress: string;
+  Location: Coordinate;
+  LocationType: string;
+  BoundingBox: BoundingBox;
+  Country: string;
 };
