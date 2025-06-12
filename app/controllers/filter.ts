@@ -118,7 +118,7 @@ export default class FilterController extends Controller {
   updateDistance(selectedDistance: DistanceOption) {
     this.distanceList.selected = selectedDistance;
     this.filterService.updateFilters({
-      distance: selectedDistance.id,
+      distance: selectedDistance?.id,
     });
     this.itemsService.loadAgendaItems.perform(0, false);
   }

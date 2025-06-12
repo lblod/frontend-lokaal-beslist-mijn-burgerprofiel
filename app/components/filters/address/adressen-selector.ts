@@ -20,12 +20,12 @@ export default class AddressRegisterSelectorComponent extends FilterComponent {
   selectSuggestion = task(async (addressSuggestion) => {
     this.address.selectedAddress = addressSuggestion;
     this.filterService.updateFilters({
-      street: addressSuggestion.fullAddress,
+      street: addressSuggestion?.fullAddress,
     });
     this.itemsService.loadAgendaItems.perform(0, false);
     this.updateQueryParams({
       [QueryParameterKeys.street]: addressSuggestion
-        ? addressSuggestion.fullAddress
+        ? addressSuggestion?.fullAddress
         : undefined,
     });
     if (!this.distanceList.selected) {

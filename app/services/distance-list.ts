@@ -8,7 +8,7 @@ import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constant
 export interface DistanceOption {
   id: string;
   label: string;
-  value: string | null;
+  value: number | null;
 }
 
 export default class DistanceListService extends Service {
@@ -21,32 +21,32 @@ export default class DistanceListService extends Service {
     {
       id: '1',
       label: '< 3 km',
-      value: '3',
+      value: 3,
     },
     {
       id: '2',
       label: '< 5 km',
-      value: '5',
+      value: 5,
     },
     {
       id: '3',
       label: '< 10 km',
-      value: '10',
+      value: 10,
     },
     {
       id: '4',
       label: '< 15 km',
-      value: '15',
+      value: 15,
     },
     {
       id: '5',
       label: '< 25 km',
-      value: '25',
+      value: 25,
     },
     {
       id: '6',
       label: '< 50 km',
-      value: '50',
+      value: 50,
     },
   ]; // This data will be replaced with a query to the API
 
@@ -61,7 +61,10 @@ export default class DistanceListService extends Service {
     return this.options;
   }
 
-  getSelectedDistance(id: string): DistanceOption | undefined {
+  getSelectedDistance(id?: string): DistanceOption | undefined {
+    if (!id || id.trim() === '') {
+      return undefined;
+    }
     return this.options.find((option) => option.id === id);
   }
 }

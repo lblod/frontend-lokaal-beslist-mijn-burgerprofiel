@@ -15,6 +15,7 @@ import {
   parseMuSearchAttributeToString,
 } from 'frontend-burgernabije-besluitendatabank/utils/mu-search-data-format';
 import { keywordSearch } from 'frontend-burgernabije-besluitendatabank/helpers/keyword-search';
+import { deserializeArray } from '../query-params';
 
 export function createAgendaItemsQuery({
   index,
@@ -61,8 +62,7 @@ function buildFilters({
     query[':terms:search_location_id'] = locationIds;
   }
   if (themeIds) {
-    query[':query:themas.uuid'] = themeIds
-      .split('+')
+    query[':query:themas.uuid'] = deserializeArray(themeIds)
       .map((id) => `"${id}"`)
       .join(' OR ');
   }

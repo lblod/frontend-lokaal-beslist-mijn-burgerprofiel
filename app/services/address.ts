@@ -16,19 +16,16 @@ export default class AddressService extends Service {
   @tracked selectedAddress?: Address | null;
 
   getSelectedAddress = task(async (fullAddress: string) => {
-    if (!fullAddress) {
-      return null;
-    }
+    if (!fullAddress) return null;
+
     this.addressSuggestion = await createLocationQuery(fullAddress);
-    return (this.selectedAddress = this.addressSuggestion.find(
-      (addressSuggestion) => {
-        if (addressSuggestion.fullAddress === fullAddress) {
-          this.selectedAddress = addressSuggestion;
-          return true;
-        }
-        return false;
-      },
-    ));
+
+    const matchedAddress = this.addressSuggestion.find(
+      (suggestion) => suggestion.fullAddress === fullAddress,
+    );
+
+    this.selectedAddress = matchedAddress ?? null;
+    return this.selectedAddress;
   });
 
   setSelectedAddress(address: Address) {
