@@ -13,18 +13,16 @@ export default class AddressService extends Service {
   @service declare router: RouterService;
 
   @tracked addressSuggestion: Address[] = [];
-  @tracked selectedAddress?: Address | null;
+  @tracked selectedAddress?: Address;
 
   getSelectedAddress = task(async (fullAddress: string) => {
     if (!fullAddress) return null;
 
     this.addressSuggestion = await createLocationQuery(fullAddress);
 
-    const matchedAddress = this.addressSuggestion.find(
+    this.selectedAddress = this.addressSuggestion.find(
       (suggestion) => suggestion.fullAddress === fullAddress,
     );
-
-    this.selectedAddress = matchedAddress ?? null;
     return this.selectedAddress;
   });
 
