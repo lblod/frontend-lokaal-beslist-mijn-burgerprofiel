@@ -24,9 +24,7 @@ export default class AddressRegisterSelectorComponent extends FilterComponent {
     });
     this.itemsService.loadAgendaItems.perform(0, false);
     this.updateQueryParams({
-      [QueryParameterKeys.street]: addressSuggestion
-        ? addressSuggestion?.fullAddress
-        : undefined,
+      [QueryParameterKeys.street]: addressSuggestion?.fullAddress,
     });
     if (!this.distanceList.selected) {
       this.distanceList.selected =
