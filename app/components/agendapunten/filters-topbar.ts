@@ -89,12 +89,11 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   }
 
   createDistanceFilterLabel() {
-    const key = QueryParameterKeys.distance;
     const distanceValue = this.args.filters.afstand || undefined;
     const distanceOption = this.distanceList.getSelectedDistance(distanceValue);
     if (distanceOption && distanceValue) {
       return {
-        key,
+        key: QueryParameterKeys.distance,
         value: distanceOption.label,
       };
     }
