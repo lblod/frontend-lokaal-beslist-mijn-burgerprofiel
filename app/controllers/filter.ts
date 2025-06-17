@@ -131,8 +131,8 @@ export default class FilterController extends Controller {
   }
 
   @action
-  updateKeyword(event: { target: { value?: string } }) {
-    this.filterService.updateFilters({ keyword: event?.target.value });
+  updateKeyword(keyword: string | null) {
+    this.filterService.updateFilters({ keyword });
     this.itemsService.loadAgendaItems.perform(0, false);
   }
 

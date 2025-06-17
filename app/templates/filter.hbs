@@ -8,14 +8,10 @@
   <AuHr />
 </div>
 <div class="c-interface__sidebar-main au-u-padding-left au-u-padding-right">
-  <section class="au-u-flex au-u-flex--column">
-    <AuLabel for="sort-on">Zoek op titel en inhoud</AuLabel>
-    <AuInput
-      value={{this.keywordValue}}
-      placeholder="Zoek in lokale agendapunten"
-      {{on "input" this.updateKeyword}}
-    />
-  </section>
+  <Filters::AdvancedInputSearch
+    @value={{this.filterService.filters.keyword}}
+    @onUpdateKeyword={{this.updateKeyword}}
+  />
   <section class="au-u-flex au-u-flex--column">
     <AuLabel for="sort-on">Sorteren</AuLabel>
     <select

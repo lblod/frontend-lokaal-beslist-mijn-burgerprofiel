@@ -1,0 +1,9 @@
+<div>
+  <AuLabel for="sort-on">Zoek op titel en inhoud</AuLabel>
+  <AuInput
+    @width="block"
+    value={{@value}}
+    placeholder="Zoek in lokale agendapunten"
+    {{on "input" this.updateKeyword}}
+  />
+</div>
