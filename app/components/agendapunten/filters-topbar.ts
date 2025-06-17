@@ -27,27 +27,58 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   }
 
   get filterValues() {
-    return Object.entries(this.args.filters)
-      ?.map(([key, value]) =>
-        this.getFormattedLabelForFilter(key, value as string | undefined),
-      )
-      .filter((kv) => kv && kv.value && kv.value !== '');
+    return this.filterKeys
+      .map((key) => this.getFormattedLabelForFilter(key))
+      .filter((kv) => kv);
   }
 
-  getFormattedLabelForFilter(key: string, value?: string) {
-    const labelForFilter = {
-      [QueryParameterKeys.municipalities]: {
-        key: null,
-        value: null,
-      },
-      [QueryParameterKeys.distance]: this.createDistanceFilterLabel(
-        key,
-        value as string | undefined,
-      ),
-    };
+  get filterKeys() {
+    console.log(`filter`, this.args.filters);
+    const keysOfFilters = Object.keys(this.args.filters);
+    const keysWithValue = keysOfFilters.filter((key) => {
+      const filterValue = this.args.filters[key as keyof FiltersAsQueryParams];
+      if (!filterValue || filterValue.trim?.() === '') {
+        return false;
+      }
 
-    if (Object.keys(labelForFilter).includes(key)) {
-      return labelForFilter[key];
+      if (this.hiddenFilterKeys.includes(key)) {
+        return false;
+      }
+
+      return true;
+    });
+    if (
+      keysOfFilters.includes(QueryParameterKeys.start || QueryParameterKeys.end)
+    ) {
+      keysWithValue.push('periode');
+    }
+
+    return keysWithValue;
+  }
+
+  get hiddenFilterKeys() {
+    return [
+      QueryParameterKeys.municipalities,
+      QueryParameterKeys.provinces,
+      QueryParameterKeys.start, // this is handled as one label with end
+      QueryParameterKeys.end, // this is handled as one label with start
+    ];
+  }
+
+  get keyFormatMapping() {
+    return {
+      [QueryParameterKeys.distance]: this.createDistanceFilterLabel(),
+      ['periode']: this.createPeriodFilterLabel(),
+    };
+  }
+
+  getFormattedLabelForFilter(key: string) {
+    if (Object.keys(this.keyFormatMapping).includes(key)) {
+      return this.keyFormatMapping[key];
+    }
+    const value = this.args.filters[key as keyof FiltersAsQueryParams];
+    if (!value) {
+      return null;
     }
 
     return {
@@ -56,18 +87,39 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
     };
   }
 
-  createDistanceFilterLabel(key: string, value?: string) {
-    const distanceOption = this.distanceList.getSelectedDistance(value);
-    if (distanceOption && value) {
+  createDistanceFilterLabel() {
+    const key = QueryParameterKeys.distance;
+    const distanceValue = this.args.filters.afstand || undefined;
+    const distanceOption = this.distanceList.getSelectedDistance(distanceValue);
+    if (distanceOption && distanceValue) {
       return {
         key,
         value: distanceOption.label,
       };
     }
-    return {
-      key: null,
-      value: null,
-    };
+    return null;
+  }
+
+  createPeriodFilterLabel() {
+    const start = this.args.filters.begin;
+    const end = this.args.filters.eind;
+
+    if (start && end) {
+      return {
+        key: 'periode',
+        value: `Van ${start} tot ${end}`,
+      };
+    } else if (start) {
+      return {
+        key: 'periode',
+        value: `Van ${start}`,
+      };
+    } else if (end) {
+      return {
+        key: 'periode',
+        value: `Tot ${end}`,
+      };
+    }
   }
 
   @action
