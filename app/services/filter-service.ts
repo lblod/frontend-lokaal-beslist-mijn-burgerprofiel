@@ -88,12 +88,16 @@ export default class FilterService extends Service {
     value: string | string[] | null,
   ) {
     const filterKey = this.getFilterKeyForQueryParamKey(key);
+    if (!filterKey) {
+      return null;
+    }
+
     this.filters[filterKey] = value as string & string[] & null;
   }
 
   getFilterKeyForQueryParamKey(
     key: keyof FiltersAsQueryParams,
-  ): keyof AgendaItemsParams {
+  ): keyof AgendaItemsParams | null {
     // TODO: combine QueryParameterKeys with these, QueryParameterKeys are the starting point
     const mapping = {
       gemeentes: 'municipalityLabels',
@@ -108,6 +112,10 @@ export default class FilterService extends Service {
       straat: 'street',
       afstand: 'distance',
     };
+
+    if (!Object.keys(mapping).includes(key)) {
+      return null;
+    }
 
     return mapping[key] as keyof AgendaItemsParams;
   }

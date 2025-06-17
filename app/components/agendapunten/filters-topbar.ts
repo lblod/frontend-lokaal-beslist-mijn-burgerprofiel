@@ -17,6 +17,8 @@ export interface AgendapuntenFiltersTopbarSignature {
   Element: null;
 }
 
+const PERIOD_KEY = 'periode';
+
 export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFiltersTopbarSignature> {
   @service declare itemsService: ItemsService;
   @service declare filterService: FilterService;
@@ -33,7 +35,6 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   }
 
   get filterKeys() {
-    console.log(`filter`, this.args.filters);
     const keysOfFilters = Object.keys(this.args.filters);
     const keysWithValue = keysOfFilters.filter((key) => {
       const filterValue = this.args.filters[key as keyof FiltersAsQueryParams];
@@ -50,7 +51,7 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
     if (
       keysOfFilters.includes(QueryParameterKeys.start || QueryParameterKeys.end)
     ) {
-      keysWithValue.push('periode');
+      keysWithValue.push(PERIOD_KEY);
     }
 
     return keysWithValue;
@@ -68,7 +69,7 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   get keyFormatMapping() {
     return {
       [QueryParameterKeys.distance]: this.createDistanceFilterLabel(),
-      ['periode']: this.createPeriodFilterLabel(),
+      [PERIOD_KEY]: this.createPeriodFilterLabel(),
     };
   }
 
@@ -106,25 +107,40 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
 
     if (start && end) {
       return {
-        key: 'periode',
+        key: PERIOD_KEY,
         value: `Van ${start} tot ${end}`,
       };
     } else if (start) {
       return {
-        key: 'periode',
+        key: QueryParameterKeys.start,
         value: `Van ${start}`,
       };
     } else if (end) {
       return {
-        key: 'periode',
+        key: QueryParameterKeys.end,
         value: `Tot ${end}`,
       };
     }
   }
 
   @action
-  removeFilter(queryParamKey: keyof FiltersAsQueryParams) {
-    this.filterService.updateFilterFromQueryParamKey(queryParamKey, null);
+  removeFilter(queryParamKey: string) {
+    if (queryParamKey === 'periode') {
+      this.filterService.updateFilterFromQueryParamKey(
+        QueryParameterKeys.start as keyof FiltersAsQueryParams,
+        null,
+      );
+      this.filterService.updateFilterFromQueryParamKey(
+        QueryParameterKeys.end as keyof FiltersAsQueryParams,
+        null,
+      );
+    } else {
+      this.filterService.updateFilterFromQueryParamKey(
+        queryParamKey as keyof FiltersAsQueryParams,
+        null,
+      );
+    }
+
     this.args.onFiltersUpdated?.();
   }
 }
