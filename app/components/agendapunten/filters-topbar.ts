@@ -28,32 +28,46 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
 
   get filterValues() {
     return Object.entries(this.args.filters)
-      ?.map(([key, value]) => {
-        if (key == QueryParameterKeys.municipalities) {
-          return {
-            key: null,
-            value: null,
-          };
-        }
-        if (key == QueryParameterKeys.distance && value) {
-          const distanceOption = this.distanceList.getSelectedDistance(value);
-          if (distanceOption) {
-            return {
-              key,
-              value: distanceOption.label,
-            };
-          }
-          return {
-            key: null,
-            value: null,
-          };
-        }
-        return {
-          key,
-          value: value,
-        };
-      })
-      .filter((kv) => kv.value && kv.value !== '');
+      ?.map(([key, value]) =>
+        this.getFormattedLabelForFilter(key, value as string | undefined),
+      )
+      .filter((kv) => kv && kv.value && kv.value !== '');
+  }
+
+  getFormattedLabelForFilter(key: string, value?: string) {
+    const labelForFilter = {
+      [QueryParameterKeys.municipalities]: {
+        key: null,
+        value: null,
+      },
+      [QueryParameterKeys.distance]: this.createDistanceFilterLabel(
+        key,
+        value as string | undefined,
+      ),
+    };
+
+    if (Object.keys(labelForFilter).includes(key)) {
+      return labelForFilter[key];
+    }
+
+    return {
+      key,
+      value: value,
+    };
+  }
+
+  createDistanceFilterLabel(key: string, value?: string) {
+    const distanceOption = this.distanceList.getSelectedDistance(value);
+    if (distanceOption && value) {
+      return {
+        key,
+        value: distanceOption.label,
+      };
+    }
+    return {
+      key: null,
+      value: null,
+    };
   }
 
   @action
