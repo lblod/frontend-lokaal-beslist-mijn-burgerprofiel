@@ -10,6 +10,7 @@
 <div class="c-interface__sidebar-main au-u-padding-left au-u-padding-right">
   <Filters::AdvancedInputSearch
     @value={{this.filterService.filters.keyword}}
+    @searchOnlyOnTitle={{this.filterService.filters.keywordSearchOnlyInTitle}}
     @onUpdateKeyword={{this.updateKeyword}}
   />
   <section class="au-u-flex au-u-flex--column">

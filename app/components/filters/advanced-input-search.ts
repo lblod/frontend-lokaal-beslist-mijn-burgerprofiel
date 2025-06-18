@@ -3,18 +3,44 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 
+import { task, timeout } from 'ember-concurrency';
+
 export interface FiltersAdvancedInputSearchSignature {
   Args: {
-    onUpdateKeyword?: (keyword: string | null) => void;
+    value: string | null;
+    searchOnlyOnTitle?: string | null;
+    onUpdateKeyword?: (keyword: string | null, onlyOnTitle: boolean) => void;
   };
 }
 
 export default class FiltersAdvancedInputSearch extends Component<FiltersAdvancedInputSearchSignature> {
   @tracked isInfoModalOpen = false;
 
+  get isSearchOnTitleCheckboxDisabled() {
+    return !this.args.value || this.args.value.trim?.() === '';
+  }
+
+  updateKeyword = task(
+    { restartable: true },
+    async (event: { target: { value?: string } }) => {
+      await timeout(250);
+      this.args.onUpdateKeyword?.(
+        event.target.value || null,
+        this.isSearchOnTitle,
+      );
+    },
+  );
+
+  get isSearchOnTitle() {
+    if (this.args.searchOnlyOnTitle && this.args.searchOnlyOnTitle == 'true') {
+      return true;
+    }
+    return false;
+  }
+
   @action
-  updateKeyword(event: { target: { value?: string } }) {
-    this.args.onUpdateKeyword?.(event.target.value || null);
+  toggleSearchOnTitle() {
+    this.args.onUpdateKeyword?.(this.args.value, !this.isSearchOnTitle);
   }
 
   @action

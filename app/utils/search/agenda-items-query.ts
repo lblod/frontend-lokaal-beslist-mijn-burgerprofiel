@@ -86,9 +86,13 @@ function buildFilters({
         query[':has-no:description'] = 't';
       }
     } else {
+      const narrowDownByFields = ['title', 'description'];
+      if (filters.keywordSearchOnlyInTitle == 'true') {
+        narrowDownByFields.pop();
+      }
       const parsedResults = keywordSearch([
         filters?.keyword,
-        ['title', 'description'],
+        narrowDownByFields,
       ]);
       const buildQuery = [];
       if (parsedResults !== null) {

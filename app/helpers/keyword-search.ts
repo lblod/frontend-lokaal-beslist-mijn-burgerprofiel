@@ -85,6 +85,13 @@ export function keywordSearch([query, searchField]: [
   string,
   string[]?,
 ]): ParsedResults | null {
+  const queryParts = formatQueryToParts(query, ['OR', 'NOT', 'MUST']);
+  if (queryParts.length === 0 && searchField && searchField.length >= 1) {
+    return {
+      ['must']: searchField?.map((field) => `${field}:"${query}"`) || [],
+    };
+  }
+
   return getKeywordAdvancedSearch(query, searchField);
 }
 

@@ -131,8 +131,11 @@ export default class FilterController extends Controller {
   }
 
   @action
-  updateKeyword(keyword: string | null) {
-    this.filterService.updateFilters({ keyword });
+  updateKeyword(keyword: string | null, onlyOnTitle: boolean) {
+    this.filterService.updateFilters({
+      keyword,
+    });
+    this.filterService.searchOnTitleOnly(onlyOnTitle);
     this.itemsService.loadAgendaItems.perform(0, false);
   }
 

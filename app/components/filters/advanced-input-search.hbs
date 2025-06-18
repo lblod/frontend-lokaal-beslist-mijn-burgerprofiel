@@ -4,7 +4,7 @@
     @width="block"
     value={{@value}}
     placeholder="Zoek in lokale agendapunten"
-    {{on "input" this.updateKeyword}}
+    {{on "input" (perform this.updateKeyword)}}
   />
   <div class="au-u-flex au-u-flex--end">
     <AuButton
@@ -16,8 +16,14 @@
       Geavanceerd zoeken
     </AuButton>
   </div>
+  <AuCheckbox
+    @checked={{this.isSearchOnTitle}}
+    @disabled={{this.isSearchOnTitleCheckboxDisabled}}
+    @onChange={{this.toggleSearchOnTitle}}
+  >
+    Zoek enkel op titel
+  </AuCheckbox>
 </div>
-
 <AuModal
   @modalOpen={{this.isInfoModalOpen}}
   @closable={{true}}

@@ -37,6 +37,10 @@ export default class AgendaItemsIndexRoute extends Route {
       as: QueryParameterKeys.keyword,
       refreshModel: true,
     },
+    keywordSearchOnlyInTitle: {
+      as: QueryParameterKeys.keywordSearchOnlyInTitle,
+      refreshModel: true,
+    },
     dateSort: {
       as: QueryParameterKeys.dateSort,
       refreshModel: true,
