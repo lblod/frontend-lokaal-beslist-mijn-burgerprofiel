@@ -49,7 +49,6 @@ export default class FilterService extends Service {
       this.keywordAdvancedSearch = null;
     }
     this.filters = { ...this.filters, ...newFilters };
-    console.log(`updated filters`, this.filters);
   }
 
   searchOnTitleOnly(searchOnTitleOnly: boolean) {
@@ -160,7 +159,11 @@ export default class FilterService extends Service {
       begin: this.filters.plannedStartMin,
       eind: this.filters.plannedStartMax,
       trefwoord: this.filters.keyword,
-      zoekOpTitel: this.filters.keywordSearchOnlyInTitle,
+      zoekOpTitel:
+        this.filters.keywordSearchOnlyInTitle &&
+        this.filters.keywordSearchOnlyInTitle !== 'false'
+          ? this.filters.keywordSearchOnlyInTitle
+          : null,
       datumsortering: this.filters.dateSort as SortType,
       status: this.filters.status !== '' ? this.filters.status : undefined,
       thema: themeIds,
