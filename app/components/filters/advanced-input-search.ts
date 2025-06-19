@@ -16,10 +16,6 @@ export interface FiltersAdvancedInputSearchSignature {
 export default class FiltersAdvancedInputSearch extends Component<FiltersAdvancedInputSearchSignature> {
   @tracked isInfoModalOpen = false;
 
-  get isSearchOnTitleCheckboxDisabled() {
-    return !this.args.value || this.args.value.trim?.() === '';
-  }
-
   updateKeyword = task(
     { restartable: true },
     async (event: { target: { value?: string } }) => {
