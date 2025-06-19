@@ -86,9 +86,11 @@ function buildFilters({
         query[':has-no:description'] = 't';
       }
     } else {
+      let isFilterOnTitle = false;
       const narrowDownByFields = ['title', 'description'];
       if (filters.keywordSearchOnlyInTitle == 'true') {
         narrowDownByFields.pop();
+        isFilterOnTitle = true;
       }
       const parsedResults = keywordSearch([
         filters?.keyword,
@@ -106,10 +108,34 @@ function buildFilters({
           buildQuery.push(`(NOT ${parsedResults['not'].join(' AND NOT ')})`);
         }
       }
-      if (buildQuery.length !== 0) {
-        query[':query:search_content'] = buildQuery.join(' AND ');
-      } else {
+
+      const queryActions = [
+        {
+          queryKey: ':query:title',
+          trigger: isFilterOnTitle && buildQuery.length !== 0,
+          value: buildQuery.join(' AND '),
+        },
+        {
+          queryKey: ':query:search_content',
+          trigger: buildQuery.length !== 0,
+          value: buildQuery.join(' AND '),
+        },
+        {
+          queryKey: ':fuzzy:title',
+          trigger: isFilterOnTitle && buildQuery.length === 0,
+          value: filters?.keyword,
+        },
+        {
+          queryKey: ':fuzzy:search_content',
+          trigger: buildQuery.length === 0,
+          value: filters?.keyword,
+        },
+      ];
+      const action = queryActions.find((_action) => _action.trigger);
+      if (!action) {
         query[':fuzzy:search_content'] = filters?.keyword;
+      } else {
+        query[action.queryKey] = action.value;
       }
     }
   }

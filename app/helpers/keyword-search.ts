@@ -85,24 +85,6 @@ export function keywordSearch([query, searchField]: [
   string,
   string[]?,
 ]): ParsedResults | null {
-  const queryParts = formatQueryToParts(query, ['OR', 'NOT', 'MUST']);
-  const exactOrFuzzy = {
-    exact: 'or',
-    fuzzy: 'randomKey',
-  };
-
-  let searchValueAs = exactOrFuzzy['fuzzy'];
-
-  if (query.startsWith('"')) {
-    searchValueAs = exactOrFuzzy['exact'];
-  }
-
-  if (queryParts.length === 0 && searchField && searchField.length >= 1) {
-    return {
-      [searchValueAs]: searchField?.map((field) => `${field}:"${query}"`) || [],
-    };
-  }
-
   return getKeywordAdvancedSearch(query, searchField);
 }
 
