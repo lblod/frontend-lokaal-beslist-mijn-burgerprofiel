@@ -5,6 +5,7 @@ export const QueryParameterKeys = {
   start: 'begin',
   end: 'eind',
   keyword: 'trefwoord',
+  keywordSearchOnlyInTitle: 'zoekOpTitel',
   dateSort: 'datumsortering',
   status: 'status',
   themes: 'thema',

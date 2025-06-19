@@ -1,0 +1,70 @@
+<div>
+  <AuLabel for="sort-on">Zoek op titel en inhoud</AuLabel>
+  <AuInput
+    @width="block"
+    value={{@value}}
+    placeholder="Zoek in lokale agendapunten"
+    {{on "input" (perform this.updateKeyword)}}
+  />
+  <div class="au-u-flex au-u-flex--end">
+    <AuButton
+      @skin="link-secondary"
+      @icon="circle-question"
+      class="au-u-padding-none au-u-flex--end"
+      {{on "click" (fn (mut this.isInfoModalOpen) true)}}
+    >
+      Geavanceerd zoeken
+    </AuButton>
+  </div>
+  <AuCheckbox
+    @checked={{this.isSearchOnTitle}}
+    @onChange={{this.toggleSearchOnTitle}}
+  >
+    Zoek enkel op titel
+  </AuCheckbox>
+</div>
+<AuModal
+  @modalOpen={{this.isInfoModalOpen}}
+  @closable={{true}}
+  @closeModal={{this.closeModal}}
+>
+  <:title>
+    Hoe zoek ik geavanceerd?
+  </:title>
+  <:body>
+    <p class="au-u-margin-bottom">Gebruik de volgende commando's om betere
+      zoekresultaten te krijgen:</p>
+    <ul>
+      <li class="au-u-margin-bottom-tiny">Zet exacte trefwoorden tussen
+        aanhalingstekens. E.g.:
+        <AuPill @skin="success">“Straatlampen“</AuPill>
+      </li>
+      <li class="au-u-margin-bottom-tiny">Maak een combinatie van exacte
+        trefwoorden. E.g.:
+        <AuPill @skin="success">“Straatlampen“ </AuPill>
+        <AuPill @skin="success">“Gent”</AuPill>
+      </li>
+      <li class="au-u-margin-bottom-tiny">Gebruik een minteken voor ongewenste
+        trefwoorden. E.g.:
+        <AuPill @skin="warning">-straat</AuPill>
+      </li>
+      <li class="au-u-margin-bottom-tiny">
+        Typ OF tussen gewenste trefwoorden: E.g.:
+        <AuPill @skin="info">straatlampen OF straatverlichting</AuPill>
+      </li>
+      <li class="au-u-margin-bottom-tiny">Combineer meerdere functies met EN.
+        E.g.:
+        <AuPill @skin="info">klimaat OF dienst</AuPill>
+        EN
+        <AuPill @skin="warning"> -straat</AuPill>
+        EN
+        <AuPill @skin="success">"vergadering"</AuPill>
+      </li>
+    </ul>
+  </:body>
+  <:footer>
+    <div class="au-u-flex au-u-flex--center">
+      <AuButton {{on "click" this.closeModal}}>Ik snap het</AuButton>
+    </div>
+  </:footer>
+</AuModal>

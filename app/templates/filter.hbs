@@ -8,13 +8,18 @@
   <AuHr />
 </div>
 <div class="c-interface__sidebar-main au-u-padding-left au-u-padding-right">
+  <Filters::AdvancedInputSearch
+    @value={{this.filterService.filters.keyword}}
+    @searchOnlyOnTitle={{this.filterService.filters.keywordSearchOnlyInTitle}}
+    @onUpdateKeyword={{this.updateKeyword}}
+  />
   <section class="au-u-flex au-u-flex--column">
     <AuLabel for="sort-on">Sorteren</AuLabel>
     <select
       id="sort-on"
       type="select"
       {{on "change" this.updateSorting}}
-      class="au-c-input au-u-1-1 au-u-max-width-xsmall@small"
+      class="au-c-input au-u-1-1"
     >
       <option value="desc" selected={{this.isFilterDescending}}>Nieuwste eerst</option>
       <option value="asc" selected={{this.isFilterAscending}}>Oudste eerst</option>

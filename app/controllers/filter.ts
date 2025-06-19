@@ -37,6 +37,10 @@ export default class FilterController extends Controller {
     return this.themeList.getOptionsForIds(this.filterService.filters.themeIds);
   }
 
+  get keywordValue() {
+    return this.filterService.filters.keyword;
+  }
+
   get hasSelectedAdvancedFilters() {
     return this.selectedBestuursorgaanIds.length >= 1;
   }
@@ -120,9 +124,19 @@ export default class FilterController extends Controller {
     });
     this.itemsService.loadAgendaItems.perform(0, false);
   }
+
   @action
   updateSorting(event: { target: { value: SortType } }) {
     this.filterService.updateFilters({ dateSort: event?.target.value });
+  }
+
+  @action
+  updateKeyword(keyword: string | null, onlyOnTitle: boolean) {
+    this.filterService.updateFilters({
+      keyword,
+    });
+    this.filterService.searchOnTitleOnly(onlyOnTitle);
+    this.itemsService.loadAgendaItems.perform(0, false);
   }
 
   @action
@@ -144,7 +158,7 @@ export default class FilterController extends Controller {
   @action
   async resetFilters() {
     this.governingBodyList.selectedIds = [];
-    this.address.selectedAddress = null;
+    this.address.selectedAddress = undefined;
     this.distanceList.selected = null;
     this.filterService.resetFiltersToInitialView();
     this.itemsService.loadAgendaItems.perform(0, false);

@@ -11,10 +11,10 @@
       {{! TODO make them reactive with the filters/queryParams }}
       {{#each this.filterValues as |keyValue|}}
         <AuPill
+          @actionIcon="cross"
+          @actionText="close"
           id={{keyValue.key}}
-          @icon="cross"
-          @iconAlignment="right"
-          {{on "click" (fn this.removeFilter keyValue.key)}}
+          @onClickAction={{fn this.removeFilter keyValue.key}}
         >{{keyValue.value}}</AuPill>
       {{/each}}
     </div>

@@ -3,6 +3,7 @@ import type AgendaItem from 'frontend-burgernabije-besluitendatabank/models/mu-s
 
 export interface AgendaItemsParams {
   keyword: string | null;
+  keywordSearchOnlyInTitle: string | null;
   municipalityLabels: string | null;
   provinceLabels: string | null;
   plannedStartMin: string | null;
@@ -23,6 +24,7 @@ export type FiltersAsQueryParams = {
   begin: string | null;
   eind: string | null;
   trefwoord: string | null;
+  zoekOpTitel: string | null;
   datumsortering?: SortType;
   status?: string;
   thema: string | null;
