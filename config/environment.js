@@ -5,7 +5,7 @@ module.exports = function (environment) {
     modulePrefix: 'frontend-burgernabije-besluitendatabank',
     environment,
     rootURL: '/',
-    locationType: 'history', // If updated to hash, change ember-plausible config
+    locationType: 'none', // If updated to hash, change ember-plausible config
     EmberENV: {
       EXTEND_PROTOTYPES: false,
     },
@@ -17,8 +17,7 @@ module.exports = function (environment) {
       domain: '{{PLAUSIBLE_DOMAIN}}',
     },
     APP: {
-      // Here you can pass flags/options to your application instance
-      // when it is created
+      MBP_CLIENT_ID: '{{MBP_CLIENT_ID}}',
     },
     features: {
       // define feature flags here
