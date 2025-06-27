@@ -21,6 +21,7 @@ export default class FilterService extends Service {
   @tracked keywordAdvancedSearch: { [key: string]: string[] } | null = null;
   @tracked filters: AgendaItemsParams = {
     keyword: null,
+    keywordSearchOnlyInTitle: null,
     municipalityLabels: this.municipalityLabels || null,
     provinceLabels: null,
     plannedStartMin: null,
@@ -50,6 +51,16 @@ export default class FilterService extends Service {
     this.filters = { ...this.filters, ...newFilters };
   }
 
+  searchOnTitleOnly(searchOnTitleOnly: boolean) {
+    this.filters.keywordSearchOnlyInTitle = `${searchOnTitleOnly}`;
+    if (this.filters.keyword) {
+      this.keywordAdvancedSearch = keywordSearch([
+        this.filters.keyword,
+        ['title'],
+      ]);
+    }
+  }
+
   updateFiltersFromParams(params: Partial<AgendaItemsParams>) {
     // Mismatch in type as these are + separated strings here and not an array of string
     const bestuursorgaanIdsAsString =
@@ -69,6 +80,7 @@ export default class FilterService extends Service {
   resetFiltersToInitialView() {
     this.updateFilters({
       keyword: null,
+      keywordSearchOnlyInTitle: null,
       municipalityLabels: this.municipalityLabels,
       provinceLabels: null,
       plannedStartMin: null,
@@ -106,6 +118,7 @@ export default class FilterService extends Service {
       begin: 'plannedStartMin',
       eind: 'plannedStartMax',
       trefwoord: 'keyword',
+      zoekOpTitel: 'keywordSearchOnlyInTitle',
       datumsortering: 'dateSort',
       status: 'status',
       thema: 'themes',
@@ -146,6 +159,11 @@ export default class FilterService extends Service {
       begin: this.filters.plannedStartMin,
       eind: this.filters.plannedStartMax,
       trefwoord: this.filters.keyword,
+      zoekOpTitel:
+        this.filters.keywordSearchOnlyInTitle &&
+        this.filters.keywordSearchOnlyInTitle !== 'false'
+          ? this.filters.keywordSearchOnlyInTitle
+          : null,
       datumsortering: this.filters.dateSort as SortType,
       status: this.filters.status !== '' ? this.filters.status : undefined,
       thema: themeIds,
@@ -169,6 +187,7 @@ export default class FilterService extends Service {
       begin: null,
       eind: null,
       trefwoord: null,
+      zoekOpTitel: false,
       datumsortering: null,
       status: null,
       thema: null,
@@ -182,7 +201,7 @@ export default class FilterService extends Service {
   }
 
   setMunicipalityInStorage(municipalityLabels: string | null) {
-    if (!this.municipalityLabels && municipalityLabels) {
+    if (municipalityLabels) {
       sessionStorage.setItem(MUNICIPALITY_SESSION_KEY, municipalityLabels);
     }
   }

@@ -63,6 +63,7 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
       QueryParameterKeys.provinces,
       QueryParameterKeys.start, // this is handled as one label with end
       QueryParameterKeys.end, // this is handled as one label with start
+      QueryParameterKeys.keywordSearchOnlyInTitle, // combined with the keyword label
     ];
   }
 
@@ -70,6 +71,7 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
     return {
       [QueryParameterKeys.distance]: this.createDistanceFilterLabel(),
       [PERIOD_KEY]: this.createPeriodFilterLabel(),
+      [QueryParameterKeys.keyword]: this.createKeywordFilterLabel(),
     };
   }
 
@@ -122,6 +124,22 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
     }
   }
 
+  createKeywordFilterLabel() {
+    const keyword = this.args.filters.trefwoord;
+    const onlyOnTitle = this.args.filters.zoekOpTitel;
+
+    if (onlyOnTitle && onlyOnTitle == 'true') {
+      return {
+        key: QueryParameterKeys.keywordSearchOnlyInTitle,
+        value: `Zoek in de titel naar: ${keyword}`,
+      };
+    }
+    return {
+      key: QueryParameterKeys.keyword,
+      value: `Zoek naar: ${keyword}`,
+    };
+  }
+
   @action
   removeFilter(queryParamKey: string) {
     if (queryParamKey === 'periode') {
@@ -133,6 +151,8 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
         QueryParameterKeys.end as keyof FiltersAsQueryParams,
         null,
       );
+    } else if (queryParamKey === QueryParameterKeys.keywordSearchOnlyInTitle) {
+      this.filterService.searchOnTitleOnly(false);
     } else {
       this.filterService.updateFilterFromQueryParamKey(
         queryParamKey as keyof FiltersAsQueryParams,
