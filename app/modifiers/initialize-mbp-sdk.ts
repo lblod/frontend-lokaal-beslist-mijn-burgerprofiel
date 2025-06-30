@@ -21,6 +21,7 @@ export default modifier(function initializeMbpSdk(
     try {
       await client.connect();
       console.log('MBP SDK connected!');
+      client.ui.setStatusLoading(false);
     } catch (e) {
       console.error('MBP SDK connection failed:', e);
     }
