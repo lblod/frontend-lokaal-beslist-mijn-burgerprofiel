@@ -13,6 +13,7 @@ export default modifier(function initializeMbpSdk(
         'https://admin.vlaanderen.be/debug/embeds',
         'https://*.burgerprofiel.be/*',
         'https://admin.vlaanderen.be/*',
+        'https://admin.vlaanderen.be',
       ],
       element,
     });
