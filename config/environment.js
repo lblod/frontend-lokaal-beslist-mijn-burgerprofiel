@@ -17,8 +17,7 @@ module.exports = function (environment) {
       domain: '{{PLAUSIBLE_DOMAIN}}',
     },
     APP: {
-      // Here you can pass flags/options to your application instance
-      // when it is created
+      MBP_CLIENT_ID: '{{MBP_CLIENT_ID}}',
     },
     features: {
       // define feature flags here
