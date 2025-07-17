@@ -2,6 +2,8 @@ import Route from '@ember/routing/route';
 
 import { service } from '@ember/service';
 
+import type Transition from '@ember/routing/transition';
+
 import type DistanceListService from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
 import type GoverningBodyListService from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
@@ -13,7 +15,8 @@ export default class FilterRoute extends Route {
   @service declare distanceList: DistanceListService;
   @service declare filterService: FilterService;
 
-  async model() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async model(params = {}, transition: Transition) {
     await this.themeList.fetchThemes();
     const distanceOptions = await this.distanceList.loadOptions();
     const bestuursorgaanOptions =
@@ -26,6 +29,7 @@ export default class FilterRoute extends Route {
       agendaStatusOptions: ['Alles', 'Behandeld', 'Niet behandeld'],
       themaOptions: this.themeList.asOptions,
       distanceOptions,
+      previousRoute: transition?.from,
     };
   }
 }

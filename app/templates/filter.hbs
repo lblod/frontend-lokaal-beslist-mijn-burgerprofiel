@@ -1,12 +1,14 @@
 {{page-title "Filter"}}
-<div class="filters-topbar-go-to-filters au-u-margin-bottom">
-  <div class="au-u-flex au-u-flex--end">
-    <AuButton @skin="link" {{on "click" this.resetFilters}}>
-      Reset filters
-    </AuButton>
-  </div>
-  <AuHr />
-</div>
+<AuToolbar @border="bottom" as |Group|>
+  <Group />
+  <Group>
+    <AuButton
+      class="au-u-padding au-u-padding-bottom-small"
+      @skin="link"
+      {{on "click" this.resetFilters}}
+    >Reset filters</AuButton>
+  </Group>
+</AuToolbar>
 <div class="c-interface__sidebar-main au-u-padding-left au-u-padding-right">
   <Filters::AdvancedInputSearch
     @value={{this.filterService.filters.keyword}}

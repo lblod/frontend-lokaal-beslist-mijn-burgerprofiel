@@ -25,7 +25,11 @@
         <li>
           <AuIcon @size="large" @icon="calendar" />
           <span class="au-u-hidden-visually">Planning:</span>
-          {{this.model.agendaItem.session.dateFormatted}}
+          {{#if this.model.agendaItem.session.dateFormatted}}
+            {{this.model.agendaItem.session.dateFormatted}}
+          {{else}}
+            Onbekend
+          {{/if}}
         </li>
       </ul>
       <AuHr class="lighter" />
