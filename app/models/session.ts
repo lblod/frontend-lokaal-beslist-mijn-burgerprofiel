@@ -17,7 +17,9 @@ export default class SessionModel extends Model {
   declare governingBody: AsyncBelongsTo<GoverningBodyModel>;
 
   get titleFormatted() {
-    return `${this.governingBodyNameResolved} ${this.dateFormatted}`;
+    const titleStartingWithCapitalLetter = `${this.governingBodyNameResolved.charAt(0).toUpperCase()}${this.governingBodyNameResolved.slice(1)}`;
+
+    return `${titleStartingWithCapitalLetter} ${this.dateFormatted}`;
   }
 
   get governingBodyValue() {
