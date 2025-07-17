@@ -8,7 +8,6 @@
         "active"
       }}
     >
-      {{format-number @loader.totalAgendaItems 0}}
       Agendapunten</AuLink>
   </Tab>
   <Tab>
@@ -16,7 +15,7 @@
       @route="sessions.index"
       @query={{this.filters}}
       class={{if (eq this.router.currentRouteName "sessions.index") "active"}}
-    >{{format-number @loader.totalSessions 0}}
+    >
       Zittingen</AuLink>
   </Tab>
 </AuTabs>
