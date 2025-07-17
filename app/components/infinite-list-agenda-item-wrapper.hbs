@@ -1,16 +1,16 @@
 {{#let this.itemsService as |loader|}}
   {{#if loader.hasErroredAgendaItems}}
     <Oops @title="Oeps!" @content="Er is iets fout gelopen!" />
-  {{else if (and loader.loadAgendaItems.isRunning (not loader.agendaItems))}}
+  {{else if (and loader.fetchItems.isRunning (not loader.items))}}
     <LoaderFullPage @content="Agendapunten aan het laden" />
-  {{else if loader.agendaItems}}
+  {{else if loader.items}}
     <InfiniteList
-      @loadMore={{loader.loadMoreAgendaItems}}
-      @isLoading={{loader.loadAgendaItems.isRunning}}
-      @itemsShown={{loader.agendaItems.length}}
-      @itemsAmount={{loader.total}}
+      @loadMore={{loader.loadMoreItems}}
+      @isLoading={{loader.fetchItems.isRunning}}
+      @itemsShown={{loader.items.length}}
+      @itemsAmount={{loader.totalItemCount}}
     >
-      {{#each loader.agendaItems as |item|}}
+      {{#each loader.items as |item|}}
         <AgendaItemCard @item={{item}} />
       {{/each}}
     </InfiniteList>

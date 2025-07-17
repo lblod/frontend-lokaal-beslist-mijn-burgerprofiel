@@ -1,7 +1,9 @@
 import Component from '@glimmer/component';
+
 import { service } from '@ember/service';
-import type ItemsService from 'frontend-burgernabije-besluitendatabank/services/items-service';
+
+import type ItemListService from 'frontend-burgernabije-besluitendatabank/services/item-list';
 
 export default class InfiniteListAgendaItemWrapper extends Component {
-  @service declare itemsService: ItemsService;
+  @service('item-list') declare itemsService: ItemListService;
 }

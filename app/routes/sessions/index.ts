@@ -4,12 +4,13 @@ import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constant
 import type { AgendaItemsParams } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
 import type FeaturesService from 'frontend-burgernabije-besluitendatabank/services/features';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
-import type ItemsService from 'frontend-burgernabije-besluitendatabank/services/items-service';
+import type ItemListService from 'frontend-burgernabije-besluitendatabank/services/item-list';
 
 export default class SessionsIndexRoute extends Route {
   @service declare features: FeaturesService;
   @service declare filterService: FilterService;
-  @service declare itemsService: ItemsService;
+  @service('item-list') declare itemsService: ItemListService;
+
   queryParams = {
     municipalityLabels: {
       as: QueryParameterKeys.municipalities,
@@ -45,7 +46,13 @@ export default class SessionsIndexRoute extends Route {
     },
   };
   async model(params: AgendaItemsParams) {
-    this.itemsService.resetSessions();
-    this.filterService.updateFilters(params);
+    this.filterService.setMunicipalityInStorage(
+      params.municipalityLabels || null,
+    );
+    this.filterService.updateFiltersFromParams(params);
+    this.itemsService.changeModelIndex('session');
+    this.itemsService.loadFirstPage(this.filterService.filters);
+
+    return { filters: this.filterService.asQueryParams };
   }
 }

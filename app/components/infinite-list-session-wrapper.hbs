@@ -1,3 +1,5 @@
+{{!-- This is duplicate as the agenda-items except for the card --}}
+
 {{#let this.itemsService as |loader|}}
   {{#if loader.hasErroredSessions}}
     <Oops @title="Oeps!" @content="Er is iets fout gelopen!" />
@@ -5,12 +7,12 @@
     <LoaderFullPage @content="Zittingen aan het laden" />
   {{else if loader.sessions}}
     <InfiniteList
-      @loadMore={{loader.loadMoreSessions}}
-      @isLoading={{loader.loadSessions.isRunning}}
-      @itemsShown={{loader.sessions.length}}
+      @loadMore={{loader.loadMoreItems}}
+      @isLoading={{loader.fetchItems.isRunning}}
+      @itemsShown={{loader.items.length}}
       @itemsAmount={{loader.total}}
     >
-      {{#each loader.sessions as |item|}}
+      {{#each loader.items as |item|}}
         <SessionItemCard @item={{item}} />
       {{/each}}
     </InfiniteList>
