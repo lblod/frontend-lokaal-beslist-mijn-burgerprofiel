@@ -16,6 +16,8 @@ import type { SelectOption, SortType } from './agenda-items/types';
 import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 import { formatNumber } from 'frontend-burgernabije-besluitendatabank/helpers/format-number';
 import type AddressService from 'frontend-burgernabije-besluitendatabank/services/address';
+import type FilterRoute from 'frontend-burgernabije-besluitendatabank/routes/filter';
+import type { ModelFrom } from 'frontend-burgernabije-besluitendatabank/lib/type-utils';
 
 export default class FilterController extends Controller {
   @service declare governingBodyList: GoverningBodyListService;
@@ -26,6 +28,8 @@ export default class FilterController extends Controller {
   @service declare themeList: ThemeListService;
   @service declare distanceList: DistanceListService;
   @service declare address: AddressService;
+
+  declare model: ModelFrom<FilterRoute>;
 
   @tracked dateRangeHasErrors = false;
 
@@ -150,7 +154,11 @@ export default class FilterController extends Controller {
 
   @action
   goToAgendaItems() {
-    this.router.transitionTo('agenda-items.index', {
+    let routeName = 'agenda-items.index';
+    if (this.model.previousRoute) {
+      routeName = this.model.previousRoute.name;
+    }
+    this.router.transitionTo(routeName, {
       queryParams: this.filterService.asQueryParams,
     });
   }
