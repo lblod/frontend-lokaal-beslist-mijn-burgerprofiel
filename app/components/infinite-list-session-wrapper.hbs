@@ -1,13 +1,4 @@
 {{#let this.itemsService as |loader|}}
-  <div
-    class="au-u-flex au-u-flex--between au-u-flex--spaced-small au-u-flex-center au-u-flex--vertical-center au-u-margin-top-small"
-  >
-    <p class="au-u-margin-left au-u-h4 au-u-medium au-u-word-nowrap">
-      {{format-number loader.total 0}}
-      Zoekresultaten
-    </p>
-  </div>
-  <MultiTabs @loader={{loader}} @filters={{this.filters}} />
   {{#if loader.hasErroredSessions}}
     <Oops @title="Oeps!" @content="Er is iets fout gelopen!" />
   {{else if (and loader.loadSessions.isRunning (not loader.sessions))}}
