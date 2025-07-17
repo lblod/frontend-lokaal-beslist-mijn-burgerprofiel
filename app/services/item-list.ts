@@ -133,11 +133,7 @@ export default class ItemListService extends Service {
         newItems = results.items;
       }
 
-      if (loadMore) {
-        return [...this.items, ...newItems];
-      }
-
-      return newItems;
+      this.items = loadMore ? [...this.items, ...newItems] : newItems;
     },
   );
 
