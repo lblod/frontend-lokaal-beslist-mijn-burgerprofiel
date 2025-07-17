@@ -1,257 +1,147 @@
 {{page-title "Zitting"}}
 
 <AuModalContainer />
-{{#let this.model.session as |session|}}
-  <div id="route-detail">
-    <AuToolbar @size="medium" @skin="tint" @border="bottom" as |Group|>
-      <Group>
-        <ul class="au-c-list-horizontal au-c-list-horizontal--small">
-          <li class="au-c-list-horizontal__item">
-            <AuLink @route="sessions" @icon="arrow-left">
-              Lijst
-            </AuLink>
+<div id="route-detail">
+  <div class="au-u-flex au-u-flex--column">
+    <AuHeading @level="1" @skin="3" class="au-o-box au-u-padding-right-small">
+      {{@model.session.titleFormatted}}
+    </AuHeading>
+    {{#if @model.session.agendaItem.wasHandled}}
+      <div class="banner-decided">
+        <AuIcon @icon="decided" />
+        <p>Dit werd behandeld</p>
+      </div>
+    {{/if}}
+    <div class="au-u-padding-left au-u-padding-right au-u-padding-top-small">
+      <ul class="c-description-list">
+        {{#if @model.session.classification}}
+          <li>
+            {{! TODO update the icon to university }}
+            <AuIcon @size="large" @icon="decided" />
+            <span class="au-u-hidden-visually">Bestuursorgaan:</span>
+            {{@model.session.classification}}
           </li>
-          <li class="au-c-list-horizontal__item">
-            <span class="u-truncate">
-              {{session.governingBodyNameResolved}}
-              {{session.dateFormatted}}</span>
-          </li>
-
-        </ul>
-      </Group>
-    </AuToolbar>
-    <div class="au-o-box">
-      <div class="au-o-grid au-o-grid--small">
-        <div class="au-o-grid__item au-u-hidden-from@medium">
-          {{#if session.agendaItem.wasHandled}}
+        {{/if}}
+        <li>
+          <AuIcon @size="large" @icon="calendar" />
+          <span class="au-u-hidden-visually">Planning:</span>
+          {{@model.session.dateFormatted}}
+        </li>
+      </ul>
+      <AuHr class="lighter" />
+    </div>
+    <div class="au-o-box au-u-padding-top-none">
+      <Accordion
+        @buttonLabel="Gepubliceerde agendapunten"
+        @badgeIcon="bookmark"
+        @showBottomBorder={{true}}
+      >
+        {{#if @model.agendaItems.isRunning}}
+          <div class="loading-spinner">
+            <AuLoader
+              @centered={{false}}
+              @inline={{true}}
+              class="au-u-flex au-u-flex--spaced-small au-u-flex--vertical-center au-u-margin-top"
+            >Agendapunten aan het laden</AuLoader>
+          </div>
+        {{else}}
+          <AuList class="au-u-margin-top" as |Item|>
+            <ol type="1" class="less-margin">
+              {{#each this.agendaItems as |item|}}
+                <Item class="au-u-flex au-u-margin-bottom-small">
+                  <AuLink @route="agenda-items.agenda-item" @model={{item.id}}>
+                    {{item.titleFormatted}}</AuLink>
+                </Item>
+              {{else}}
+                <AuAlert
+                  @skin="warning"
+                  @title="Geen agendapunten gevonden"
+                  class="au-u-margin-top au-u-margin-bottom"
+                />
+              {{/each}}
+            </ol>
+          </AuList>
+        {{/if}}
+      </Accordion>
+      <AuContent class="au-u-margin-top">
+        <AuHeading @level="2" @skin="4" class="au-u-margin-top-small">
+          Andere zittingen van
+          <AuLink
+            @route="sessions.index"
+            @query={{this.govBodyQuery}}
+            class="au-u-medium"
+          >
+            {{@model.session.governingBodyNameResolved}}
+          </AuLink>
+        </AuHeading>
+        {{#if @model.otherSessions.isRunning}}
+          <AuLoader
+            @centered={{false}}
+            class="au-u-flex au-u-flex--spaced-small au-u-flex--vertical-center"
+          >Zittingen aan het laden</AuLoader>
+        {{else}}
+          {{#if this.otherSessions.sessions}}
+            <AuList class="au-u-margin-top" as |Item|>
+              <ol type="1" class="less-margin">
+                {{#each this.otherSessions.sessions as |otherSessions|}}
+                  <Item class="au-u-flex au-u-margin-bottom-small">
+                    <AuLink
+                      @route="sessions.session"
+                      @model={{otherSessions.id}}
+                    >
+                      {{otherSessions.dateFormatted}}</AuLink>
+                  </Item>
+                {{/each}}
+              </ol>
+            </AuList>
+          {{else}}
             <AuAlert
-              @skin="info"
-              @icon="decided"
-              @title="Dit werd behandeld"
-              class="au-u-margin-bottom-none"
+              @skin="warning"
+              @title="Geen andere zittingen gevonden"
+              class="au-u-margin-top au-u-margin-bottom"
             />
           {{/if}}
-        </div>
-        <article
-          id="detail-left-section"
-          class="au-o-grid__item au-u-4-6@medium"
-        >
-          <AuCard class="u-color-top-border" as |c|>
-            <c.header>
-              <div class="au-u-flex au-u-flex--between au-u-flex--column@small">
-                <AuHeading @level="1" @skin="3">
-                  {{session.governingBodyNameResolved}}
-                  {{session.dateFormatted}}
-                </AuHeading>
-              </div>
-            </c.header>
-            <c.content class="content">
-              <ul class="c-description-list">
-                {{#if session.hasMunicipality}}
-                  <li>
-                    <AuIcon @size="large" @icon="location" />
-                    <span
-                      class="au-u-hidden-visually"
-                    >{{session.locationLevel}}:</span>
-                    <AuLink
-                      @route="sessions.index"
-                      @query={{this.municipalityQuery}}
-                    >
-                      {{#if session.municipality}}
-                        {{session.locationLevel}}
-                        {{session.municipality}}
-                      {{else}}
-                        Geen
-                        {{lower-case session.locationLevel}}
-                      {{/if}}
-                    </AuLink>
-                  </li>
-                {{/if}}
-                {{#if session.classification}}
-                  <li>
-                    <AuIcon @size="large" @icon="decided" />
-                    <span class="au-u-hidden-visually">Bestuursorgaan:</span>
-                    {{session.classification}}
-                  </li>
-                {{/if}}
-                <li>
-                  <AuIcon @size="large" @icon="calendar" />
-                  <span class="au-u-hidden-visually">Planning:</span>
-                  {{session.dateFormatted}}
-                </li>
-              </ul>
-              {{!-- Temporary hidden --}}
-              {{!-- <AuContent @skin="small">
-                <AuLinkExternal @icon="link" href="{{session.source}}">
-                  Bekijk gepubliceerde agendapunten op de website van de
-                  gemeente
-                </AuLinkExternal>
-              </AuContent> --}}
-
-              <section class="c-accordion-holder">
-                <AuBadge @icon="bookmark" @skin="brand" />
-                <AuAccordion
-                  @reverse={{true}}
-                  @iconOpen="nav-down"
-                  @iconClosed="nav-right"
-                  @buttonLabel="Gepubliceerde agendapunten"
-                  @isOpenInitially={{true}}
-                >
-                  {{#if this.model.agendaItems.isRunning}}
-                    <div class="loading-spinner">
-                      <AuLoader
-                        @centered={{false}}
-                        @inline={{true}}
-                        class="au-u-flex au-u-flex--spaced-small au-u-flex--vertical-center au-u-margin-top"
-                      >Agendapunten aan het laden</AuLoader>
-                    </div>
-                  {{else}}
-                    <AuList class="au-u-margin-top" as |Item|>
-                      <ol type="1">
-                        {{#each this.agendaItems as |item|}}
-                          <Item class="au-u-flex au-u-margin-bottom-small">
-                            <AuLink
-                              @route="agenda-items.agenda-item"
-                              @model={{item.id}}
-                            > {{item.titleFormatted}}</AuLink>
-                          </Item>
-                        {{else}}
-                          <AuAlert
-                            @skin="warning"
-                            @title="Geen agendapunten gevonden"
-                            class="au-u-margin-top au-u-margin-bottom"
-                          />
-                        {{/each}}
-                      </ol>
-                    </AuList>
-                  {{/if}}
-                </AuAccordion>
-              </section>
-            </c.content>
-          </AuCard>
-        </article>
-
-        <aside class="au-o-grid__item au-u-2-6@medium">
-          <div class="u-top-sticky">
-            <div class="au-u-visible-from@medium">
-              {{#if session.endedAt}}
-                <AuAlert
-                  @size="small"
-                  @skin="success"
-                  @icon="calendar"
-                  @title="Zitting beëindigd op {{formatted-date
-                    session.endedAt
-                  }}"
-                />
-              {{else}}
-                {{#if session.dateFormatted}}
-                  <AuAlert
-                    @size="small"
-                    @skin="info"
-                    @icon="calendar"
-                    @title="Zitting {{session.dateFormatted}}"
-                  />
-                {{/if}}
-              {{/if}}
-
-            </div>
-            <AuContent class="au-u-margin-top">
-              <AuHeading @level="2" @skin="4">
-                Andere zittingen van
-                <AuLink
-                  @route="sessions.index"
-                  @query={{this.govBodyQuery}}
-                  class="au-u-medium"
-                >
-                  {{session.governingBodyNameResolved}}
-                </AuLink>
-              </AuHeading>
-              {{#if this.model.otherSessions.isRunning}}
-                <AuLoader
-                  @centered={{false}}
-                  class="au-u-flex au-u-flex--spaced-small au-u-flex--vertical-center"
-                >Zittingen aan het laden</AuLoader>
-              {{else}}
-                {{#if this.otherSessions.sessions}}
-                  <ol type="1">
-                    {{#each this.otherSessions.sessions as |otherSessions|}}
-                      <li class="au-u-margin-top-small">
-                        <AuLink
-                          @route="sessions.session"
-                          @model={{otherSessions.id}}
-                        >
-                          <p class="truncate">
-                            {{otherSessions.dateFormatted}}
-                          </p>
-                        </AuLink>
-                      </li>
-                    {{/each}}
-                    {{!-- {{#if (gt this.otherSessions.count 5)}}
-                      <AuLink
-                        @icon="arrow-right"
-                        @iconAlignment="right"
-                        class="au-u-margin-top-small"
-                        @route="sessions.index"
-                        @query={{this.govBodyQuery}}
-                      >
-                        Bekijk alle zittingen ({{this.otherSessions.count}})
-                      </AuLink>
-                    {{/if}} --}}
-                  </ol>
-                {{else}}
-                  <AuAlert
-                    @skin="warning"
-                    @title="Geen andere zittingen gevonden"
-                    class="au-u-margin-top au-u-margin-bottom"
-                  />
-                {{/if}}
-              {{/if}}
-              <AuHeading @level="2" @skin="4">
-                Andere organen in
-                <AuLink
-                  @route="sessions.index"
-                  @query={{this.municipalityQuery}}
-                  class="au-u-medium"
-                >{{session.municipality}}</AuLink>
-              </AuHeading>
-              {{#if this.model.governingBodies.isRunning}}
-                <div class="loading-spinner">
-                  <AuLoader
-                    @centered={{false}}
-                    @inline={{true}}
-                    class="au-u-flex au-u-flex--spaced-small au-u-flex--vertical-center au-u-margin-top"
-                  >Organen aan het laden</AuLoader>
-                </div>
-              {{else}}
-                <ol type="1">
-                  {{#each this.governingBodies as |govBody|}}
-                    <li class="au-u-margin-top-small">
-                      <AuLink
-                        @route="sessions.index"
-                        @query={{hash
-                          bestuursorganen=govBody.label
-                          gemeentes=session.municipality
-                        }}
-                      >
-                        <p class="truncate">
-                          {{govBody.label}}
-                        </p>
-                      </AuLink>
-                    </li>
-                  {{/each}}
-                </ol>
-                {{#unless this.governingBodies}}
-                  <AuAlert
-                    @skin="warning"
-                    @title="Geen andere organen gevonden"
-                    class="au-u-margin-top au-u-margin-bottom"
-                  />
-                {{/unless}}
-              {{/if}}
-            </AuContent>
+        {{/if}}
+        <AuHr class="lighter" />
+        <AuHeading @level="2" @skin="4" class="au-u-margin-top-small">
+          Andere organen
+        </AuHeading>
+        {{#if @model.governingBodies.isRunning}}
+          <div class="loading-spinner">
+            <AuLoader
+              @centered={{false}}
+              @inline={{true}}
+              class="au-u-flex au-u-flex--spaced-small au-u-flex--vertical-center au-u-margin-top"
+            >Organen aan het laden</AuLoader>
           </div>
-        </aside>
-      </div>
+        {{else}}
+          <AuList class="au-u-margin-top" as |Item|>
+            <ol type="1" class="less-margin">
+              {{#each this.governingBodies as |govBody|}}
+                <Item class="au-u-flex au-u-margin-bottom-small">
+
+                  <AuLink
+                    @route="sessions.index"
+                    @query={{hash
+                      bestuursorganen=govBody.label
+                      gemeentes=@model.session.municipality
+                    }}
+                  >
+                    {{govBody.label}}
+                  </AuLink>
+                </Item>
+              {{/each}}
+            </ol>
+          </AuList>
+          {{#unless this.governingBodies}}
+            <AuAlert
+              @skin="warning"
+              @title="Geen andere organen gevonden"
+              class="au-u-margin-top au-u-margin-bottom"
+            />
+          {{/unless}}
+        {{/if}}
+      </AuContent>
     </div>
   </div>
-{{/let}}
+</div>
