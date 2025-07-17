@@ -1,31 +1,40 @@
 import Controller from '@ember/controller';
+
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 import { service } from '@ember/service';
+
 import type RouterService from '@ember/routing/router-service';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
-import type ItemsService from '../../services/items-service';
-import { runTask } from 'ember-lifeline';
+import type AddressService from 'frontend-burgernabije-besluitendatabank/services/address';
+import type DistanceListService from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 
 export default class SessionsIndexController extends Controller {
   @service declare filterService: FilterService;
+  @service declare distanceList: DistanceListService;
+  @service declare address: AddressService;
   @service declare router: RouterService;
-  @service declare itemsService: ItemsService;
   @tracked hasFilter = false;
 
-  get filters() {
-    return this.filterService.filters;
+  @action
+  resetFilters() {
+    this.distanceList.selected = null;
+    this.address.selectedAddress = null;
+    this.filterService.resetFiltersToInitialView();
+    this.router.transitionTo(this.router.currentRouteName, {
+      queryParams: this.filterService.resetQueryParams,
+    });
   }
 
   @action
-  showFilter() {
-    this.hasFilter = true;
+  goToFilters() {
+    this.router.transitionTo('filter');
   }
 
   @action
-  hideFilter() {
-    runTask(this, () => {
-      this.hasFilter = false;
+  refreshRoute() {
+    this.router.transitionTo(this.router.currentRouteName, {
+      queryParams: this.filterService.asQueryParams,
     });
   }
 }
