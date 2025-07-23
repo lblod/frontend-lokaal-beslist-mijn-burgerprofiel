@@ -6,7 +6,7 @@
     <AuButton
       class="au-u-padding-right"
       @skin="link"
-      @disabled={{not this.itemsService.isFirstPageLoaded}}
+      @disabled={{this.isFiltersDisabled}}
       {{on "click" @onShowFiltersPage}}
     >Sorteer en filter</AuButton>
   </Group>

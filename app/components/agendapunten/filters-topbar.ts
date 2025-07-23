@@ -4,10 +4,10 @@ import { action } from '@ember/object';
 import { service } from '@ember/service';
 
 import type { FiltersAsQueryParams } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
-import type ItemsService from 'frontend-burgernabije-besluitendatabank/services/items-service';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
 import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
 import type DistanceListService from 'frontend-burgernabije-besluitendatabank/services/distance-list';
+import type ItemListService from 'frontend-burgernabije-besluitendatabank/services/item-list';
 
 export interface AgendapuntenFiltersTopbarSignature {
   Args: {
@@ -20,12 +20,16 @@ export interface AgendapuntenFiltersTopbarSignature {
 const PERIOD_KEY = 'periode';
 
 export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFiltersTopbarSignature> {
-  @service declare itemsService: ItemsService;
+  @service('item-list') declare itemsService: ItemListService;
   @service declare filterService: FilterService;
   @service declare distanceList: DistanceListService;
 
   get hasFilters() {
     return this.filterValues.length >= 1;
+  }
+
+  get isFiltersDisabled() {
+    return !this.itemsService.isFirstPageLoaded;
   }
 
   get filterValues() {
