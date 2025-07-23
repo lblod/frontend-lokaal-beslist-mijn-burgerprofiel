@@ -29,7 +29,9 @@ export default class AgendaItemRoute extends Route {
   @service declare governingBodyDisabledList: GoverningBodyDisabledList;
 
   async model(params: DetailParams) {
-    const agendaItem = await this.store.findRecord('agenda-item', params.id);
+    const agendaItem = await this.store.findRecord('agenda-item', params.id, {
+      include: 'sessions',
+    });
 
     // wait until sessions are loaded
     const sessions = await agendaItem.sessions;
