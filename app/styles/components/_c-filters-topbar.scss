@@ -1,14 +1,3 @@
-.filters-topbar-go-to-filters {
-  display: flex;
-  justify-content: end;
-  padding: $au-unit;
-  border-bottom: $au-border solid var(--au-gray-300);
-  position: sticky;
-  top: 0;
-  background-color: var(--au-white);
-  z-index: 2;
-}
-
 .filters-topbar-active-filters {
   background-color: var(--au-gray-200);
   padding: $au-unit 0;

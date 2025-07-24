@@ -25,7 +25,11 @@
         <li>
           <AuIcon @size="large" @icon="calendar" />
           <span class="au-u-hidden-visually">Planning:</span>
-          {{this.model.agendaItem.session.dateFormatted}}
+          {{#if this.model.agendaItem.session.dateFormatted}}
+            {{this.model.agendaItem.session.dateFormatted}}
+          {{else}}
+            Onbekend
+          {{/if}}
         </li>
       </ul>
       <AuHr class="lighter" />
@@ -200,11 +204,6 @@
     </div>
     <aside class="au-o-grid__item au-u-2-6@medium">
       <div class="u-top-sticky">
-        <div class="au-u-visible-from@medium">
-          {{#if this.model.agendaItem.wasHandled}}
-            <AuAlert @skin="info" @icon="decided" @title="Dit werd behandeld" />
-          {{/if}}
-        </div>
         <AuContent>
           {{#if this.model.agendaItemOnSameSession}}
             <h2 class="au-u-h4 au-u-medium">

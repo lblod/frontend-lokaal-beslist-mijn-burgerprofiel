@@ -8,7 +8,7 @@ import type RouterService from '@ember/routing/router-service';
 import type GoverningBodyListService from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
 import type GovernmentListService from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
-import type ItemsService from 'frontend-burgernabije-besluitendatabank/services/items-service';
+import type ItemListService from 'frontend-burgernabije-besluitendatabank/services/item-list';
 import type ThemeListService from 'frontend-burgernabije-besluitendatabank/services/theme-list';
 import type DistanceListService from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 
@@ -16,16 +16,20 @@ import type { SelectOption, SortType } from './agenda-items/types';
 import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 import { formatNumber } from 'frontend-burgernabije-besluitendatabank/helpers/format-number';
 import type AddressService from 'frontend-burgernabije-besluitendatabank/services/address';
+import type FilterRoute from 'frontend-burgernabije-besluitendatabank/routes/filter';
+import type { ModelFrom } from 'frontend-burgernabije-besluitendatabank/lib/type-utils';
 
 export default class FilterController extends Controller {
   @service declare governingBodyList: GoverningBodyListService;
   @service declare governmentList: GovernmentListService;
   @service declare router: RouterService;
   @service declare filterService: FilterService;
-  @service declare itemsService: ItemsService;
+  @service('item-list') declare itemsService: ItemListService;
   @service declare themeList: ThemeListService;
   @service declare distanceList: DistanceListService;
   @service declare address: AddressService;
+
+  declare model: ModelFrom<FilterRoute>;
 
   @tracked dateRangeHasErrors = false;
 
@@ -54,11 +58,11 @@ export default class FilterController extends Controller {
   }
 
   get resultCount() {
-    return this.itemsService.totalAgendaItems || 0;
+    return this.itemsService.totalItemCount || 0;
   }
 
   get isApplyingFilters() {
-    return this.itemsService.loadAgendaItems.isRunning;
+    return this.itemsService.fetchItems.isRunning;
   }
 
   get filtersHaveErrors() {
@@ -82,7 +86,7 @@ export default class FilterController extends Controller {
     this.filterService.updateFilters({
       themeIds: selected.map((theme) => theme.id),
     });
-    this.itemsService.loadAgendaItems.perform(0, false);
+    this.itemsService.fetchItems.perform(0, false);
   }
 
   get status() {
@@ -92,7 +96,7 @@ export default class FilterController extends Controller {
   @action
   setStatus(value: string) {
     this.filterService.updateFilters({ status: value });
-    this.itemsService.loadAgendaItems.perform(0, false);
+    this.itemsService.fetchItems.perform(0, false);
   }
 
   @action
@@ -101,7 +105,7 @@ export default class FilterController extends Controller {
     this.filterService.updateFilters({
       governingBodyClassificationIds: selectedIds,
     });
-    this.itemsService.loadAgendaItems.perform(0, false);
+    this.itemsService.fetchItems.perform(0, false);
   }
 
   get startDate() {
@@ -122,7 +126,7 @@ export default class FilterController extends Controller {
       plannedStartMin: start,
       plannedStartMax: end,
     });
-    this.itemsService.loadAgendaItems.perform(0, false);
+    this.itemsService.fetchItems.perform(0, false);
   }
 
   @action
@@ -136,7 +140,7 @@ export default class FilterController extends Controller {
       keyword,
     });
     this.filterService.searchOnTitleOnly(onlyOnTitle);
-    this.itemsService.loadAgendaItems.perform(0, false);
+    this.itemsService.fetchItems.perform(0, false);
   }
 
   @action
@@ -145,12 +149,16 @@ export default class FilterController extends Controller {
     this.filterService.updateFilters({
       distance: selectedDistance?.id,
     });
-    this.itemsService.loadAgendaItems.perform(0, false);
+    this.itemsService.fetchItems.perform(0, false);
   }
 
   @action
   goToAgendaItems() {
-    this.router.transitionTo('agenda-items.index', {
+    let routeName = 'agenda-items.index';
+    if (this.model.previousRoute) {
+      routeName = this.model.previousRoute.name;
+    }
+    this.router.transitionTo(routeName, {
       queryParams: this.filterService.asQueryParams,
     });
   }
@@ -161,6 +169,6 @@ export default class FilterController extends Controller {
     this.address.selectedAddress = undefined;
     this.distanceList.selected = null;
     this.filterService.resetFiltersToInitialView();
-    this.itemsService.loadAgendaItems.perform(0, false);
+    this.itemsService.fetchItems.perform(0, false);
   }
 }

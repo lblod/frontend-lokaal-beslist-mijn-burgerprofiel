@@ -7,13 +7,13 @@ import { createLocationQuery } from 'frontend-burgernabije-besluitendatabank/uti
 import { tracked } from '@glimmer/tracking';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
 import type { Address } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
-import type ItemsService from 'frontend-burgernabije-besluitendatabank/services/items-service';
 import type DistanceListService from 'frontend-burgernabije-besluitendatabank/services/distance-list';
+import type ItemListService from 'frontend-burgernabije-besluitendatabank/services/item-list';
 
 export default class AddressRegisterSelectorComponent extends FilterComponent {
   @service declare address: AddressService;
   @service declare filterService: FilterService;
-  @service declare itemsService: ItemsService;
+  @service('item-list') declare itemsService: ItemListService;
   @service declare distanceList: DistanceListService;
   @tracked addressSuggestion: Address[] = [];
 
@@ -22,7 +22,7 @@ export default class AddressRegisterSelectorComponent extends FilterComponent {
     this.filterService.updateFilters({
       street: addressSuggestion?.fullAddress,
     });
-    this.itemsService.loadAgendaItems.perform(0, false);
+    this.itemsService.fetchItems.perform(0, false);
     this.updateQueryParams({
       [QueryParameterKeys.street]: addressSuggestion?.fullAddress,
     });

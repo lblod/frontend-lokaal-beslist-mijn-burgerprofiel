@@ -1,14 +1,19 @@
-<div class="filters-topbar-go-to-filters">
-  <AuButton
-    @skin="link"
-    @disabled={{not this.itemsService.isFirstPageLoaded}}
-    {{on "click" @onShowFiltersPage}}
-  >Sorteer en filter</AuButton>
-</div>
+<AuToolbar @border="bottom" class="au-u-padding-bottom-none" as |Group|>
+  <Group>
+    <MultiTabs />
+  </Group>
+  <Group>
+    <AuButton
+      class="au-u-padding-right"
+      @skin="link"
+      @disabled={{this.isFiltersDisabled}}
+      {{on "click" @onShowFiltersPage}}
+    >Sorteer en filter</AuButton>
+  </Group>
+</AuToolbar>
 {{#if this.hasFilters}}
   <div class="filters-topbar-active-filters">
     <div class="pills">
-      {{! TODO make them reactive with the filters/queryParams }}
       {{#each this.filterValues as |keyValue|}}
         <AuPill
           @actionIcon="cross"

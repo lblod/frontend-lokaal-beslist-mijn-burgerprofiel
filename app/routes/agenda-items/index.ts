@@ -6,12 +6,13 @@ import type { AgendaItemsParams } from 'frontend-burgernabije-besluitendatabank/
 
 import type FeaturesService from 'frontend-burgernabije-besluitendatabank/services/features';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
-import type ItemsService from 'frontend-burgernabije-besluitendatabank/services/items-service';
+import type ItemListService from 'frontend-burgernabije-besluitendatabank/services/item-list';
 
 export default class AgendaItemsIndexRoute extends Route {
   @service declare features: FeaturesService;
   @service declare filterService: FilterService;
-  @service declare itemsService: ItemsService;
+  @service('item-list') declare itemsService: ItemListService;
+
   queryParams = {
     municipalityLabels: {
       as: QueryParameterKeys.municipalities,
@@ -68,8 +69,8 @@ export default class AgendaItemsIndexRoute extends Route {
       params.municipalityLabels || null,
     );
     this.filterService.updateFiltersFromParams(params);
-    this.itemsService.resetAgendaItems();
-    this.itemsService.initialAgendaItems(this.filterService.filters);
+    this.itemsService.changeModelIndex('agenda-items');
+    this.itemsService.loadFirstPage(this.filterService.filters);
 
     return { filters: this.filterService.asQueryParams };
   }
