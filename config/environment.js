@@ -5,7 +5,7 @@ module.exports = function (environment) {
     modulePrefix: 'frontend-burgernabije-besluitendatabank',
     environment,
     rootURL: '/',
-    locationType: 'none', // If updated to hash, change ember-plausible config
+    locationType: 'history', // If updated to hash, change ember-plausible config
     EmberENV: {
       EXTEND_PROTOTYPES: false,
     },
