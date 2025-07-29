@@ -148,9 +148,15 @@ export default class FilterService extends Service {
       governingBodyClassificationIds = serializeArray(
         this.filters.governingBodyClassificationIds,
       );
+      if (governingBodyClassificationIds === '') {
+        governingBodyClassificationIds = null;
+      }
     }
     if (this.filters.themeIds.length >= 1) {
       themeIds = serializeArray(this.filters.themeIds);
+      if (themeIds === '') {
+        themeIds = null;
+      }
     }
     const queryParams: FiltersAsQueryParams = {
       gemeentes: this.municipalityLabels,
