@@ -143,27 +143,14 @@ export default class FilterService extends Service {
   get asQueryParams() {
     let governingBodyClassificationIds = null;
     let themeIds = null;
-    let searchOnTitle = null;
 
     if (this.filters.governingBodyClassificationIds.length >= 1) {
       governingBodyClassificationIds = serializeArray(
         this.filters.governingBodyClassificationIds,
       );
-      if (governingBodyClassificationIds === '') {
-        governingBodyClassificationIds = null;
-      }
     }
     if (this.filters.themeIds.length >= 1) {
       themeIds = serializeArray(this.filters.themeIds);
-      if (themeIds === '') {
-        themeIds = null;
-      }
-    }
-    if (
-      this.filters.keywordSearchOnlyInTitle &&
-      this.filters.keywordSearchOnlyInTitle == 'true'
-    ) {
-      searchOnTitle = 'true';
     }
     const queryParams: FiltersAsQueryParams = {
       gemeentes: this.municipalityLabels,
@@ -172,7 +159,7 @@ export default class FilterService extends Service {
       begin: this.filters.plannedStartMin,
       eind: this.filters.plannedStartMax,
       trefwoord: this.filters.keyword,
-      zoekOpTitel: searchOnTitle,
+      zoekOpTitel: this.filters.keywordSearchOnlyInTitle,
       datumsortering: this.filters.dateSort as SortType,
       status: this.filters.status !== '' ? this.filters.status : undefined,
       thema: themeIds,
@@ -181,10 +168,19 @@ export default class FilterService extends Service {
     };
 
     if (queryParams.status == 'Alles') {
-      delete queryParams.status;
+      queryParams.status = undefined;
     }
     if (queryParams.datumsortering == 'desc') {
-      delete queryParams.datumsortering;
+      queryParams.datumsortering = undefined;
+    }
+    if (queryParams.bestuursorganen === '') {
+      queryParams.bestuursorganen = null;
+    }
+    if (queryParams.thema === '') {
+      queryParams.thema = null;
+    }
+    if (queryParams.zoekOpTitel == 'false') {
+      queryParams.zoekOpTitel = null;
     }
     return queryParams;
   }
