@@ -121,7 +121,7 @@ export default class FilterService extends Service {
       zoekOpTitel: 'keywordSearchOnlyInTitle',
       datumsortering: 'dateSort',
       status: 'status',
-      thema: 'themes',
+      thema: 'themeIds',
       straat: 'street',
       afstand: 'distance',
     };
@@ -144,12 +144,12 @@ export default class FilterService extends Service {
     let governingBodyClassificationIds = null;
     let themeIds = null;
 
-    if (this.filters.governingBodyClassificationIds.length >= 1) {
+    if (this.filters.governingBodyClassificationIds?.length >= 1) {
       governingBodyClassificationIds = serializeArray(
         this.filters.governingBodyClassificationIds,
       );
     }
-    if (this.filters.themeIds.length >= 1) {
+    if (this.filters.themeIds?.length >= 1) {
       themeIds = serializeArray(this.filters.themeIds);
     }
     const queryParams: FiltersAsQueryParams = {

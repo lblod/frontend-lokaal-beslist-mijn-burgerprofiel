@@ -33,7 +33,7 @@ export default class ThemeListService extends Service {
   }
 
   getOptionsForIds(ids: Array<string>) {
-    return this.asOptions.filter((option) => ids.includes(option.id));
+    return this.asOptions.filter((option) => ids?.includes(option.id));
   }
 }
 

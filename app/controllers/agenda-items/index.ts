@@ -39,6 +39,7 @@ export default class AgendaItemsIndexController extends Controller {
 
   @action
   refreshRoute() {
+    this.itemsService.fetchItems.perform(0, false);
     this.router.transitionTo(this.router.currentRouteName, {
       queryParams: this.filterService.asQueryParams,
     });
