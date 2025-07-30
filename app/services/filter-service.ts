@@ -121,7 +121,7 @@ export default class FilterService extends Service {
       zoekOpTitel: 'keywordSearchOnlyInTitle',
       datumsortering: 'dateSort',
       status: 'status',
-      thema: 'themes',
+      thema: 'themeIds',
       straat: 'street',
       afstand: 'distance',
     };
@@ -144,12 +144,12 @@ export default class FilterService extends Service {
     let governingBodyClassificationIds = null;
     let themeIds = null;
 
-    if (this.filters.governingBodyClassificationIds.length >= 1) {
+    if (this.filters.governingBodyClassificationIds?.length >= 1) {
       governingBodyClassificationIds = serializeArray(
         this.filters.governingBodyClassificationIds,
       );
     }
-    if (this.filters.themeIds.length >= 1) {
+    if (this.filters.themeIds?.length >= 1) {
       themeIds = serializeArray(this.filters.themeIds);
     }
     const queryParams: FiltersAsQueryParams = {
@@ -159,11 +159,7 @@ export default class FilterService extends Service {
       begin: this.filters.plannedStartMin,
       eind: this.filters.plannedStartMax,
       trefwoord: this.filters.keyword,
-      zoekOpTitel:
-        this.filters.keywordSearchOnlyInTitle &&
-        this.filters.keywordSearchOnlyInTitle !== 'false'
-          ? this.filters.keywordSearchOnlyInTitle
-          : null,
+      zoekOpTitel: this.filters.keywordSearchOnlyInTitle,
       datumsortering: this.filters.dateSort as SortType,
       status: this.filters.status !== '' ? this.filters.status : undefined,
       thema: themeIds,
@@ -172,10 +168,19 @@ export default class FilterService extends Service {
     };
 
     if (queryParams.status == 'Alles') {
-      delete queryParams.status;
+      queryParams.status = undefined;
     }
     if (queryParams.datumsortering == 'desc') {
-      delete queryParams.datumsortering;
+      queryParams.datumsortering = undefined;
+    }
+    if (queryParams.bestuursorganen === '') {
+      queryParams.bestuursorganen = null;
+    }
+    if (queryParams.thema === '') {
+      queryParams.thema = null;
+    }
+    if (queryParams.zoekOpTitel == 'false') {
+      queryParams.zoekOpTitel = null;
     }
     return queryParams;
   }
@@ -187,7 +192,7 @@ export default class FilterService extends Service {
       begin: null,
       eind: null,
       trefwoord: null,
-      zoekOpTitel: false,
+      zoekOpTitel: null,
       datumsortering: null,
       status: null,
       thema: null,

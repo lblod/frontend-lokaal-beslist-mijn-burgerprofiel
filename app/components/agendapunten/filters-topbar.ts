@@ -8,6 +8,7 @@ import type FilterService from 'frontend-burgernabije-besluitendatabank/services
 import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
 import type DistanceListService from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 import type ItemListService from 'frontend-burgernabije-besluitendatabank/services/item-list';
+import type AddressService from 'frontend-burgernabije-besluitendatabank/services/address';
 
 export interface AgendapuntenFiltersTopbarSignature {
   Args: {
@@ -23,6 +24,7 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   @service('item-list') declare itemsService: ItemListService;
   @service declare filterService: FilterService;
   @service declare distanceList: DistanceListService;
+  @service declare address: AddressService;
 
   get hasFilters() {
     return this.filterValues.length >= 1;
@@ -146,6 +148,15 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
 
   @action
   removeFilter(queryParamKey: string) {
+    const extraActionsForKey = {
+      [QueryParameterKeys.street]: () => {
+        this.address.selectedAddress = undefined;
+      },
+      [QueryParameterKeys.distance]: () => {
+        this.distanceList.selected = null;
+      },
+    };
+
     if (queryParamKey === 'periode') {
       this.filterService.updateFilterFromQueryParamKey(
         QueryParameterKeys.start as keyof FiltersAsQueryParams,
@@ -164,6 +175,7 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
       );
     }
 
+    extraActionsForKey[queryParamKey]?.();
     this.args.onFiltersUpdated?.();
   }
 }
