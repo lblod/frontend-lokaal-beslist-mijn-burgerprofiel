@@ -487,7 +487,11 @@ ol.less-margin {
   top: 0;
   overflow: hidden;
   width: 100%;
-  z-index: 99;
+  z-index: 10;
   background-color: var(--au-white);
   max-height: 4.8rem;
+}
+
+.ember-basic-dropdown-trigger {
+  z-index: 9;
 }
