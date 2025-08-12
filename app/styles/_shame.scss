@@ -477,3 +477,7 @@ ol.less-margin {
 .au-c-badge--error {
   background-color: var(--au-red-700) !important;
 }
+
+.au-c-modal-backdrop.is-visible {
+  overflow: hidden;
+}
