@@ -481,3 +481,13 @@ ol.less-margin {
 .au-c-modal-backdrop.is-visible {
   overflow: hidden;
 }
+
+.sticky-top {
+  position: fixed;
+  top: 0;
+  overflow: hidden;
+  width: 100%;
+  z-index: 99;
+  background-color: var(--au-white);
+  max-height: 4.8rem;
+}
