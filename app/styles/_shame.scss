@@ -480,6 +480,7 @@ ol.less-margin {
 
 .au-c-modal-backdrop.is-visible {
   overflow: hidden;
+  touch-action: none;
 }
 
 .sticky-top {
