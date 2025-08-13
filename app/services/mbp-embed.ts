@@ -45,13 +45,17 @@ export default class MbpEmbedService extends Service {
   }
 
   async setAppColors() {
+    if (!this.client) {
+      return;
+    }
+
     const tenant = await this.client?.context.getTenant();
     document.documentElement.style.setProperty(
       '--au-blue-700',
       tenant.branding.primaryColor,
     );
     document.documentElement.style.setProperty(
-      '--sdk-action',
+      '--au-gray-900',
       tenant.branding.actionColor,
     );
   }

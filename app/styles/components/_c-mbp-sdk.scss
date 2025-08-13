@@ -1,9 +1,5 @@
 $primary: var(--au-blue-700);
 
-:root {
-  --sdk-action: $primary;
-}
-
 .icon-color--primary {
   .au-c-icon {
     stroke: $primary !important;
@@ -13,7 +9,7 @@ $primary: var(--au-blue-700);
 
 .au-c-tabs {
   .au-c-tabs-list__item .au-c-link.active {
-    color: var(--sdk-action) !important;
+    color: $primary !important;
     box-shadow: 0 -3px 0 0 inset $primary !important;
   }
 
