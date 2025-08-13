@@ -499,4 +499,8 @@ ol.less-margin {
 
 #advanced-search-modal {
   touch-action: none;
+
+  .au-c-modal__body {
+    touch-action: none;
+  }
 }
