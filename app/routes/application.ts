@@ -14,8 +14,10 @@ export default class ApplicationRoute extends Route {
   @service declare mbpEmbed: MbpEmbedService;
   @service declare router: Route;
 
-  constructor() {
-    super();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(args: { Args: any }) {
+    super(args);
+
     this.router.on('routeDidChange', (transition) => {
       this.mbpEmbed.setRouteTitle(transition);
     });

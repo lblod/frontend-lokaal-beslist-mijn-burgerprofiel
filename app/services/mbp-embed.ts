@@ -50,9 +50,9 @@ export default class MbpEmbedService extends Service {
       ['sessions.session']: 'Zitting',
       ['filter']: 'Filters',
     };
-    const routeTitle = '';
-    if (transition.to?.name) {
-      routeTitleMap[transition.to?.name];
+    let routeTitle = '';
+    if (transition.to?.name && routeTitleMap[transition.to.name]) {
+      routeTitle = routeTitleMap[transition.to.name] || '';
     }
     this.client?.ui.setTitle(routeTitle);
   }
