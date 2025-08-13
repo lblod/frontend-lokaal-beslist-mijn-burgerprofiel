@@ -1,0 +1,19 @@
+$primary: var(--au-blue-700);
+
+.icon-color--primary {
+  .au-c-icon {
+    stroke: $primary !important;
+    fill: $primary !important;
+  }
+}
+
+.au-c-tabs {
+  .au-c-tabs-list__item .au-c-link.active {
+    color: $primary !important;
+    box-shadow: 0 -3px 0 0 inset $primary !important;
+  }
+
+  .au-c-tabs-list__item .au-c-link {
+    color: var(--au-gray-900) !important;
+  }
+}
