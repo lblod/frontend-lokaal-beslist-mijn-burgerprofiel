@@ -31,7 +31,7 @@ export default class AgendaItemRoute extends Route {
   @service declare mbpEmbed: MbpEmbedService;
 
   async model(params: DetailParams) {
-    this.mbpEmbed.client?.ui.setTitle('Agenda-item');
+    this.mbpEmbed.client?.ui.setTitle('Agendapunt');
 
     const agendaItem = await this.store.findRecord('agenda-item', params.id);
 
