@@ -11,6 +11,7 @@ import type GoverningBodyModel from 'frontend-burgernabije-besluitendatabank/mod
 
 export default class SessionRoute extends Route {
   @service declare store: Store;
+
   @tracked governingBodies: { label: string }[] | null = null;
   @tracked otherSessions: {
     sessions: SessionModel[];
