@@ -1,5 +1,7 @@
 import Component from '@glimmer/component';
+
 import { action } from '@ember/object';
+import { tracked } from '@glimmer/tracking';
 
 interface ArgsInterface {
   loadMore: () => void;
@@ -10,6 +12,7 @@ interface ArgsInterface {
 
 export default class InfiniteList extends Component<ArgsInterface> {
   isScrolling = false;
+  @tracked showScrollToTopButton = false;
 
   @action
   scroll(event: Event) {
@@ -36,6 +39,14 @@ export default class InfiniteList extends Component<ArgsInterface> {
     if (scrollPercentage > 0.9 && !this.args.isLoading) {
       this.loadMore();
     }
+    this.showScrollToTopButton = scrollTop > clientHeight / 2;
+  }
+
+  @action
+  scrollToTop() {
+    document
+      .getElementsByClassName('c-infinite-list')[0]
+      ?.scrollIntoView({ block: 'start', behavior: 'smooth' });
   }
 
   @action
