@@ -38,7 +38,10 @@ export default class AgendaItemModel extends Model {
   }
 
   get wasHandled() {
-    return Boolean(this.session?.startedAt) || Boolean(this.session?.endedAt);
+    return (
+      (Boolean(this.session?.startedAt) || Boolean(this.session?.endedAt)) &&
+      Boolean((this as AgendaItemModel).belongsTo('handledBy')?.value())
+    );
   }
 
   get municipality() {
