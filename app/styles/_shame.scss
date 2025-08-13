@@ -496,3 +496,7 @@ ol.less-margin {
 .ember-basic-dropdown-trigger {
   z-index: 9;
 }
+
+#advanced-search-modal {
+  touch-action: none;
+}
