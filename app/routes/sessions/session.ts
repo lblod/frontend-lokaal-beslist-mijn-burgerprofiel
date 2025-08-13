@@ -8,9 +8,12 @@ import type ArrayProxy from '@ember/array/proxy';
 import type AgendaItemModel from 'frontend-burgernabije-besluitendatabank/models/agenda-item';
 import type { AdapterPopulatedRecordArrayWithMeta } from 'frontend-burgernabije-besluitendatabank/utils/ember-data';
 import type GoverningBodyModel from 'frontend-burgernabije-besluitendatabank/models/governing-body';
+import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 
 export default class SessionRoute extends Route {
   @service declare store: Store;
+  @service declare mbpEmbed: MbpEmbedService;
+
   @tracked governingBodies: { label: string }[] | null = null;
   @tracked otherSessions: {
     sessions: SessionModel[];
@@ -19,6 +22,7 @@ export default class SessionRoute extends Route {
   @tracked sortedAgendaItems: AgendaItemModel[] | null = null;
 
   async model({ session_id }: { session_id: string }) {
+    this.mbpEmbed.client?.ui.setTitle('Zitting');
     const session = await this.store.findRecord('session', session_id, {
       include: [
         'governing-body.is-time-specialization-of.administrative-unit.location',

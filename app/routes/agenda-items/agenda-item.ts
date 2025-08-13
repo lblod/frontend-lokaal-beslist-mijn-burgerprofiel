@@ -8,6 +8,7 @@ import type ArticleModel from 'frontend-burgernabije-besluitendatabank/models/ar
 import type VoteModel from 'frontend-burgernabije-besluitendatabank/models/vote';
 import type GoverningBodyDisabledList from 'frontend-burgernabije-besluitendatabank/services/governing-body-disabled-list';
 import type KeywordStoreService from 'frontend-burgernabije-besluitendatabank/services/keyword-store';
+import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 import { sortObjectsByTitle } from 'frontend-burgernabije-besluitendatabank/utils/array-utils';
 
 interface DetailParams {
@@ -27,8 +28,11 @@ export default class AgendaItemRoute extends Route {
   @service declare store: Store;
   @service declare keywordStore: KeywordStoreService;
   @service declare governingBodyDisabledList: GoverningBodyDisabledList;
+  @service declare mbpEmbed: MbpEmbedService;
 
   async model(params: DetailParams) {
+    this.mbpEmbed.client?.ui.setTitle('Agenda-item');
+
     const agendaItem = await this.store.findRecord('agenda-item', params.id);
 
     // wait until sessions are loaded

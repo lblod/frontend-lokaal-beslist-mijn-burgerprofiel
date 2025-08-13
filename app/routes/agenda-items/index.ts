@@ -7,11 +7,13 @@ import type { AgendaItemsParams } from 'frontend-burgernabije-besluitendatabank/
 import type FeaturesService from 'frontend-burgernabije-besluitendatabank/services/features';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
 import type ItemListService from 'frontend-burgernabije-besluitendatabank/services/item-list';
+import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 
 export default class AgendaItemsIndexRoute extends Route {
   @service declare features: FeaturesService;
   @service declare filterService: FilterService;
   @service('item-list') declare itemsService: ItemListService;
+  @service declare mbpEmbed: MbpEmbedService;
 
   queryParams = {
     municipalityLabels: {
@@ -65,6 +67,7 @@ export default class AgendaItemsIndexRoute extends Route {
   };
 
   model(params: Partial<AgendaItemsParams>) {
+    this.mbpEmbed.clearTitle();
     this.filterService.setMunicipalityInStorage(
       params.municipalityLabels || null,
     );
