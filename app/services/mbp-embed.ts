@@ -14,6 +14,11 @@ export default class MbpEmbedService extends Service {
   }
 
   async setup() {
+    await this.connectToClient();
+    await this.setAppColors();
+  }
+
+  async connectToClient() {
     if (!this.clientId) {
       throw new Error(
         'MBP_CLIENT_ID is not set in the environment configuration.',
@@ -37,6 +42,14 @@ export default class MbpEmbedService extends Service {
     } catch (e) {
       console.error('MBP SDK connection failed:', e);
     }
+  }
+
+  async setAppColors() {
+    const tenant = await this.client?.context.getTenant();
+    document.documentElement.style.setProperty(
+      '--au-blue-700',
+      tenant.branding.primaryColor,
+    );
   }
 
   setRouteTitle(transition?: Transition) {
