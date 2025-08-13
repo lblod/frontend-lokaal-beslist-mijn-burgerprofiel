@@ -54,6 +54,7 @@ export default class MbpEmbedService extends Service {
     if (transition.to?.name && routeTitleMap[transition.to.name]) {
       routeTitle = routeTitleMap[transition.to.name] || '';
     }
+    alert(`Set SDK title to: ${routeTitle}`);
     this.client?.ui.setTitle(routeTitle);
   }
 }
