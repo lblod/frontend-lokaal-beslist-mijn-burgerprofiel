@@ -46,7 +46,9 @@ export default class MbpEmbedService extends Service {
     }
 
     const routeTitleMap: Record<string, string> = {
+      ['agenda-items.index']: 'Agendapunten',
       ['agenda-items.agenda-item']: 'Agendapunt',
+      ['sessions.index']: 'Zittingen',
       ['sessions.session']: 'Zitting',
       ['filter']: 'Filters',
     };
