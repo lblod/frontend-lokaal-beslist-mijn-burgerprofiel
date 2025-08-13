@@ -1,7 +1,10 @@
 import Route from '@ember/routing/route';
+
 import { service } from '@ember/service';
-import type PlausibleService from 'ember-plausible/services/plausible';
+
 import config from 'frontend-burgernabije-besluitendatabank/config/environment';
+
+import type PlausibleService from 'ember-plausible/services/plausible';
 import type GoverningBodyDisabledList from 'frontend-burgernabije-besluitendatabank/services/governing-body-disabled-list';
 import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 
@@ -9,7 +12,14 @@ export default class ApplicationRoute extends Route {
   @service declare plausible: PlausibleService;
   @service declare governingBodyDisabledList: GoverningBodyDisabledList;
   @service declare mbpEmbed: MbpEmbedService;
+  @service declare router: Route;
 
+  constructor() {
+    super();
+    this.router.on('routeDidChange', (transition) => {
+      this.mbpEmbed.setRouteTitle(transition);
+    });
+  }
   beforeModel(): void {
     this.startAnalytics();
     this.setGoverningBodyDisabledList();

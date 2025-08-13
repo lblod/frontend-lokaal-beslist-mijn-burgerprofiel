@@ -4,6 +4,7 @@ import config from '../config/environment';
 
 import type { MbpEmbedClient } from '@govflanders/mbp-embed-sdk';
 import { createMbpEmbedClient } from '@govflanders/mbp-embed-sdk';
+import type Transition from '@ember/routing/transition';
 
 export default class MbpEmbedService extends Service {
   declare client: MbpEmbedClient;
@@ -38,8 +39,22 @@ export default class MbpEmbedService extends Service {
     }
   }
 
-  clearTitle() {
-    this.client?.ui.setTitle('');
+  setRouteTitle(transition?: Transition) {
+    if (!transition) {
+      this.client?.ui.setTitle('');
+      return;
+    }
+
+    const routeTitleMap: Record<string, string> = {
+      ['agenda-items.agenda-item']: 'Agendapunt',
+      ['sessions.session']: 'Zitting',
+      ['filter']: 'Filters',
+    };
+    const routeTitle = '';
+    if (transition.to?.name) {
+      routeTitleMap[transition.to?.name];
+    }
+    this.client?.ui.setTitle(routeTitle);
   }
 }
 
