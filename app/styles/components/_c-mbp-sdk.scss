@@ -1,5 +1,9 @@
 $primary: var(--au-blue-700);
 
+:root {
+  --sdk-action: $primary;
+}
+
 .icon-color--primary {
   .au-c-icon {
     stroke: $primary !important;

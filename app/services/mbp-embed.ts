@@ -50,6 +50,10 @@ export default class MbpEmbedService extends Service {
       '--au-blue-700',
       tenant.branding.primaryColor,
     );
+    document.documentElement.style.setProperty(
+      '--sdk-action',
+      tenant.branding.actionColor,
+    );
   }
 
   setRouteTitle(transition?: Transition) {
