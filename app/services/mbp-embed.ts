@@ -13,12 +13,14 @@ export default class MbpEmbedService extends Service {
   }
 
   async setup() {
+    alert('setup', JSON.stringify(config));
     if (!this.clientId) {
       throw new Error(
         'MBP_CLIENT_ID is not set in the environment configuration.',
       );
     }
 
+    alert('id:' + this.clientId);
     this.client = createMbpEmbedClient(this.clientId, {
       allowedHosts: [
         'https://mbp.lokaalbeslist.lblod.info/',
@@ -31,10 +33,12 @@ export default class MbpEmbedService extends Service {
 
     try {
       await this.client.connect();
+      alert('connected');
       console.log('MBP SDK connected!');
       this.client.ui.setStatusLoading(false);
     } catch (e) {
       console.error('MBP SDK connection failed:', e);
+      alert('something went wrong');
     }
   }
 
