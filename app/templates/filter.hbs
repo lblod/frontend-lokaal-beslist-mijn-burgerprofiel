@@ -1,5 +1,5 @@
 {{page-title "Filter"}}
-<AuToolbar @border="bottom" as |Group|>
+<AuToolbar @border="bottom" class="sticky-top" as |Group|>
   <Group />
   <Group>
     <AuButton
@@ -9,8 +9,11 @@
     >Reset filters</AuButton>
   </Group>
 </AuToolbar>
-<div class="c-interface__sidebar-main au-u-padding-left au-u-padding-right">
+<div
+  class="c-interface__sidebar-main au-u-padding-left au-u-padding-right au-u-margin-top-large"
+>
   <Filters::AdvancedInputSearch
+    class="au-u-margin-top"
     @value={{this.filterService.filters.keyword}}
     @searchOnlyOnTitle={{this.filterService.filters.keywordSearchOnlyInTitle}}
     @onUpdateKeyword={{this.updateKeyword}}

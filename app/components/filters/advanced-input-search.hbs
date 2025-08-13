@@ -1,4 +1,4 @@
-<div>
+<div ...attributes>
   <AuLabel for="sort-on">Zoek op titel en inhoud</AuLabel>
   <AuInput
     @width="block"
@@ -24,6 +24,7 @@
   </AuCheckbox>
 </div>
 <AuModal
+  id="advanced-search-modal"
   @modalOpen={{this.isInfoModalOpen}}
   @closable={{true}}
   @closeModal={{this.closeModal}}

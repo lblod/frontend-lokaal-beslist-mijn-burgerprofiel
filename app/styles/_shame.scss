@@ -477,3 +477,30 @@ ol.less-margin {
 .au-c-badge--error {
   background-color: var(--au-red-700) !important;
 }
+
+.au-c-modal-backdrop.is-visible {
+  overflow: hidden;
+  touch-action: none;
+}
+
+.sticky-top {
+  position: fixed;
+  top: 0;
+  overflow: hidden;
+  width: 100%;
+  z-index: 10;
+  background-color: var(--au-white);
+  max-height: 4.8rem;
+}
+
+.ember-basic-dropdown-trigger {
+  z-index: 9;
+}
+
+#advanced-search-modal {
+  touch-action: none;
+
+  .au-c-modal__body {
+    touch-action: none;
+  }
+}
