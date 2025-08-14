@@ -18,8 +18,8 @@
 #scroll-to-top-button {
   position: absolute;
   z-index: 5;
-  bottom: 7rem;
-  right: 5rem;
+  bottom: $au-unit;
+  right: $au-unit;
 
   .au-c-icon {
     stroke: var(--au-white) !important;
