@@ -13,6 +13,7 @@ import type {
   SessionsQueryArguments,
   SessionsQueryResult,
 } from 'frontend-burgernabije-besluitendatabank/controllers/sessions/types';
+import { keywordSearch } from 'frontend-burgernabije-besluitendatabank/helpers/keyword-search';
 
 export function createSessionsQuery({
   index,
@@ -75,7 +76,38 @@ function buildFilters({
     filters[':has-no:ended_at'] = 't';
   }
   if (keyword) {
-    filters[':fuzzy:search_content'] = keyword;
+    if (keyword.includes('-title*') && keyword.includes('-description*')) {
+      filters[':query:search_content'] =
+        '(NOT _exists_:agenda-items_title OR agenda-items_title:"") AND (NOT _exists_:agenda-items_description OR agenda-items_description:"")';
+    } else if (keyword.includes('-title*')) {
+      filters[':query:search_content'] =
+        '(NOT _exists_:agenda-items_title OR agenda-items_title:"")';
+    } else if (keyword.includes('-description*')) {
+      filters[':query:search_content'] =
+        '(NOT _exists_:agenda-items_description OR agenda-items_description:"")';
+    } else {
+      const parsedResults = keywordSearch([
+        keyword,
+        ['agenda-items_title', 'agenda-items_description'],
+      ]);
+      const buildQuery = [];
+      if (parsedResults !== null) {
+        if (parsedResults['must'] && parsedResults['must'].length > 0) {
+          buildQuery.push(`(${parsedResults['must'].join(' AND ')})`);
+        }
+        if (parsedResults['or'] && parsedResults['or'].length > 0) {
+          buildQuery.push(`(${parsedResults['or'].join(' OR ')})`);
+        }
+        if (parsedResults['not'] && parsedResults['not'].length > 0) {
+          buildQuery.push(`(NOT ${parsedResults['not'].join(' AND NOT ')})`);
+        }
+      }
+      if (buildQuery.length !== 0) {
+        filters[':query:search_content'] = buildQuery.join(' AND ');
+      } else {
+        filters[':fuzzy:search_content'] = keyword;
+      }
+    }
   }
 
   return filters;
