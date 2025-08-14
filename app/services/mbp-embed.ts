@@ -2,20 +2,29 @@ import Service from '@ember/service';
 
 import config from '../config/environment';
 
-import type { MbpEmbedClient } from '@govflanders/mbp-embed-sdk';
+import type { MbpEmbedClient, Tenant } from '@govflanders/mbp-embed-sdk';
 import { createMbpEmbedClient } from '@govflanders/mbp-embed-sdk';
 import type Transition from '@ember/routing/transition';
 
 export default class MbpEmbedService extends Service {
   declare client: MbpEmbedClient;
+  declare tenant: Tenant;
 
   get clientId() {
     return config.APP.MBP_CLIENT_ID;
   }
 
+  get postalCodes() {
+    return this.tenant?.postalCodes ?? [];
+  }
+
+  get NISCodes() {
+    return this.tenant?.nisCodes ?? [];
+  }
   async setup() {
     await this.connectToClient();
-    await this.setAppColors();
+    this.tenant = await this.client?.context.getTenant();
+    this.setAppColors();
   }
 
   async connectToClient() {
@@ -44,19 +53,18 @@ export default class MbpEmbedService extends Service {
     }
   }
 
-  async setAppColors() {
-    if (!this.client) {
+  setAppColors() {
+    if (!this.tenant) {
       return;
     }
 
-    const tenant = await this.client?.context.getTenant();
     document.documentElement.style.setProperty(
       '--au-blue-700',
-      tenant.branding.primaryColor,
+      this.tenant.branding.primaryColor,
     );
     document.documentElement.style.setProperty(
       '--au-gray-900',
-      tenant.branding.actionColor,
+      this.tenant.branding.actionColor,
     );
   }
 
