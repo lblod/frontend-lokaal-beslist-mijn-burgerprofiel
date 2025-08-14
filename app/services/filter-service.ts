@@ -14,7 +14,6 @@ import {
   serializeArray,
 } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 
-const MUNICIPALITY_SESSION_KEY = 'municipality-labels';
 export default class FilterService extends Service {
   @service declare router: RouterService;
 
@@ -22,7 +21,7 @@ export default class FilterService extends Service {
   @tracked filters: AgendaItemsParams = {
     keyword: null,
     keywordSearchOnlyInTitle: null,
-    municipalityLabels: this.municipalityLabels || null,
+    municipalityLabels: null,
     provinceLabels: null,
     plannedStartMin: null,
     plannedStartMax: null,
@@ -199,15 +198,5 @@ export default class FilterService extends Service {
       straat: null,
       afstand: null,
     };
-  }
-
-  get municipalityLabels() {
-    return sessionStorage.getItem(MUNICIPALITY_SESSION_KEY) || undefined;
-  }
-
-  setMunicipalityInStorage(municipalityLabels: string | null) {
-    if (municipalityLabels) {
-      sessionStorage.setItem(MUNICIPALITY_SESSION_KEY, municipalityLabels);
-    }
   }
 }

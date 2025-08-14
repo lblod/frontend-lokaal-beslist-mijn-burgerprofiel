@@ -46,9 +46,6 @@ export default class SessionsIndexRoute extends Route {
     },
   };
   async model(params: AgendaItemsParams) {
-    this.filterService.setMunicipalityInStorage(
-      params.municipalityLabels || null,
-    );
     this.filterService.updateFiltersFromParams(params);
     this.itemsService.changeModelIndex('session');
     this.itemsService.loadFirstPage(this.filterService.filters);
