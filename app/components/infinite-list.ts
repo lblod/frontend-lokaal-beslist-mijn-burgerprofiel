@@ -3,6 +3,8 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { tracked } from '@glimmer/tracking';
 
+import { restartableTask, timeout } from 'ember-concurrency';
+
 interface ArgsInterface {
   loadMore: () => void;
   isLoading: boolean;
@@ -40,20 +42,24 @@ export default class InfiniteList extends Component<ArgsInterface> {
     if (scrollPercentage > 0.9 && !this.args.isLoading) {
       this.loadMore();
     }
-    this.manageScrollToTopButton(scrollTop, clientHeight);
+    this.manageScrollToTopButton.perform(scrollTop, clientHeight);
     this.setPagePositionLine(scrollPercentage);
   }
 
-  manageScrollToTopButton(scrollTop: number, clientHeight: number) {
-    const isScrollingToTop = scrollTop < this.currentScrollTop;
-    this.currentScrollTop = scrollTop;
-    if (!isScrollingToTop) {
-      this.showScrollToTopButton = false;
-      return;
-    }
-    const scrollTriggerOnPage = 4;
-    this.showScrollToTopButton = scrollTop > clientHeight * scrollTriggerOnPage;
-  }
+  manageScrollToTopButton = restartableTask(
+    async (scrollTop: number, clientHeight: number) => {
+      const isScrollingToTop = scrollTop < this.currentScrollTop;
+      this.currentScrollTop = scrollTop;
+      if (!isScrollingToTop) {
+        await timeout(500);
+        this.showScrollToTopButton = false;
+        return;
+      }
+      const scrollTriggerOnPage = 4;
+      this.showScrollToTopButton =
+        scrollTop > clientHeight * scrollTriggerOnPage;
+    },
+  );
 
   setPagePositionLine(scrollPercentage: number) {
     const absoluteItemPosition = this.args.itemsShown * scrollPercentage;
