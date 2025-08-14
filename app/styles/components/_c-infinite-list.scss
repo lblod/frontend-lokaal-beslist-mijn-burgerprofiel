@@ -1,4 +1,6 @@
 .c-infinite-list {
+  scroll-behavior: auto;
+
   > li + li {
     margin-top: $au-unit-small;
     padding-top: $au-unit-small;
@@ -16,7 +18,7 @@
 #scroll-to-top-button {
   position: absolute;
   z-index: 5;
-  bottom: 10rem;
+  bottom: 7rem;
   right: 5rem;
 
   .au-c-icon {
@@ -28,6 +30,6 @@
 #page-position-line {
   width: 0;
   max-width: 100vw;
-  height: 0.5rem;
+  height: 1rem;
   background-color: var(--au-blue-700);
 }
