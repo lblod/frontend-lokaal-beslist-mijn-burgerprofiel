@@ -18,6 +18,11 @@
   z-index: 5;
   bottom: 10rem;
   right: 5rem;
+
+  .au-c-icon {
+    stroke: var(--au-white) !important;
+    fill: var(--au-white) !important;
+  }
 }
 
 #page-position-line {
