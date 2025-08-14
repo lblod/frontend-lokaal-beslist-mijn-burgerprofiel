@@ -4,21 +4,11 @@
   <div class="au-o-layout">
     <AuContent class="au-u-3-4@medium">
       <div class="au-u-flex au-u-flex--vertical-center au-u-flex--spaced-small">
-        <span
-          class="au-c-badge au-c-badge--brand au-u-margin-right-none"
-          aria-hidden="true"
-        >
-          <svg
-            role="img"
-            class="au-c-icon"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          ><path
-              fill-rule="evenodd"
-              d="M19,1 L13,1 C11.897,1 11,1.898 11,3 L11,21 C11,22.103 11.897,23 13,23 L19,23 C20.103,23 21,22.103 21,21 L21,3 C21,1.898 20.103,1 19,1 Z M13,21 L13,18 L16,18 L16,16 L13,16 L13,13 L16,13 L16,11 L13,11 L13,8 L16,8 L16,6 L13,6 L13,3 L19,3 L19.001,21 L13,21 Z M3,7 C3,5.346 4.346,4 6,4 C7.654,4 9,5.346 9,7 L9,18.303 L6,22.803 L3,18.303 L3,7 Z M6,19.197 L7,17.697 L7,10 L5,10 L5,17.697 L6,19.197 Z M5,8 L5,7 C5,6.448 5.449,6 6,6 C6.551,6 7,6.448 7,7 L7,8 L5,8 Z"
-            /></svg>
-        </span>
+        <AuBadge
+          @icon="document-added"
+          @skin="border"
+          class="accordion-badge icon-color--primary"
+        />
         <AuHeading>Datakwaliteit</AuHeading>
       </div>
       <AuHeading @level="2" @skin="2">Aanpak</AuHeading>
