@@ -21,8 +21,8 @@ export default class ApplicationRoute extends Route {
     this.router.on('routeDidChange', (transition) => {
       this.mbpEmbed.setRouteTitle(transition);
       alert(window.location.href);
-      alert(this.mbpEmbed.NISCodes.join(', '));
-      alert(this.mbpEmbed.postalCodes.join(', '));
+      alert(this.mbpEmbed.tenant?.id);
+      alert(this.mbpEmbed.tenant?.name);
     });
   }
   beforeModel(): void {

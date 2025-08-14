@@ -14,13 +14,10 @@ export default class MbpEmbedService extends Service {
     return config.APP.MBP_CLIENT_ID;
   }
 
-  get postalCodes() {
-    return this.tenant?.postalCodes ?? [];
-  }
-
   get NISCodes() {
     return this.tenant?.nisCodes ?? [];
   }
+
   async setup() {
     await this.connectToClient();
     this.tenant = await this.client?.context.getTenant();
