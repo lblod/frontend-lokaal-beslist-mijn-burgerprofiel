@@ -13,6 +13,7 @@ interface ArgsInterface {
 export default class InfiniteList extends Component<ArgsInterface> {
   isScrolling = false;
   @tracked showScrollToTopButton = false;
+  @tracked currentScrollTop = 0;
 
   @action
   scroll(event: Event) {
@@ -39,8 +40,19 @@ export default class InfiniteList extends Component<ArgsInterface> {
     if (scrollPercentage > 0.9 && !this.args.isLoading) {
       this.loadMore();
     }
-    this.showScrollToTopButton = scrollTop > clientHeight / 2;
+    this.manageScrollToTopButton(scrollTop, clientHeight);
     this.setPagePositionLine(scrollPercentage);
+  }
+
+  manageScrollToTopButton(scrollTop: number, clientHeight: number) {
+    const isScrollingToTop = scrollTop < this.currentScrollTop;
+    this.currentScrollTop = scrollTop;
+    if (!isScrollingToTop) {
+      this.showScrollToTopButton = false;
+      return;
+    }
+    const scrollTriggerOnPage = 4;
+    this.showScrollToTopButton = scrollTop > clientHeight * scrollTriggerOnPage;
   }
 
   setPagePositionLine(scrollPercentage: number) {
