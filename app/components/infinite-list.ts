@@ -40,6 +40,17 @@ export default class InfiniteList extends Component<ArgsInterface> {
       this.loadMore();
     }
     this.showScrollToTopButton = scrollTop > clientHeight / 2;
+    this.setPagePositionLine(scrollPercentage);
+  }
+
+  setPagePositionLine(scrollPercentage: number) {
+    const absoluteItemPosition = this.args.itemsShown * scrollPercentage;
+    const totalPercentage = absoluteItemPosition / this.args.itemsAmount;
+    const pixels = totalPercentage * window.innerWidth;
+    const line = document.getElementById('page-position-line');
+    if (line) {
+      line?.style.setProperty('width', `${pixels}px`);
+    }
   }
 
   @action
