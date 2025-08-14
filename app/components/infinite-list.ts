@@ -1,5 +1,9 @@
 import Component from '@glimmer/component';
+
 import { action } from '@ember/object';
+import { tracked } from '@glimmer/tracking';
+
+import { restartableTask, timeout } from 'ember-concurrency';
 
 interface ArgsInterface {
   loadMore: () => void;
@@ -10,6 +14,8 @@ interface ArgsInterface {
 
 export default class InfiniteList extends Component<ArgsInterface> {
   isScrolling = false;
+  @tracked showScrollToTopButton = false;
+  @tracked currentScrollTop = 0;
 
   @action
   scroll(event: Event) {
@@ -36,6 +42,40 @@ export default class InfiniteList extends Component<ArgsInterface> {
     if (scrollPercentage > 0.9 && !this.args.isLoading) {
       this.loadMore();
     }
+    this.manageScrollToTopButton.perform(scrollTop, clientHeight);
+    this.setPagePositionLine(scrollPercentage);
+  }
+
+  manageScrollToTopButton = restartableTask(
+    async (scrollTop: number, clientHeight: number) => {
+      const isScrollingToTop = scrollTop < this.currentScrollTop;
+      this.currentScrollTop = scrollTop;
+      if (!isScrollingToTop) {
+        await timeout(500);
+        this.showScrollToTopButton = false;
+        return;
+      }
+      const scrollTriggerOnPage = 4;
+      this.showScrollToTopButton =
+        scrollTop > clientHeight * scrollTriggerOnPage;
+    },
+  );
+
+  setPagePositionLine(scrollPercentage: number) {
+    const absoluteItemPosition = this.args.itemsShown * scrollPercentage;
+    const totalPercentage = absoluteItemPosition / this.args.itemsAmount;
+    const pixels = totalPercentage * window.innerWidth;
+    const line = document.getElementById('page-position-line');
+    if (line) {
+      line?.style.setProperty('width', `${pixels}px`);
+    }
+  }
+
+  @action
+  scrollToTop() {
+    document
+      .getElementsByClassName('c-infinite-list')[0]
+      ?.scrollIntoView({ block: 'start', behavior: 'smooth' });
   }
 
   @action

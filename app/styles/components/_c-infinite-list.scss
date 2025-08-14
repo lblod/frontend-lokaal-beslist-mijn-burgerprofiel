@@ -1,4 +1,6 @@
 .c-infinite-list {
+  scroll-behavior: auto;
+
   > li + li {
     margin-top: $au-unit-small;
     padding-top: $au-unit-small;
@@ -11,4 +13,23 @@
       padding-top: $au-unit-small + $au-unit-tiny;
     }
   }
+}
+
+#scroll-to-top-button {
+  position: absolute;
+  z-index: 5;
+  bottom: $au-unit;
+  right: $au-unit;
+
+  .au-c-icon {
+    stroke: var(--au-white) !important;
+    fill: var(--au-white) !important;
+  }
+}
+
+#page-position-line {
+  width: 0;
+  max-width: 100vw;
+  height: 0.5rem;
+  background-color: var(--au-gray-900);
 }

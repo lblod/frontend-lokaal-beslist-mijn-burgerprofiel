@@ -8,15 +8,18 @@
     {{yield}}
   </ul>
   <div class="au-u-flex au-u-flex--center au-u-padding-top">
+    {{#if this.showScrollToTopButton}}
+      <div id="scroll-to-top-button">
+        <AuBadge
+          {{on "click" this.scrollToTop}}
+          @skin="action"
+          @icon="chevron-up"
+          class="accordion-badge icon-color--primary"
+        />
+      </div>
+    {{/if}}
     {{#if @isLoading}}
       <AuLoader @hideMessage={{true}}>Aan het laden</AuLoader>
-    {{else if this.moreDataToLoad}}
-      <AuButton
-        @icon="add"
-        @skin="secondary"
-        @width="block"
-        {{on "click" this.loadMore}}
-      >Laad meer</AuButton>
     {{/if}}
   </div>
 </div>
