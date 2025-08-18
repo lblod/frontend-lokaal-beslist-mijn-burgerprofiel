@@ -3,22 +3,28 @@ import Service from '@ember/service';
 import config from '../config/environment';
 
 import type { MbpEmbedClient, Tenant } from '@govflanders/mbp-embed-sdk';
-import { createMbpEmbedClient } from '@govflanders/mbp-embed-sdk';
 import type Transition from '@ember/routing/transition';
+
+import { createMbpEmbedClient } from '@govflanders/mbp-embed-sdk';
+import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 
 export default class MbpEmbedService extends Service {
   declare client: MbpEmbedClient;
   declare tenant: Tenant;
+  declare municipalityLabel?: string;
 
   get clientId() {
     return config.APP.MBP_CLIENT_ID;
   }
 
-  get NISCodes() {
-    return this.tenant?.nisCodes ?? [];
+  get isLoggedInAsVlaanderen() {
+    return !this.municipalityLabel;
   }
 
-  async setup() {
+  async setup(gemeentesQueryParam?: string) {
+    if (gemeentesQueryParam) {
+      this.municipalityLabel = deserializeArray(gemeentesQueryParam)?.[0];
+    }
     await this.connectToClient();
     this.tenant = await this.client?.context.getTenant();
     this.setAppColors();

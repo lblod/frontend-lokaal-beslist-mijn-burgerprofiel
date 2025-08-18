@@ -7,6 +7,7 @@ import config from 'frontend-burgernabije-besluitendatabank/config/environment';
 import type PlausibleService from 'ember-plausible/services/plausible';
 import type GoverningBodyDisabledList from 'frontend-burgernabije-besluitendatabank/services/governing-body-disabled-list';
 import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
+import type Transition from '@ember/routing/transition';
 
 export default class ApplicationRoute extends Route {
   @service declare plausible: PlausibleService;
@@ -20,13 +21,17 @@ export default class ApplicationRoute extends Route {
 
     this.router.on('routeDidChange', (transition) => {
       this.mbpEmbed.setRouteTitle(transition);
-      alert(window.location.href);
+      // alert(window.location.href);
     });
   }
-  beforeModel(): void {
+  beforeModel(transition: Transition): void {
     this.startAnalytics();
     this.setGoverningBodyDisabledList();
-    this.mbpEmbed.setup();
+    let gemeentes = undefined;
+    if (transition.to?.queryParams) {
+      gemeentes = transition.to?.queryParams['gemeentes'];
+    }
+    this.mbpEmbed.setup(gemeentes);
   }
 
   startAnalytics(): void {

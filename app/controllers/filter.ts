@@ -18,16 +18,15 @@ import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/ser
 import type AddressService from 'frontend-burgernabije-besluitendatabank/services/address';
 import type FilterRoute from 'frontend-burgernabije-besluitendatabank/routes/filter';
 import type { ModelFrom } from 'frontend-burgernabije-besluitendatabank/lib/type-utils';
-import type CurrentSessionService from 'frontend-burgernabije-besluitendatabank/services/current-session';
 import type { GoverningBodyOption } from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
 import type NativeArray from '@ember/array/-private/native-array';
 
 import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import { formatNumber } from 'frontend-burgernabije-besluitendatabank/helpers/format-number';
 import { serializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
+import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 
 export default class FilterController extends Controller {
-  @service declare currentSession: CurrentSessionService;
   @service declare governingBodyList: GoverningBodyListService;
   @service declare governmentList: GovernmentListService;
   @service declare router: RouterService;
@@ -36,6 +35,7 @@ export default class FilterController extends Controller {
   @service declare themeList: ThemeListService;
   @service declare distanceList: DistanceListService;
   @service declare address: AddressService;
+  @service declare mbpEmbed: MbpEmbedService;
 
   declare model: ModelFrom<FilterRoute>;
 
@@ -97,7 +97,7 @@ export default class FilterController extends Controller {
   }
 
   get isMunicipalitySelectorShown() {
-    return this.currentSession.isVlaanderenLogin;
+    return this.mbpEmbed.isLoggedInAsVlaanderen;
   }
 
   @action

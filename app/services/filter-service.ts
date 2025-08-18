@@ -8,6 +8,8 @@ import type {
   FiltersAsQueryParams,
   SortType,
 } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
+import type MbpEmbedService from './mbp-embed';
+
 import { keywordSearch } from 'frontend-burgernabije-besluitendatabank/helpers/keyword-search';
 import {
   deserializeArray,
@@ -16,6 +18,7 @@ import {
 
 export default class FilterService extends Service {
   @service declare router: RouterService;
+  @service declare mbpEmbed: MbpEmbedService;
 
   @tracked keywordAdvancedSearch: { [key: string]: string[] } | null = null;
   @tracked filters: AgendaItemsParams = {
@@ -87,7 +90,6 @@ export default class FilterService extends Service {
     this.updateFilters({
       keyword: null,
       keywordSearchOnlyInTitle: null,
-      municipalityLabels: [],
       provinceLabels: [],
       plannedStartMin: null,
       plannedStartMax: null,
@@ -99,6 +101,12 @@ export default class FilterService extends Service {
       street: null,
       distance: null,
     });
+
+    if (this.mbpEmbed.isLoggedInAsVlaanderen) {
+      this.updateFilters({
+        municipalityLabels: [],
+      });
+    }
   }
 
   updateFilterFromQueryParamKey(
@@ -200,8 +208,8 @@ export default class FilterService extends Service {
   }
 
   get resetQueryParams() {
-    return {
-      gemeentes: null,
+    const params = {
+      gemeentes: this.mbpEmbed.municipalityLabel,
       provincies: null,
       bestuursorganen: null,
       begin: null,
@@ -214,5 +222,7 @@ export default class FilterService extends Service {
       straat: null,
       afstand: null,
     };
+
+    return params;
   }
 }

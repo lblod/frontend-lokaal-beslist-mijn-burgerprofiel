@@ -9,6 +9,7 @@ import type DistanceListService from 'frontend-burgernabije-besluitendatabank/se
 import type ItemListService from 'frontend-burgernabije-besluitendatabank/services/item-list';
 import type AddressService from 'frontend-burgernabije-besluitendatabank/services/address';
 import type GovernmentListService from 'frontend-burgernabije-besluitendatabank/services/government-list';
+import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 
 import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
 import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
@@ -29,6 +30,7 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   @service declare distanceList: DistanceListService;
   @service declare address: AddressService;
   @service declare governmentList: GovernmentListService;
+  @service declare mbpEmbed: MbpEmbedService;
 
   get hasFilters() {
     return this.filterValues.length >= 1;
@@ -154,6 +156,10 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   }
 
   createMunicipalityFilterLabels() {
+    if (!this.mbpEmbed.isLoggedInAsVlaanderen) {
+      return null;
+    }
+
     const municipalityLabels = deserializeArray(
       this.args.filters.gemeentes ?? '',
     );
