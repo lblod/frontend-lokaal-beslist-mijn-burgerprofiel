@@ -14,6 +14,23 @@
     {{/if}}
     <div class="au-u-padding-left au-u-padding-right au-u-padding-top-small">
       <ul class="c-description-list">
+        {{#if (and this.showMunicipality @model.session.locationLevel)}}
+          <li>
+            <AuIcon @size="large" @icon="location" />
+            <span
+              class="au-u-hidden-visually"
+            >{{@model.session.locationLevel}}:</span>
+            <AuLink @route="agenda-items" @query={{this.municipalityQuery}}>
+              {{#if @model.session.municipality}}
+                {{@model.session.locationLevel}}
+                {{@model.session.municipality}}
+              {{else}}
+                Geen
+                {{lower-case @model.session.locationLevel}}
+              {{/if}}
+            </AuLink>
+          </li>
+        {{/if}}
         {{#if @model.session.classification}}
           <li>
             {{! TODO update the icon to university }}
@@ -69,14 +86,17 @@
       </Accordion>
       <AuContent class="au-u-margin-top">
         <AuHeading @level="2" @skin="4" class="au-u-margin-top-small">
-          Andere zittingen van
-          <AuLink
-            @route="sessions.index"
-            @query={{this.govBodyQuery}}
-            class="au-u-medium"
-          >
-            {{@model.session.governingBodyNameResolved}}
-          </AuLink>
+          Andere zittingen
+          {{#if this.showMunicipality}}
+            van
+            <AuLink
+              @route="sessions.index"
+              @query={{this.govBodyQuery}}
+              class="au-u-medium"
+            >
+              {{@model.session.governingBodyNameResolved}}
+            </AuLink>
+          {{/if}}
         </AuHeading>
         {{#if @model.otherSessions.isRunning}}
           <AuLoader
