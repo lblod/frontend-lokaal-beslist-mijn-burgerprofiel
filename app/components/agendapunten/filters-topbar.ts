@@ -9,6 +9,7 @@ import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constant
 import type DistanceListService from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 import type ItemListService from 'frontend-burgernabije-besluitendatabank/services/item-list';
 import type AddressService from 'frontend-burgernabije-besluitendatabank/services/address';
+import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 
 export interface AgendapuntenFiltersTopbarSignature {
   Args: {
@@ -35,9 +36,11 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   }
 
   get filterValues() {
-    return this.filterKeys
-      .map((key) => this.getFormattedLabelForFilter(key))
-      .filter((kv) => kv);
+    const values = this.filterKeys.map((key) =>
+      this.getFormattedLabelForFilter(key),
+    );
+
+    return values.flat().filter((kv) => kv);
   }
 
   get filterKeys() {
@@ -65,6 +68,7 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
 
   get hiddenFilterKeys() {
     return [
+      QueryParameterKeys.provinces, // combined with the keyword gemeentes
       QueryParameterKeys.start, // this is handled as one label with end
       QueryParameterKeys.end, // this is handled as one label with start
       QueryParameterKeys.keywordSearchOnlyInTitle, // combined with the keyword label
@@ -76,6 +80,8 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
       [QueryParameterKeys.distance]: this.createDistanceFilterLabel(),
       [PERIOD_KEY]: this.createPeriodFilterLabel(),
       [QueryParameterKeys.keyword]: this.createKeywordFilterLabel(),
+      [QueryParameterKeys.municipalities]:
+        this.createMunicipalityFilterLabels(),
     };
   }
 
@@ -142,6 +148,28 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
       key: QueryParameterKeys.keyword,
       value: `Zoek naar: ${keyword}`,
     };
+  }
+
+  createMunicipalityFilterLabels() {
+    const municipalityLabels = deserializeArray(
+      this.args.filters.gemeentes ?? '',
+    );
+    const provinceLabels = deserializeArray(this.args.filters.provincies);
+
+    const municipalities = municipalityLabels.map((label) => {
+      return {
+        key: QueryParameterKeys.municipalities,
+        value: label,
+      };
+    });
+    const provinces = provinceLabels.map((label) => {
+      return {
+        key: QueryParameterKeys.provinces,
+        value: label,
+      };
+    });
+
+    return [...municipalities, ...provinces];
   }
 
   @action
