@@ -1,5 +1,6 @@
 import Controller from '@ember/controller';
 
+import { A } from '@ember/array';
 import { action } from '@ember/object';
 import { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
@@ -18,9 +19,12 @@ import type AddressService from 'frontend-burgernabije-besluitendatabank/service
 import type FilterRoute from 'frontend-burgernabije-besluitendatabank/routes/filter';
 import type { ModelFrom } from 'frontend-burgernabije-besluitendatabank/lib/type-utils';
 import type CurrentSessionService from 'frontend-burgernabije-besluitendatabank/services/current-session';
+import type { GoverningBodyOption } from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
+import type NativeArray from '@ember/array/-private/native-array';
 
 import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import { formatNumber } from 'frontend-burgernabije-besluitendatabank/helpers/format-number';
+import { serializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 
 export default class FilterController extends Controller {
   @service declare currentSession: CurrentSessionService;
@@ -36,6 +40,13 @@ export default class FilterController extends Controller {
   declare model: ModelFrom<FilterRoute>;
 
   @tracked dateRangeHasErrors = false;
+  @tracked bestuursorgaanOptions: NativeArray<GoverningBodyOption> = A([]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(args: { Args: any }) {
+    super(args);
+    this.setBestuursorgaanOptions();
+  }
 
   get selectedBestuursorgaanIds() {
     return this.filterService.filters.governingBodyClassificationIds;
@@ -137,6 +148,7 @@ export default class FilterController extends Controller {
     });
 
     await this.governingBodyList.loadOptions();
+    await this.setBestuursorgaanOptions();
     this.itemsService.fetchItems.perform(0, false);
   }
 
@@ -182,6 +194,19 @@ export default class FilterController extends Controller {
       distance: selectedDistance?.id,
     });
     this.itemsService.fetchItems.perform(0, false);
+  }
+
+  async setBestuursorgaanOptions() {
+    let options = [];
+    if (this.governmentList?.selected?.length === 0) {
+      options = await this.governingBodyList.getAll();
+    } else {
+      options = await this.governingBodyList.fetchBestuursorgaanOptions(
+        serializeArray(this.governmentList.selected.map((g) => g.label)),
+      );
+    }
+    this.bestuursorgaanOptions.clear();
+    this.bestuursorgaanOptions.pushObjects(A(options));
   }
 
   @action
