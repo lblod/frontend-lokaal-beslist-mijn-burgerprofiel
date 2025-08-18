@@ -199,7 +199,9 @@ export default class FilterController extends Controller {
   async setBestuursorgaanOptions() {
     let options = [];
     if (this.mbpEmbed.municipalityLabel) {
-      options = await this.governingBodyList.fetchBestuursorgaanOptions(this.mbpEmbed.municipalityLabel);
+      options = await this.governingBodyList.fetchBestuursorgaanOptions(
+        this.mbpEmbed.municipalityLabel,
+      );
     } else if (this.governmentList?.selected?.length === 0) {
       options = await this.governingBodyList.getAll();
     } else {
