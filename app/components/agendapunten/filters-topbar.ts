@@ -65,8 +65,6 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
 
   get hiddenFilterKeys() {
     return [
-      QueryParameterKeys.municipalities,
-      QueryParameterKeys.provinces,
       QueryParameterKeys.start, // this is handled as one label with end
       QueryParameterKeys.end, // this is handled as one label with start
       QueryParameterKeys.keywordSearchOnlyInTitle, // combined with the keyword label

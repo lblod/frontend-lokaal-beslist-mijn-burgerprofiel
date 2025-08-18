@@ -18,6 +18,7 @@ import { formatNumber } from 'frontend-burgernabije-besluitendatabank/helpers/fo
 import type AddressService from 'frontend-burgernabije-besluitendatabank/services/address';
 import type FilterRoute from 'frontend-burgernabije-besluitendatabank/routes/filter';
 import type { ModelFrom } from 'frontend-burgernabije-besluitendatabank/lib/type-utils';
+import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
 
 export default class FilterController extends Controller {
   @service declare governingBodyList: GoverningBodyListService;
@@ -105,6 +106,32 @@ export default class FilterController extends Controller {
     this.filterService.updateFilters({
       governingBodyClassificationIds: selectedIds,
     });
+    this.itemsService.fetchItems.perform(0, false);
+  }
+
+  @action
+  async updateSelectedGovernment(
+    newOptions: Array<{
+      label: string;
+      id: string;
+      type: LocalGovernmentType;
+    }>,
+  ) {
+    this.governmentList.selected = newOptions;
+    const municipalityLabels = newOptions
+      .filter((o) => o.type === LocalGovernmentType.Municipality)
+      .map((o) => o.label)
+      .toString();
+    const provinceLabels = newOptions
+      .filter((o) => o.type === LocalGovernmentType.Province)
+      .map((o) => o.label)
+      .toString();
+    this.filterService.updateFilters({
+      municipalityLabels,
+      provinceLabels,
+    });
+
+    await this.governingBodyList.loadOptions();
     this.itemsService.fetchItems.perform(0, false);
   }
 

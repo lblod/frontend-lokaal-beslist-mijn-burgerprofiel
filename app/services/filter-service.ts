@@ -152,7 +152,7 @@ export default class FilterService extends Service {
       themeIds = serializeArray(this.filters.themeIds);
     }
     const queryParams: FiltersAsQueryParams = {
-      gemeentes: this.municipalityLabels,
+      gemeentes: this.filters.municipalityLabels ?? '',
       provincies: this.filters.provinceLabels,
       bestuursorganen: governingBodyClassificationIds,
       begin: this.filters.plannedStartMin,
