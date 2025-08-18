@@ -14,13 +14,16 @@ import type DistanceListService from 'frontend-burgernabije-besluitendatabank/se
 
 import type { SelectOption, SortType } from './agenda-items/types';
 import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/services/distance-list';
-import { formatNumber } from 'frontend-burgernabije-besluitendatabank/helpers/format-number';
 import type AddressService from 'frontend-burgernabije-besluitendatabank/services/address';
 import type FilterRoute from 'frontend-burgernabije-besluitendatabank/routes/filter';
 import type { ModelFrom } from 'frontend-burgernabije-besluitendatabank/lib/type-utils';
+import type CurrentSessionService from 'frontend-burgernabije-besluitendatabank/services/current-session';
+
 import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
+import { formatNumber } from 'frontend-burgernabije-besluitendatabank/helpers/format-number';
 
 export default class FilterController extends Controller {
+  @service declare currentSession: CurrentSessionService;
   @service declare governingBodyList: GoverningBodyListService;
   @service declare governmentList: GovernmentListService;
   @service declare router: RouterService;
@@ -80,6 +83,10 @@ export default class FilterController extends Controller {
       return `Toon ${countAsString} resultaten`;
     }
     return 'Toon resultaten';
+  }
+
+  get isMunicipalitySelectorShown() {
+    return this.currentSession.isVlaanderenLogin;
   }
 
   @action

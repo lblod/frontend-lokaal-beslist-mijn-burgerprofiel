@@ -12,19 +12,22 @@
 <div
   class="c-interface__sidebar-main au-u-padding-left au-u-padding-right au-u-margin-top-large"
 >
-  <Filters::SelectMultipleFilter
-    @id="municipality"
-    @label="Kies één of meer besturen"
-    @options={{this.governmentList.options}}
-    @selected={{this.governmentList.selected}}
-    @updateSelected={{this.updateSelectedGovernment}}
-    @noMatchesMessage="Geen besturen gevonden"
-    @searchField="label"
-    @queryParam="gemeentes+provincies"
-    @placeholder="Alle besturen"
-  />
+  {{#if this.isMunicipalitySelectorShown}}
+    <Filters::SelectMultipleFilter
+      class="au-u-margin-top"
+      @id="municipality"
+      @label="Kies één of meer besturen"
+      @options={{this.governmentList.options}}
+      @selected={{this.governmentList.selected}}
+      @updateSelected={{this.updateSelectedGovernment}}
+      @noMatchesMessage="Geen besturen gevonden"
+      @searchField="label"
+      @queryParam="gemeentes+provincies"
+      @placeholder="Alle besturen"
+    />
+  {{/if}}
   <Filters::AdvancedInputSearch
-    class="au-u-margin-top"
+    class={{if this.isMunicipalitySelectorShown "" "au-u-margin-top"}}
     @value={{this.filterService.filters.keyword}}
     @searchOnlyOnTitle={{this.filterService.filters.keywordSearchOnlyInTitle}}
     @onUpdateKeyword={{this.updateKeyword}}
