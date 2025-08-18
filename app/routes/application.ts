@@ -8,10 +8,12 @@ import type PlausibleService from 'ember-plausible/services/plausible';
 import type GoverningBodyDisabledList from 'frontend-burgernabije-besluitendatabank/services/governing-body-disabled-list';
 import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 import type Transition from '@ember/routing/transition';
+import type ThemeListService from 'frontend-burgernabije-besluitendatabank/services/theme-list';
 
 export default class ApplicationRoute extends Route {
   @service declare plausible: PlausibleService;
   @service declare governingBodyDisabledList: GoverningBodyDisabledList;
+  @service declare themeList: ThemeListService;
   @service declare mbpEmbed: MbpEmbedService;
   @service declare router: Route;
 
@@ -32,6 +34,10 @@ export default class ApplicationRoute extends Route {
       gemeentes = transition.to?.queryParams['gemeentes'];
     }
     this.mbpEmbed.setup(gemeentes);
+  }
+
+  model() {
+    this.themeList.fetchThemes();
   }
 
   startAnalytics(): void {
