@@ -5,10 +5,12 @@ import { service } from '@ember/service';
 
 import type { FiltersAsQueryParams } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
-import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
 import type DistanceListService from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 import type ItemListService from 'frontend-burgernabije-besluitendatabank/services/item-list';
 import type AddressService from 'frontend-burgernabije-besluitendatabank/services/address';
+import type GovernmentListService from 'frontend-burgernabije-besluitendatabank/services/government-list';
+
+import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
 import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 
 export interface AgendapuntenFiltersTopbarSignature {
@@ -26,6 +28,7 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   @service declare filterService: FilterService;
   @service declare distanceList: DistanceListService;
   @service declare address: AddressService;
+  @service declare governmentList: GovernmentListService;
 
   get hasFilters() {
     return this.filterValues.length >= 1;
@@ -173,13 +176,21 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   }
 
   @action
-  removeFilter(queryParamKey: string) {
+  async removeFilter(keyValue: { key: string; value: string }) {
     const extraActionsForKey = {
       [QueryParameterKeys.street]: () => {
         this.address.selectedAddress = undefined;
+        this.filterService.updateFilterFromQueryParamKey(
+          QueryParameterKeys.street as keyof FiltersAsQueryParams,
+          null,
+        );
       },
       [QueryParameterKeys.distance]: () => {
         this.distanceList.selected = null;
+        this.filterService.updateFilterFromQueryParamKey(
+          QueryParameterKeys.distance as keyof FiltersAsQueryParams,
+          null,
+        );
       },
       [QueryParameterKeys.keywordSearchOnlyInTitle]: () => {
         this.filterService.searchOnTitleOnly(false);
@@ -194,15 +205,33 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
           null,
         );
       },
+      [QueryParameterKeys.municipalities]: async () => {
+        const asArray = deserializeArray(this.args.filters.gemeentes ?? '');
+        const selected = asArray.filter((label) => label !== keyValue.value);
+        this.filterService.updateFilterFromQueryParamKey(
+          QueryParameterKeys.municipalities as keyof FiltersAsQueryParams,
+          selected.length >= 1 ? selected : null,
+        );
+      },
+      [QueryParameterKeys.provinces]: async () => {
+        const asArray = deserializeArray(this.args.filters.provincies);
+        const selected = asArray.filter((label) => label !== keyValue.value);
+        this.filterService.updateFilterFromQueryParamKey(
+          QueryParameterKeys.provinces as keyof FiltersAsQueryParams,
+          selected.length >= 1 ? selected : null,
+        );
+      },
     };
-    if (extraActionsForKey[queryParamKey]) {
-      extraActionsForKey[queryParamKey]?.();
+    const actionFn = extraActionsForKey[keyValue.key];
+    if (actionFn) {
+      await Promise.all([actionFn()]);
+    } else {
+      this.filterService.updateFilterFromQueryParamKey(
+        keyValue.key as keyof FiltersAsQueryParams,
+        null,
+      );
     }
 
-    this.filterService.updateFilterFromQueryParamKey(
-      queryParamKey as keyof FiltersAsQueryParams,
-      null,
-    );
     this.args.onFiltersUpdated?.();
   }
 }

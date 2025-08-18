@@ -193,6 +193,7 @@ export default class FilterController extends Controller {
     this.governingBodyList.selectedIds = [];
     this.address.selectedAddress = undefined;
     this.distanceList.selected = null;
+    this.governmentList.selected = [];
     this.filterService.resetFiltersToInitialView();
     this.itemsService.fetchItems.perform(0, false);
   }
