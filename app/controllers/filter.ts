@@ -120,12 +120,10 @@ export default class FilterController extends Controller {
     this.governmentList.selected = newOptions;
     const municipalityLabels = newOptions
       .filter((o) => o.type === LocalGovernmentType.Municipality)
-      .map((o) => o.label)
-      .toString();
+      .map((o) => o.label);
     const provinceLabels = newOptions
       .filter((o) => o.type === LocalGovernmentType.Province)
-      .map((o) => o.label)
-      .toString();
+      .map((o) => o.label);
     this.filterService.updateFilters({
       municipalityLabels,
       provinceLabels,

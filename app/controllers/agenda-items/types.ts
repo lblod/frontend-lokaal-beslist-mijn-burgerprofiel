@@ -5,8 +5,8 @@ import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/ser
 export interface AgendaItemsParams {
   keyword: string | null;
   keywordSearchOnlyInTitle: string | null;
-  municipalityLabels: string | null;
-  provinceLabels: string | null;
+  municipalityLabels: Array<string>;
+  provinceLabels: Array<string>;
   plannedStartMin: string | null;
   plannedStartMax: string | null;
   governingBodyClassificationIds: Array<string>;
@@ -19,7 +19,7 @@ export interface AgendaItemsParams {
 }
 
 export type FiltersAsQueryParams = {
-  gemeentes?: string;
+  gemeentes?: string | null;
   provincies: string | null;
   bestuursorganen: string | null;
   begin: string | null;

@@ -2,8 +2,8 @@ import type { PageableRequest } from 'frontend-burgernabije-besluitendatabank/se
 import type Session from 'frontend-burgernabije-besluitendatabank/models/mu-search/session';
 
 export interface SessionsParams {
-  municipalityLabels: string;
-  provinceLabels: string;
+  municipalityLabels: Array<string>;
+  provinceLabels: Array<string>;
   plannedStartMin: string;
   plannedStartMax: string;
   keyword: string;

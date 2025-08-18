@@ -21,8 +21,8 @@ export default class FilterService extends Service {
   @tracked filters: AgendaItemsParams = {
     keyword: null,
     keywordSearchOnlyInTitle: null,
-    municipalityLabels: null,
-    provinceLabels: null,
+    municipalityLabels: [],
+    provinceLabels: [],
     plannedStartMin: null,
     plannedStartMax: null,
     dateSort: 'desc' as SortType,
@@ -65,14 +65,21 @@ export default class FilterService extends Service {
     const bestuursorgaanIdsAsString =
       params.governingBodyClassificationIds as unknown as string;
     const themeIdsAsString = params.themeIds as unknown as string;
+    const municipalityLabelsAsString =
+      params.municipalityLabels as unknown as string;
+    const provinceLabelsAsString = params.provinceLabels as unknown as string;
     delete params.governingBodyClassificationIds;
-    delete params.themeIds;
+    delete params.governingBodyClassificationIds;
+    delete params.municipalityLabels;
+    delete params.provinceLabels;
     this.updateFilters({
       ...params,
       governingBodyClassificationIds: deserializeArray(
         bestuursorgaanIdsAsString,
       ),
       themeIds: deserializeArray(themeIdsAsString),
+      municipalityLabels: deserializeArray(municipalityLabelsAsString),
+      provinceLabels: deserializeArray(provinceLabelsAsString),
     });
   }
 
@@ -80,8 +87,8 @@ export default class FilterService extends Service {
     this.updateFilters({
       keyword: null,
       keywordSearchOnlyInTitle: null,
-      municipalityLabels: this.municipalityLabels,
-      provinceLabels: null,
+      municipalityLabels: [],
+      provinceLabels: [],
       plannedStartMin: null,
       plannedStartMax: null,
       dateSort: 'desc' as SortType,
@@ -142,6 +149,8 @@ export default class FilterService extends Service {
   get asQueryParams() {
     let governingBodyClassificationIds = null;
     let themeIds = null;
+    let municipalityLabels = null;
+    let provinceLabels = null;
 
     if (this.filters.governingBodyClassificationIds?.length >= 1) {
       governingBodyClassificationIds = serializeArray(
@@ -151,9 +160,15 @@ export default class FilterService extends Service {
     if (this.filters.themeIds?.length >= 1) {
       themeIds = serializeArray(this.filters.themeIds);
     }
+    if (this.filters.municipalityLabels?.length >= 1) {
+      municipalityLabels = serializeArray(this.filters.municipalityLabels);
+    }
+    if (this.filters.municipalityLabels?.length >= 1) {
+      provinceLabels = serializeArray(this.filters.provinceLabels);
+    }
     const queryParams: FiltersAsQueryParams = {
-      gemeentes: this.filters.municipalityLabels ?? '',
-      provincies: this.filters.provinceLabels,
+      gemeentes: municipalityLabels,
+      provincies: provinceLabels,
       bestuursorganen: governingBodyClassificationIds,
       begin: this.filters.plannedStartMin,
       eind: this.filters.plannedStartMax,
@@ -186,6 +201,7 @@ export default class FilterService extends Service {
 
   get resetQueryParams() {
     return {
+      gemeentes: null,
       provincies: null,
       bestuursorganen: null,
       begin: null,

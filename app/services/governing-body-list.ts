@@ -3,7 +3,10 @@ import type RouterService from '@ember/routing/router-service';
 import Service, { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 import { QueryParameterKeys } from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
-import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
+import {
+  deserializeArray,
+  serializeArray,
+} from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 import type MunicipalityListService from './municipality-list';
 import type GoverningBodyModel from 'frontend-burgernabije-besluitendatabank/models/governing-body';
 import type GoverningBodyClassificationCodeModel from 'frontend-burgernabije-besluitendatabank/models/governing-body-classification-code';
@@ -65,10 +68,7 @@ export default class GoverningBodyListService extends Service {
       governingBodyClassificationIds,
       provinceLabels,
     } = this.filterService.filters;
-    if (
-      (municipalityLabels == undefined || municipalityLabels == '') &&
-      (provinceLabels == undefined || provinceLabels == '')
-    ) {
+    if (municipalityLabels?.length === 0 && provinceLabels?.length === 0) {
       const governingBodyClassifications = await this.store.query(
         'governing-body-classification-code',
         {
@@ -82,10 +82,10 @@ export default class GoverningBodyListService extends Service {
     } else {
       const municipalityIds =
         await this.municipalityList.getLocationIdsFromLabels(
-          municipalityLabels?.replace(',', '+'),
+          serializeArray(municipalityLabels),
         );
       const provinceIds = await this.provinceList.getProvinceIdsFromLabels(
-        provinceLabels?.replace(',', '+') || '',
+        serializeArray(provinceLabels),
       );
       const governingBodies = await this.store.query('governing-body', {
         filter: {

@@ -140,7 +140,7 @@ export default class ItemListService extends Service {
   async fetchLocationIds() {
     const municipalityIds =
       await this.municipalityList.getLocationIdsFromLabels(
-        this.filterService.municipalityLabels,
+        this.filters.municipalityLabels,
       );
     const provinceIds = await this.provinceList.getProvinceIdsFromLabels(
       this.filters?.provinceLabels || [],
