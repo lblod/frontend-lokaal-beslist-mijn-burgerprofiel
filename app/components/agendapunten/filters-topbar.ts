@@ -181,27 +181,28 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
       [QueryParameterKeys.distance]: () => {
         this.distanceList.selected = null;
       },
+      [QueryParameterKeys.keywordSearchOnlyInTitle]: () => {
+        this.filterService.searchOnTitleOnly(false);
+      },
+      ['periode']: () => {
+        this.filterService.updateFilterFromQueryParamKey(
+          QueryParameterKeys.start as keyof FiltersAsQueryParams,
+          null,
+        );
+        this.filterService.updateFilterFromQueryParamKey(
+          QueryParameterKeys.end as keyof FiltersAsQueryParams,
+          null,
+        );
+      },
     };
-
-    if (queryParamKey === 'periode') {
-      this.filterService.updateFilterFromQueryParamKey(
-        QueryParameterKeys.start as keyof FiltersAsQueryParams,
-        null,
-      );
-      this.filterService.updateFilterFromQueryParamKey(
-        QueryParameterKeys.end as keyof FiltersAsQueryParams,
-        null,
-      );
-    } else if (queryParamKey === QueryParameterKeys.keywordSearchOnlyInTitle) {
-      this.filterService.searchOnTitleOnly(false);
-    } else {
-      this.filterService.updateFilterFromQueryParamKey(
-        queryParamKey as keyof FiltersAsQueryParams,
-        null,
-      );
+    if (extraActionsForKey[queryParamKey]) {
+      extraActionsForKey[queryParamKey]?.();
     }
 
-    extraActionsForKey[queryParamKey]?.();
+    this.filterService.updateFilterFromQueryParamKey(
+      queryParamKey as keyof FiltersAsQueryParams,
+      null,
+    );
     this.args.onFiltersUpdated?.();
   }
 }
