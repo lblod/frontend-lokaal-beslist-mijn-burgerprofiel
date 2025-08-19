@@ -149,6 +149,7 @@ export default class FilterController extends Controller {
     this.filterService.updateFilters({
       municipalityLabels,
       provinceLabels,
+      governingBodyClassificationIds: [],
     });
 
     await this.governingBodyList.loadOptions();
