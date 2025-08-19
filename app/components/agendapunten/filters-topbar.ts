@@ -273,6 +273,27 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
           selected.length >= 1 ? selected : null,
         );
       },
+      [QueryParameterKeys.governingBodies]: async () => {
+        const asArray = deserializeArray(
+          this.args.filters.bestuursorganen ?? '',
+        );
+        const bestuursorgaanIdForLabel = this.governingBodyList.getIdForLabel(
+          keyValue.value,
+        );
+        if (!bestuursorgaanIdForLabel) {
+          console.error(
+            `Could not find bestuursorgaan id for label ${keyValue.value}`,
+          );
+          return;
+        }
+        const selected = asArray.filter(
+          (id) => id !== bestuursorgaanIdForLabel,
+        );
+        this.filterService.updateFilterFromQueryParamKey(
+          QueryParameterKeys.governingBodies as keyof FiltersAsQueryParams,
+          selected.length >= 1 ? selected : null,
+        );
+      },
     };
     const actionFn = extraActionsForKey[keyValue.key];
     if (actionFn) {

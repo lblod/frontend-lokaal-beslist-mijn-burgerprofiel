@@ -80,6 +80,12 @@ export default class GoverningBodyListService extends Service {
     );
   }
 
+  getIdForLabel(label: string): string | undefined {
+    const match = this.allOptions.find((option) => option.label === label);
+
+    return match?.id;
+  }
+
   async loadOptions() {
     const {
       municipalityLabels,

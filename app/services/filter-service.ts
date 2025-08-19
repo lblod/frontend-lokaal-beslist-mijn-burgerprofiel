@@ -128,7 +128,7 @@ export default class FilterService extends Service {
     const mapping = {
       gemeentes: 'municipalityLabels',
       provincies: 'provinceLabels',
-      bestuursorganen: 'governingBodyClassifications',
+      bestuursorganen: 'governingBodyClassificationIds',
       begin: 'plannedStartMin',
       eind: 'plannedStartMax',
       trefwoord: 'keyword',
