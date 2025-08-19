@@ -18,7 +18,7 @@
         />
       </div>
     {{/if}}
-    {{#if @isLoading}}
+    {{#if (and @isLoading this.moreDataToLoad)}}
       <AuLoader @hideMessage={{true}}>Aan het laden</AuLoader>
     {{/if}}
   </div>
