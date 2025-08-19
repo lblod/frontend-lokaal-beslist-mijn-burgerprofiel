@@ -87,6 +87,7 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
       [QueryParameterKeys.keyword]: this.createKeywordFilterLabel(),
       [QueryParameterKeys.municipalities]:
         this.createMunicipalityFilterLabels(),
+      [QueryParameterKeys.themes]: this.createThemaFilterLabels(),
     };
   }
 
@@ -179,6 +180,16 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
     });
 
     return [...municipalities, ...provinces];
+  }
+
+  createThemaFilterLabels() {
+    const themaIds = deserializeArray(this.args.filters.thema);
+    return themaIds.map((id) => {
+      return {
+        key: QueryParameterKeys.themes,
+        value: id,
+      };
+    });
   }
 
   @action
