@@ -50,7 +50,7 @@ export default class DistanceListService extends Service {
     },
   ]; // This data will be replaced with a query to the API
 
-  async loadOptions() {
+  getOptions() {
     if (this.filterService.filters.distance) {
       this.selected = this.options.find(
         (option) =>

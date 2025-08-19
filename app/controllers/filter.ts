@@ -52,6 +52,10 @@ export default class FilterController extends Controller {
     return this.filterService.filters.governingBodyClassificationIds;
   }
 
+  get themaOptions() {
+    return this.themeList.asOptions;
+  }
+
   get selectedThemes() {
     return this.themeList.getOptionsForIds(this.filterService.filters.themeIds);
   }
