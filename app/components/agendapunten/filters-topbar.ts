@@ -11,6 +11,7 @@ import type AddressService from 'frontend-burgernabije-besluitendatabank/service
 import type GovernmentListService from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 import type ThemeListService from 'frontend-burgernabije-besluitendatabank/services/theme-list';
+import type GoverningBodyListService from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
 
 import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
 import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
@@ -31,6 +32,7 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   @service declare distanceList: DistanceListService;
   @service declare address: AddressService;
   @service declare governmentList: GovernmentListService;
+  @service declare governingBodyList: GoverningBodyListService;
   @service declare themeList: ThemeListService;
   @service declare mbpEmbed: MbpEmbedService;
 
@@ -201,10 +203,13 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
     const bestuursorgaanIds = deserializeArray(
       this.args.filters.bestuursorganen,
     );
-    return bestuursorgaanIds.map((id) => {
+    const options = this.governingBodyList.allOptions.filter((o) =>
+      bestuursorgaanIds.includes(o.id),
+    );
+    return options.map((option) => {
       return {
         key: QueryParameterKeys.governingBodies,
-        value: id,
+        value: option.label,
       };
     });
   }

@@ -1,5 +1,6 @@
 import Service, { service } from '@ember/service';
 
+import { A } from '@ember/array';
 import { tracked } from '@glimmer/tracking';
 import { QueryParameterKeys } from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
 import {
@@ -16,6 +17,7 @@ import type { AdapterPopulatedRecordArrayWithMeta } from 'frontend-burgernabije-
 import type GovernmentListService from './government-list';
 import type FilterService from './filter-service';
 import type ProvinceListService from './province-list';
+import type NativeArray from '@ember/array/-private/native-array';
 
 export interface GoverningBodyOption {
   id: string;
@@ -33,6 +35,7 @@ export default class GoverningBodyListService extends Service {
 
   @tracked selectedIds: Array<string> = [];
   @tracked options: GoverningBodyOption[] = [];
+  @tracked allOptions: NativeArray<GoverningBodyOption> = A([]);
 
   /**
    * Get the governing body classification ids from the given labels.
