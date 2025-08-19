@@ -1,9 +1,14 @@
-import type Store from '@ember-data/store';
-import type RouterService from '@ember/routing/router-service';
 import Service, { service } from '@ember/service';
+
 import { tracked } from '@glimmer/tracking';
 import { QueryParameterKeys } from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
-import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
+import {
+  deserializeArray,
+  serializeArray,
+} from 'frontend-burgernabije-besluitendatabank/utils/query-params';
+
+import type Store from '@ember-data/store';
+import type RouterService from '@ember/routing/router-service';
 import type MunicipalityListService from './municipality-list';
 import type GoverningBodyModel from 'frontend-burgernabije-besluitendatabank/models/governing-body';
 import type GoverningBodyClassificationCodeModel from 'frontend-burgernabije-besluitendatabank/models/governing-body-classification-code';
@@ -59,33 +64,34 @@ export default class GoverningBodyListService extends Service {
     return governingBodyClassificationIds.join(',');
   }
 
+  async getAll(): Promise<Array<GoverningBodyOption>> {
+    const governingBodyClassifications = await this.store.query(
+      'governing-body-classification-code',
+      {
+        page: { size: 100 },
+        sort: 'label',
+      },
+    );
+    return this.sortOptions(
+      this.getUniqueClassifications(governingBodyClassifications),
+    );
+  }
+
   async loadOptions() {
     const {
       municipalityLabels,
       governingBodyClassificationIds,
       provinceLabels,
     } = this.filterService.filters;
-    if (
-      (municipalityLabels == undefined || municipalityLabels == '') &&
-      (provinceLabels == undefined || provinceLabels == '')
-    ) {
-      const governingBodyClassifications = await this.store.query(
-        'governing-body-classification-code',
-        {
-          page: { size: 100 },
-          sort: 'label',
-        },
-      );
-      this.options = this.sortOptions(
-        this.getUniqueClassifications(governingBodyClassifications),
-      );
+    if (municipalityLabels?.length === 0 && provinceLabels?.length === 0) {
+      this.options = await this.getAll();
     } else {
       const municipalityIds =
         await this.municipalityList.getLocationIdsFromLabels(
-          municipalityLabels?.replace(',', '+'),
+          serializeArray(municipalityLabels),
         );
       const provinceIds = await this.provinceList.getProvinceIdsFromLabels(
-        provinceLabels?.replace(',', '+') || '',
+        serializeArray(provinceLabels),
       );
       const governingBodies = await this.store.query('governing-body', {
         filter: {

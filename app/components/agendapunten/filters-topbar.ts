@@ -5,10 +5,14 @@ import { service } from '@ember/service';
 
 import type { FiltersAsQueryParams } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
-import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
 import type DistanceListService from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 import type ItemListService from 'frontend-burgernabije-besluitendatabank/services/item-list';
 import type AddressService from 'frontend-burgernabije-besluitendatabank/services/address';
+import type GovernmentListService from 'frontend-burgernabije-besluitendatabank/services/government-list';
+import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
+
+import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
+import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 
 export interface AgendapuntenFiltersTopbarSignature {
   Args: {
@@ -25,6 +29,8 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   @service declare filterService: FilterService;
   @service declare distanceList: DistanceListService;
   @service declare address: AddressService;
+  @service declare governmentList: GovernmentListService;
+  @service declare mbpEmbed: MbpEmbedService;
 
   get hasFilters() {
     return this.filterValues.length >= 1;
@@ -35,9 +41,11 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   }
 
   get filterValues() {
-    return this.filterKeys
-      .map((key) => this.getFormattedLabelForFilter(key))
-      .filter((kv) => kv);
+    const values = this.filterKeys.map((key) =>
+      this.getFormattedLabelForFilter(key),
+    );
+
+    return values.flat().filter((kv) => kv);
   }
 
   get filterKeys() {
@@ -65,8 +73,7 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
 
   get hiddenFilterKeys() {
     return [
-      QueryParameterKeys.municipalities,
-      QueryParameterKeys.provinces,
+      QueryParameterKeys.provinces, // combined with the keyword gemeentes
       QueryParameterKeys.start, // this is handled as one label with end
       QueryParameterKeys.end, // this is handled as one label with start
       QueryParameterKeys.keywordSearchOnlyInTitle, // combined with the keyword label
@@ -78,6 +85,8 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
       [QueryParameterKeys.distance]: this.createDistanceFilterLabel(),
       [PERIOD_KEY]: this.createPeriodFilterLabel(),
       [QueryParameterKeys.keyword]: this.createKeywordFilterLabel(),
+      [QueryParameterKeys.municipalities]:
+        this.createMunicipalityFilterLabels(),
     };
   }
 
@@ -146,36 +155,89 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
     };
   }
 
+  createMunicipalityFilterLabels() {
+    if (!this.mbpEmbed.isLoggedInAsVlaanderen) {
+      return null;
+    }
+
+    const municipalityLabels = deserializeArray(
+      this.args.filters.gemeentes ?? '',
+    );
+    const provinceLabels = deserializeArray(this.args.filters.provincies);
+
+    const municipalities = municipalityLabels.map((label) => {
+      return {
+        key: QueryParameterKeys.municipalities,
+        value: label,
+      };
+    });
+    const provinces = provinceLabels.map((label) => {
+      return {
+        key: QueryParameterKeys.provinces,
+        value: label,
+      };
+    });
+
+    return [...municipalities, ...provinces];
+  }
+
   @action
-  removeFilter(queryParamKey: string) {
+  async removeFilter(keyValue: { key: string; value: string }) {
     const extraActionsForKey = {
       [QueryParameterKeys.street]: () => {
         this.address.selectedAddress = undefined;
+        this.filterService.updateFilterFromQueryParamKey(
+          QueryParameterKeys.street as keyof FiltersAsQueryParams,
+          null,
+        );
       },
       [QueryParameterKeys.distance]: () => {
         this.distanceList.selected = null;
+        this.filterService.updateFilterFromQueryParamKey(
+          QueryParameterKeys.distance as keyof FiltersAsQueryParams,
+          null,
+        );
+      },
+      [QueryParameterKeys.keywordSearchOnlyInTitle]: () => {
+        this.filterService.searchOnTitleOnly(false);
+      },
+      ['periode']: () => {
+        this.filterService.updateFilterFromQueryParamKey(
+          QueryParameterKeys.start as keyof FiltersAsQueryParams,
+          null,
+        );
+        this.filterService.updateFilterFromQueryParamKey(
+          QueryParameterKeys.end as keyof FiltersAsQueryParams,
+          null,
+        );
+      },
+      [QueryParameterKeys.municipalities]: async () => {
+        const asArray = deserializeArray(this.args.filters.gemeentes ?? '');
+        const selected = asArray.filter((label) => label !== keyValue.value);
+        this.filterService.updateFilterFromQueryParamKey(
+          QueryParameterKeys.municipalities as keyof FiltersAsQueryParams,
+          selected.length >= 1 ? selected : null,
+        );
+      },
+      [QueryParameterKeys.provinces]: async () => {
+        const asArray = deserializeArray(this.args.filters.provincies);
+        const selected = asArray.filter((label) => label !== keyValue.value);
+        this.filterService.updateFilterFromQueryParamKey(
+          QueryParameterKeys.provinces as keyof FiltersAsQueryParams,
+          selected.length >= 1 ? selected : null,
+        );
       },
     };
-
-    if (queryParamKey === 'periode') {
-      this.filterService.updateFilterFromQueryParamKey(
-        QueryParameterKeys.start as keyof FiltersAsQueryParams,
-        null,
-      );
-      this.filterService.updateFilterFromQueryParamKey(
-        QueryParameterKeys.end as keyof FiltersAsQueryParams,
-        null,
-      );
-    } else if (queryParamKey === QueryParameterKeys.keywordSearchOnlyInTitle) {
-      this.filterService.searchOnTitleOnly(false);
+    const actionFn = extraActionsForKey[keyValue.key];
+    if (actionFn) {
+      await Promise.all([actionFn()]);
     } else {
       this.filterService.updateFilterFromQueryParamKey(
-        queryParamKey as keyof FiltersAsQueryParams,
+        keyValue.key as keyof FiltersAsQueryParams,
         null,
       );
     }
 
-    extraActionsForKey[queryParamKey]?.();
     this.args.onFiltersUpdated?.();
   }
 }

@@ -1,26 +1,28 @@
-<Filters::Filter @id={{@id}} @label={{@label}} @labelHidden={{@labelHidden}}>
-  {{! template-lint-disable no-at-ember-render-modifiers }}
-  <PowerSelectMultiple
-    {{!template-lint-disable no-duplicate-id}}
-    id={{@id}}
-    @onChange={{this.selectChange}}
-    class="au-u-1-1"
-    @selected={{this.selected}}
-    @options={{@options}}
-    @allowClear={{true}}
-    @searchField={{@searchField}}
-    @placeholder={{@placeholder}}
-    @noMatchesMessage={{if
-      @noMatchesMessage
-      @noMatchesMessage
-      "Geen resultaten gevonden"
-    }}
-    @searchMessage="Aan het zoeken..."
-    @searchEnabled={{true}}
-    data-test-select-multiple-filter
-    as |value|
-  >
-    {{get value @searchField}}
+<div ...attributes>
+  <Filters::Filter @id={{@id}} @label={{@label}} @labelHidden={{@labelHidden}}>
+    {{! template-lint-disable no-at-ember-render-modifiers }}
+    <PowerSelectMultiple
+      {{!template-lint-disable no-duplicate-id}}
+      id={{@id}}
+      @onChange={{this.selectChange}}
+      class="au-u-1-1"
+      @selected={{this.selected}}
+      @options={{@options}}
+      @allowClear={{true}}
+      @searchField={{@searchField}}
+      @placeholder={{@placeholder}}
+      @noMatchesMessage={{if
+        @noMatchesMessage
+        @noMatchesMessage
+        "Geen resultaten gevonden"
+      }}
+      @searchMessage="Aan het zoeken..."
+      @searchEnabled={{true}}
+      data-test-select-multiple-filter
+      as |value|
+    >
+      {{get value @searchField}}
 
-  </PowerSelectMultiple>
-</Filters::Filter>
+    </PowerSelectMultiple>
+  </Filters::Filter>
+</div>

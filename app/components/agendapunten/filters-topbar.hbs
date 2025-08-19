@@ -19,7 +19,7 @@
           @actionIcon="cross"
           @actionText="close"
           id={{keyValue.key}}
-          @onClickAction={{fn this.removeFilter keyValue.key}}
+          @onClickAction={{fn this.removeFilter keyValue}}
         >{{keyValue.value}}</AuPill>
       {{/each}}
     </div>

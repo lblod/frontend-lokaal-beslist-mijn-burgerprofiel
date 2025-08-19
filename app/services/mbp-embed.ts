@@ -2,20 +2,32 @@ import Service from '@ember/service';
 
 import config from '../config/environment';
 
-import type { MbpEmbedClient } from '@govflanders/mbp-embed-sdk';
-import { createMbpEmbedClient } from '@govflanders/mbp-embed-sdk';
+import type { MbpEmbedClient, Tenant } from '@govflanders/mbp-embed-sdk';
 import type Transition from '@ember/routing/transition';
+
+import { createMbpEmbedClient } from '@govflanders/mbp-embed-sdk';
+import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 
 export default class MbpEmbedService extends Service {
   declare client: MbpEmbedClient;
+  declare tenant: Tenant;
+  declare municipalityLabel?: string;
 
   get clientId() {
     return config.APP.MBP_CLIENT_ID;
   }
 
-  async setup() {
+  get isLoggedInAsVlaanderen() {
+    return !this.municipalityLabel;
+  }
+
+  async setup(gemeentesQueryParam?: string) {
+    if (gemeentesQueryParam) {
+      this.municipalityLabel = deserializeArray(gemeentesQueryParam)?.[0];
+    }
     await this.connectToClient();
-    await this.setAppColors();
+    this.tenant = await this.client?.context.getTenant();
+    this.setAppColors();
   }
 
   async connectToClient() {
@@ -44,19 +56,18 @@ export default class MbpEmbedService extends Service {
     }
   }
 
-  async setAppColors() {
-    if (!this.client) {
+  setAppColors() {
+    if (!this.tenant) {
       return;
     }
 
-    const tenant = await this.client?.context.getTenant();
     document.documentElement.style.setProperty(
       '--au-blue-700',
-      tenant.branding.primaryColor,
+      this.tenant.branding.primaryColor,
     );
     document.documentElement.style.setProperty(
       '--au-gray-900',
-      tenant.branding.actionColor,
+      this.tenant.branding.actionColor,
     );
   }
 

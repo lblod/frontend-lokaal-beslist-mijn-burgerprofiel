@@ -44,34 +44,37 @@ export default class GovernmentListService extends Service {
     provinces: LocalGovernmentOption[],
   ): void {
     const { municipalityLabels, provinceLabels } = this.filterService.filters;
+    const selectedMunicipalities = [];
+    const selectedProvinces = [];
 
-    const selectedMunicipalities = municipalityLabels
-      ? municipalityLabels.split('+').map((municipality) => {
-          const matchedMunicipality = municipalities.find(
-            (m) => m.label === municipality,
-          );
-          return (
-            matchedMunicipality || {
-              id: 'unknown',
-              label: municipality,
-              type: LocalGovernmentType.Municipality,
-            }
-          );
-        })
-      : [];
-
-    const selectedProvinces = provinceLabels
-      ? provinceLabels.split('+').map((province) => {
-          const matchedProvince = provinces.find((p) => p.label === province);
-          return (
-            matchedProvince || {
-              id: 'unknown',
-              label: province,
-              type: LocalGovernmentType.Province,
-            }
-          );
-        })
-      : [];
+    if (municipalityLabels.length >= 1) {
+      const models = municipalityLabels.map((municipality) => {
+        const matchedMunicipality = municipalities.find(
+          (m) => m.label === municipality,
+        );
+        return (
+          matchedMunicipality || {
+            id: 'unknown',
+            label: municipality,
+            type: LocalGovernmentType.Municipality,
+          }
+        );
+      });
+      selectedMunicipalities.push(...models);
+    }
+    if (provinceLabels.length >= 1) {
+      const models = provinceLabels.map((province) => {
+        const matchedProvince = provinces.find((p) => p.label === province);
+        return (
+          matchedProvince || {
+            id: 'unknown',
+            label: province,
+            type: LocalGovernmentType.Province,
+          }
+        );
+      });
+      selectedProvinces.push(...models);
+    }
 
     this.selected = [...selectedMunicipalities, ...selectedProvinces];
   }

@@ -1,5 +1,6 @@
 import Controller from '@ember/controller';
 
+import { A } from '@ember/array';
 import { action } from '@ember/object';
 import { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
@@ -14,10 +15,16 @@ import type DistanceListService from 'frontend-burgernabije-besluitendatabank/se
 
 import type { SelectOption, SortType } from './agenda-items/types';
 import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/services/distance-list';
-import { formatNumber } from 'frontend-burgernabije-besluitendatabank/helpers/format-number';
 import type AddressService from 'frontend-burgernabije-besluitendatabank/services/address';
 import type FilterRoute from 'frontend-burgernabije-besluitendatabank/routes/filter';
 import type { ModelFrom } from 'frontend-burgernabije-besluitendatabank/lib/type-utils';
+import type { GoverningBodyOption } from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
+import type NativeArray from '@ember/array/-private/native-array';
+
+import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
+import { formatNumber } from 'frontend-burgernabije-besluitendatabank/helpers/format-number';
+import { serializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
+import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 
 export default class FilterController extends Controller {
   @service declare governingBodyList: GoverningBodyListService;
@@ -28,10 +35,18 @@ export default class FilterController extends Controller {
   @service declare themeList: ThemeListService;
   @service declare distanceList: DistanceListService;
   @service declare address: AddressService;
+  @service declare mbpEmbed: MbpEmbedService;
 
   declare model: ModelFrom<FilterRoute>;
 
   @tracked dateRangeHasErrors = false;
+  @tracked bestuursorgaanOptions: NativeArray<GoverningBodyOption> = A([]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(args: { Args: any }) {
+    super(args);
+    this.setBestuursorgaanOptions();
+  }
 
   get selectedBestuursorgaanIds() {
     return this.filterService.filters.governingBodyClassificationIds;
@@ -81,6 +96,10 @@ export default class FilterController extends Controller {
     return 'Toon resultaten';
   }
 
+  get isMunicipalitySelectorShown() {
+    return this.mbpEmbed.isLoggedInAsVlaanderen;
+  }
+
   @action
   updateSelectedThemes(selected: Array<SelectOption>) {
     this.filterService.updateFilters({
@@ -105,6 +124,31 @@ export default class FilterController extends Controller {
     this.filterService.updateFilters({
       governingBodyClassificationIds: selectedIds,
     });
+    this.itemsService.fetchItems.perform(0, false);
+  }
+
+  @action
+  async updateSelectedGovernment(
+    newOptions: Array<{
+      label: string;
+      id: string;
+      type: LocalGovernmentType;
+    }>,
+  ) {
+    this.governmentList.selected = newOptions;
+    const municipalityLabels = newOptions
+      .filter((o) => o.type === LocalGovernmentType.Municipality)
+      .map((o) => o.label);
+    const provinceLabels = newOptions
+      .filter((o) => o.type === LocalGovernmentType.Province)
+      .map((o) => o.label);
+    this.filterService.updateFilters({
+      municipalityLabels,
+      provinceLabels,
+    });
+
+    await this.governingBodyList.loadOptions();
+    await this.setBestuursorgaanOptions();
     this.itemsService.fetchItems.perform(0, false);
   }
 
@@ -152,6 +196,23 @@ export default class FilterController extends Controller {
     this.itemsService.fetchItems.perform(0, false);
   }
 
+  async setBestuursorgaanOptions() {
+    let options = [];
+    if (this.mbpEmbed.municipalityLabel) {
+      options = await this.governingBodyList.fetchBestuursorgaanOptions(
+        this.mbpEmbed.municipalityLabel,
+      );
+    } else if (this.governmentList?.selected?.length === 0) {
+      options = await this.governingBodyList.getAll();
+    } else {
+      options = await this.governingBodyList.fetchBestuursorgaanOptions(
+        serializeArray(this.governmentList.selected.map((g) => g.label)),
+      );
+    }
+    this.bestuursorgaanOptions.clear();
+    this.bestuursorgaanOptions.pushObjects(A(options));
+  }
+
   @action
   goToAgendaItems() {
     let routeName = 'agenda-items.index';
@@ -168,6 +229,7 @@ export default class FilterController extends Controller {
     this.governingBodyList.selectedIds = [];
     this.address.selectedAddress = undefined;
     this.distanceList.selected = null;
+    this.governmentList.selected = [];
     this.filterService.resetFiltersToInitialView();
     this.itemsService.fetchItems.perform(0, false);
   }
