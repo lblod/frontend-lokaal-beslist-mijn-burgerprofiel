@@ -80,10 +80,12 @@ export default class GoverningBodyListService extends Service {
     );
   }
 
-  getIdForLabel(label: string): string | undefined {
-    const match = this.lookupOptions.find((option) => option.label === label);
+  getIdsForLabel(label: string): Array<string> | undefined {
+    const matches = this.lookupOptions.filter(
+      (option) => option.label === label,
+    );
 
-    return match?.id;
+    return matches.map((m) => m.id);
   }
 
   async loadOptions() {

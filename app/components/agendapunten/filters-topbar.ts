@@ -277,17 +277,17 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
         const asArray = deserializeArray(
           this.args.filters.bestuursorganen ?? '',
         );
-        const bestuursorgaanIdForLabel = this.governingBodyList.getIdForLabel(
+        const bestuursorgaanIdsForLabel = this.governingBodyList.getIdsForLabel(
           keyValue.value,
         );
-        if (!bestuursorgaanIdForLabel) {
+        if (!bestuursorgaanIdsForLabel) {
           console.error(
             `Could not find bestuursorgaan id for label ${keyValue.value}`,
           );
           return;
         }
         const selected = asArray.filter(
-          (id) => id !== bestuursorgaanIdForLabel,
+          (id) => !bestuursorgaanIdsForLabel.includes(id),
         );
         this.filterService.updateFilterFromQueryParamKey(
           QueryParameterKeys.governingBodies as keyof FiltersAsQueryParams,
