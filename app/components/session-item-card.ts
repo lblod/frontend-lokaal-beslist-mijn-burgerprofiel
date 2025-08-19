@@ -7,16 +7,9 @@ import type RouterService from '@ember/routing/router-service';
 import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 
 export interface SessionItemCardSignature {
-  // The arguments accepted by the component
   Args: {
     item: { id: string };
   };
-  // Any blocks yielded by the component
-  Blocks: {
-    default: [];
-  };
-  // The element to which `...attributes` is applied in the component template
-  Element: null;
 }
 
 export default class SessionItemCard extends Component<SessionItemCardSignature> {
