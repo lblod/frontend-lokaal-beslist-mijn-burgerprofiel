@@ -241,6 +241,19 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
           selected.length >= 1 ? selected : null,
         );
       },
+      [QueryParameterKeys.themes]: async () => {
+        const asArray = deserializeArray(this.args.filters.thema ?? '');
+        const themeIdForLabel = this.themeList.getIdForLabel(keyValue.value);
+        if (!themeIdForLabel) {
+          console.error(`Could not find theme id for label ${keyValue.value}`);
+          return;
+        }
+        const selected = asArray.filter((id) => id !== themeIdForLabel);
+        this.filterService.updateFilterFromQueryParamKey(
+          QueryParameterKeys.themes as keyof FiltersAsQueryParams,
+          selected.length >= 1 ? selected : null,
+        );
+      },
     };
     const actionFn = extraActionsForKey[keyValue.key];
     if (actionFn) {
