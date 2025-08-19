@@ -1,14 +1,19 @@
 <li>
-  <article class="c-agenda-item-card">
+  {{! template-lint-disable no-invalid-interactive }}
+  <article class="c-agenda-item-card" {{on "click" this.goToSessionItem}}>
     <AuHeading @level="2" @skin="5">
       <AuLink @route="sessions.session" @model={{@item.id}}>
         {{@item.governingBodyClassificationNameResolved}}
         {{@item.dateFormatted}}
       </AuLink>
     </AuHeading>
-    <div class="c-agenda-item-card__footer">
+    <div class="au-u-margin-top-tiny au-u-muted">
       {{@item.agendaItemCount}}
       agendapunten
+      {{#if this.showMunicipality}}
+        •
+        {{@item.municipality}}
+      {{/if}}
     </div>
   </article>
 </li>
