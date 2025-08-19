@@ -10,6 +10,7 @@ import type ItemListService from 'frontend-burgernabije-besluitendatabank/servic
 import type AddressService from 'frontend-burgernabije-besluitendatabank/services/address';
 import type GovernmentListService from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
+import type ThemeListService from 'frontend-burgernabije-besluitendatabank/services/theme-list';
 
 import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
 import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
@@ -30,6 +31,7 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   @service declare distanceList: DistanceListService;
   @service declare address: AddressService;
   @service declare governmentList: GovernmentListService;
+  @service declare themeList: ThemeListService;
   @service declare mbpEmbed: MbpEmbedService;
 
   get hasFilters() {
@@ -184,10 +186,11 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
 
   createThemaFilterLabels() {
     const themaIds = deserializeArray(this.args.filters.thema);
-    return themaIds.map((id) => {
+    const options = this.themeList.getOptionsForIds(themaIds);
+    return options.map((option) => {
       return {
         key: QueryParameterKeys.themes,
-        value: id,
+        value: option.label,
       };
     });
   }
