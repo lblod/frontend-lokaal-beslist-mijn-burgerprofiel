@@ -40,7 +40,7 @@ export default class SessionRoute extends Route {
       ),
       otherSessions: this.loadOtherSessionsTask.perform(governingBody, session),
       governingBodies: this.loadGoverningBodiesTask.perform(governingBody),
-      classificationLabel: classification.get('label'),
+      classification,
     };
   }
 

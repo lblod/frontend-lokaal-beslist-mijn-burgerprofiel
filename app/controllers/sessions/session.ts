@@ -8,6 +8,7 @@ import type SessionModel from 'frontend-burgernabije-besluitendatabank/models/se
 import type GoverningBodyModel from 'frontend-burgernabije-besluitendatabank/models/governing-body';
 import type AgendaItemModel from 'frontend-burgernabije-besluitendatabank/models/agenda-item';
 import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
+import type GoverningBodyClassificationCodeModel from 'frontend-burgernabije-besluitendatabank/models/governing-body-classification-code';
 export default class SessionsSessionController extends Controller {
   @service declare store: Store;
   @service declare mbpEmbed: MbpEmbedService;
@@ -18,7 +19,7 @@ export default class SessionsSessionController extends Controller {
   @tracked gemeentes: string | null = null;
 
   declare model: {
-    classificationLabel: string;
+    classification: GoverningBodyClassificationCodeModel;
     session: SessionModel;
     agendaItems: {
       isFinished: boolean;
@@ -62,7 +63,7 @@ export default class SessionsSessionController extends Controller {
   get govBodyQuery() {
     return {
       gemeentes: this.model.session.municipality,
-      bestuursorganen: this.model.classificationLabel,
+      bestuursorganen: this.model.classification.id,
     };
   }
 

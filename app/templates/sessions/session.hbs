@@ -143,14 +143,7 @@
             <ol type="1" class="less-margin">
               {{#each this.governingBodies as |govBody|}}
                 <Item class="au-u-flex au-u-margin-bottom-small">
-
-                  <AuLink
-                    @route="sessions.index"
-                    @query={{hash
-                      bestuursorganen=govBody.label
-                      gemeentes=@model.session.municipality
-                    }}
-                  >
+                  <AuLink @route="sessions.index" @query={{this.govBodyQuery}}>
                     {{govBody.label}}
                   </AuLink>
                 </Item>
