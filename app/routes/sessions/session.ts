@@ -138,13 +138,14 @@ function getUniqueGoverningBodies(
     .reduce(
       (unique, govBody) => {
         const label = govBody.get('classification').get('label');
-        if (label && !uniqueLabels.has(label)) {
+        const id = govBody.get('classification').get('id');
+        if (id && label && !uniqueLabels.has(label)) {
           uniqueLabels.add(label);
-          unique.push({ label });
+          unique.push({ id, label });
         }
         return unique;
       },
-      [] as { label: string }[],
+      [] as { id: string; label: string }[],
     )
     .sort((a, b) => a.label.localeCompare(b.label));
 }
