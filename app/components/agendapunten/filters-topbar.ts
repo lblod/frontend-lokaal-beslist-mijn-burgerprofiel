@@ -90,6 +90,8 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
       [QueryParameterKeys.municipalities]:
         this.createMunicipalityFilterLabels(),
       [QueryParameterKeys.themes]: this.createThemaFilterLabels(),
+      [QueryParameterKeys.governingBodies]:
+        this.createBestuursorgaanFilterLabels(),
     };
   }
 
@@ -191,6 +193,18 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
       return {
         key: QueryParameterKeys.themes,
         value: option.label,
+      };
+    });
+  }
+
+  createBestuursorgaanFilterLabels() {
+    const bestuursorgaanIds = deserializeArray(
+      this.args.filters.bestuursorganen,
+    );
+    return bestuursorgaanIds.map((id) => {
+      return {
+        key: QueryParameterKeys.governingBodies,
+        value: id,
       };
     });
   }
