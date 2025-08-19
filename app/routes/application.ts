@@ -34,9 +34,6 @@ export default class ApplicationRoute extends Route {
       gemeentes = transition.to?.queryParams['gemeentes'];
     }
     this.mbpEmbed.setup(gemeentes);
-  }
-
-  model() {
     this.themeList.fetchThemes();
   }
 
