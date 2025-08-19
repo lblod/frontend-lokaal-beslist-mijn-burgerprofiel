@@ -1,6 +1,5 @@
 import Route from '@ember/routing/route';
 
-import { A } from '@ember/array';
 import { service } from '@ember/service';
 
 import config from 'frontend-burgernabije-besluitendatabank/config/environment';
@@ -26,7 +25,6 @@ export default class ApplicationRoute extends Route {
 
     this.router.on('routeDidChange', (transition) => {
       this.mbpEmbed.setRouteTitle(transition);
-      // alert(window.location.href);
     });
   }
   beforeModel(transition: Transition): void {
@@ -36,10 +34,7 @@ export default class ApplicationRoute extends Route {
     if (transition.to?.queryParams) {
       gemeentes = transition.to?.queryParams['gemeentes'];
     }
-    this.governingBodyList.getAll().then((options) => {
-      this.governingBodyList.allOptions.clear();
-      this.governingBodyList.allOptions.pushObjects(A(options));
-    });
+    this.governingBodyList.setLookupForOptions();
     this.mbpEmbed.setup(gemeentes);
     this.themeList.fetchThemes();
   }

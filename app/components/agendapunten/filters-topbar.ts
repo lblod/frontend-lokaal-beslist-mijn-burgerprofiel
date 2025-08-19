@@ -203,7 +203,7 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
     const bestuursorgaanIds = deserializeArray(
       this.args.filters.bestuursorganen,
     );
-    const options = this.governingBodyList.allOptions.filter((o) =>
+    const options = this.governingBodyList.lookupOptions.filter((o) =>
       bestuursorgaanIds.includes(o.id),
     );
     return options.map((option) => {

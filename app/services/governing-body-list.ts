@@ -35,7 +35,7 @@ export default class GoverningBodyListService extends Service {
 
   @tracked selectedIds: Array<string> = [];
   @tracked options: GoverningBodyOption[] = [];
-  @tracked allOptions: NativeArray<GoverningBodyOption> = A([]);
+  @tracked lookupOptions: NativeArray<GoverningBodyOption> = A([]);
 
   /**
    * Get the governing body classification ids from the given labels.
@@ -81,7 +81,7 @@ export default class GoverningBodyListService extends Service {
   }
 
   getIdForLabel(label: string): string | undefined {
-    const match = this.allOptions.find((option) => option.label === label);
+    const match = this.lookupOptions.find((option) => option.label === label);
 
     return match?.id;
   }
@@ -191,6 +191,25 @@ export default class GoverningBodyListService extends Service {
         label: classification.label,
         type: QueryParameterKeys.governingBodies,
       }));
+  }
+
+  async setLookupForOptions(): Promise<void> {
+    const governingBodyClassifications = await this.store.query(
+      'governing-body-classification-code',
+      {
+        page: { size: 100 },
+        sort: 'label',
+      },
+    );
+    const allOptions = this.sortOptions(
+      governingBodyClassifications.map((classification) => ({
+        id: classification.id,
+        label: classification.label,
+        type: QueryParameterKeys.governingBodies,
+      })),
+    );
+    this.lookupOptions.clear();
+    this.lookupOptions.pushObjects(A(allOptions));
   }
 }
 declare module '@ember/service' {
