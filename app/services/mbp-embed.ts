@@ -106,9 +106,17 @@ export default class MbpEmbedService extends Service {
         url: string;
       }
     > = {
+      ['agenda-items.index']: {
+        isValid: true,
+        url: `${baseUrl}`,
+      },
       ['agenda-items.agenda-item']: {
         isValid: !!id,
         url: `${baseUrl}/${id}`,
+      },
+      ['sessions.index']: {
+        isValid: true,
+        url: `${baseUrl}`,
       },
       ['sessions.session']: {
         isValid: !!id,
