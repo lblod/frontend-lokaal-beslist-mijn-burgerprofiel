@@ -136,7 +136,6 @@ export default class MbpEmbedService extends Service {
       }
       const queryParams = this.filterService.asUrlQueryParams;
       this.client.navigation.openNewEmbed(`${data.url}${queryParams}`);
-      this.client.ui.setStatusLoading(false);
     }
   }
 }
