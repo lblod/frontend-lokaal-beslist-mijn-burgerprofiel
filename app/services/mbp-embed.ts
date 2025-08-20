@@ -89,6 +89,26 @@ export default class MbpEmbedService extends Service {
     }
     this.client?.ui.setTitle(routeTitle);
   }
+
+  async manageRouting(transition: Transition) {
+    if (!this.client) {
+      return;
+    }
+
+    const openNewEmbedRouteNames = ['agenda-items.agenda-item'];
+
+    if (openNewEmbedRouteNames.includes(transition.to?.name ?? '')) {
+      await this.client.navigation.openNewEmbed(
+        'https://mbp.lokaalbeslist.lblod.info/3d814daa-cbe8-550b-9d41-f3caa9b2c2a5',
+      );
+    }
+
+    const navigateBackRouteNames = ['agenda-items.index'];
+
+    if (navigateBackRouteNames.includes(transition.to?.name ?? '')) {
+      await this.client.navigation.back();
+    }
+  }
 }
 
 // Don't remove this declaration: this is what enables TypeScript to resolve
