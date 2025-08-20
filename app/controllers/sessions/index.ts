@@ -42,13 +42,7 @@ export default class SessionsIndexController extends Controller {
 
   @action
   goToFilters() {
-    if (this.mbpEmbed.isConnected) {
-      this.mbpEmbed.openNewEmbed({
-        routeName: 'filter',
-      });
-    } else {
-      this.router.transitionTo('filter');
-    }
+    this.router.transitionTo('filter');
   }
 
   @action

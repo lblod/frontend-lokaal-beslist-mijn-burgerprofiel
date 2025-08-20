@@ -114,10 +114,6 @@ export default class MbpEmbedService extends Service {
         isValid: !!id,
         url: `${baseUrl}/zittingen/${id}`,
       },
-      ['filter']: {
-        isValid: true,
-        url: `${baseUrl}/filters`,
-      },
     };
     const data = routeUrlMapping[routeName];
     if (data) {
