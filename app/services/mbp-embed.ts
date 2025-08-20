@@ -120,6 +120,9 @@ export default class MbpEmbedService extends Service {
       await this.client.navigation.openNewEmbed(`${data.url}${queryParams}`);
       await this.client?.ui.setTitle(data.pageTitle || HIDDEN_SPACE);
       await this.client.ui.setBacklinkLabel(data.backLinkLabel ?? HIDDEN_SPACE);
+    } else {
+      await this.client?.ui.setTitle(HIDDEN_SPACE);
+      await this.client.ui.setBacklinkLabel(HIDDEN_SPACE);
     }
   }
 }
