@@ -1,14 +1,17 @@
-import Service from '@ember/service';
+import Service, { service } from '@ember/service';
 
 import config from '../config/environment';
 
 import type { MbpEmbedClient, Tenant } from '@govflanders/mbp-embed-sdk';
 import type Transition from '@ember/routing/transition';
+import type FilterService from './filter-service';
 
 import { createMbpEmbedClient } from '@govflanders/mbp-embed-sdk';
 import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 
 export default class MbpEmbedService extends Service {
+  @service declare filterService: FilterService;
+
   declare client: MbpEmbedClient;
   declare tenant: Tenant;
   declare municipalityLabel?: string;
@@ -88,6 +91,35 @@ export default class MbpEmbedService extends Service {
       routeTitle = routeTitleMap[transition.to.name] || hiddenSpace;
     }
     this.client?.ui.setTitle(routeTitle);
+  }
+
+  openNewEmbed(parameters: { routeName: string; id?: string }) {
+    const { routeName, id } = parameters;
+    const baseUrl = window.location.origin;
+    const routeUrlMapping: Record<string, { isValid: boolean; url: string }> = {
+      ['agenda-items.agenda-item']: {
+        isValid: !!id,
+        url: `${baseUrl}/${id}`,
+      },
+      ['sessions.session']: {
+        isValid: !!id,
+        url: `${baseUrl}/zittingen/${id}`,
+      },
+      ['filter']: {
+        isValid: true,
+        url: `${baseUrl}/filter`,
+      },
+    };
+    if (routeUrlMapping[routeName]) {
+      if (!routeUrlMapping[routeName].isValid) {
+        throw new Error(
+          `Kon niet navigeren naar "${routeName}", parameters zijn niet correct.`,
+        );
+      }
+      const url = routeUrlMapping[routeName].url;
+      const queryParams = this.filterService.asUrlQueryParams;
+      this.client.navigation.openNewEmbed(`${url}${queryParams}`);
+    }
   }
 }
 

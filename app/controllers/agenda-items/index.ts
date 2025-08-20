@@ -42,7 +42,13 @@ export default class AgendaItemsIndexController extends Controller {
 
   @action
   goToFilters() {
-    this.router.transitionTo('filter');
+    if (this.mbpEmbed.client) {
+      this.mbpEmbed.openNewEmbed({
+        routeName: 'filter',
+      });
+    } else {
+      this.router.transitionTo('filter');
+    }
   }
 
   @action
