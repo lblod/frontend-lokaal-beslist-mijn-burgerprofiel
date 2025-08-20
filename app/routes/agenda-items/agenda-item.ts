@@ -33,7 +33,6 @@ export default class AgendaItemRoute extends Route {
   @service declare mbpEmbed: MbpEmbedService;
 
   async model(params: DetailParams) {
-    this.mbpEmbed.client?.ui.setStatusLoading(true);
     const agendaItem = await this.store.findRecord('agenda-item', params.id);
 
     // wait until sessions are loaded
@@ -92,7 +91,6 @@ export default class AgendaItemRoute extends Route {
       locationId,
       agendaItem,
     );
-    await this.mbpEmbed.client?.ui.setStatusLoading(false);
     return {
       resolutions,
       agendaItem,
