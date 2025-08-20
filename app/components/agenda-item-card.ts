@@ -18,7 +18,7 @@ export default class AgendaItemCard extends Component<AgendaItemCardSignature> {
 
   @action
   goToAgendaItem() {
-    if (this.mbpEmbed.client) {
+    if (this.mbpEmbed.isConnected) {
       this.mbpEmbed.openNewEmbed({
         routeName: 'agenda-items.agenda-item',
         id: this.args.item.id,

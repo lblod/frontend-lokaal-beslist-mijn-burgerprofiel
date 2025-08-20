@@ -15,6 +15,7 @@ export default class MbpEmbedService extends Service {
   declare client: MbpEmbedClient;
   declare tenant: Tenant;
   declare municipalityLabel?: string;
+  declare isConnected: boolean;
 
   get clientId() {
     return config.APP.MBP_CLIENT_ID;
@@ -52,9 +53,11 @@ export default class MbpEmbedService extends Service {
 
     try {
       await this.client.connect();
+      this.isConnected = true;
       console.log('MBP SDK connected!');
       this.client.ui.setStatusLoading(false);
     } catch (e) {
+      this.isConnected = false;
       console.error('MBP SDK connection failed:', e);
     }
   }
@@ -96,29 +99,39 @@ export default class MbpEmbedService extends Service {
   openNewEmbed(parameters: { routeName: string; id?: string }) {
     const { routeName, id } = parameters;
     const baseUrl = window.location.origin;
-    const routeUrlMapping: Record<string, { isValid: boolean; url: string }> = {
+    const routeUrlMapping: Record<
+      string,
+      { isValid: boolean; url: string; backLinkLabel: string | null }
+    > = {
       ['agenda-items.agenda-item']: {
         isValid: !!id,
         url: `${baseUrl}/${id}`,
+        backLinkLabel: 'Agendapunten',
       },
       ['sessions.session']: {
         isValid: !!id,
         url: `${baseUrl}/zittingen/${id}`,
+        backLinkLabel: 'Agendapunten',
       },
       ['filter']: {
         isValid: true,
-        url: `${baseUrl}/filter`,
+        url: `${baseUrl}/filters`,
+        backLinkLabel: null,
       },
     };
-    if (routeUrlMapping[routeName]) {
-      if (!routeUrlMapping[routeName].isValid) {
+    const data = routeUrlMapping[routeName];
+    if (data) {
+      alert(JSON.stringify(data));
+      if (!data.isValid) {
         throw new Error(
           `Kon niet navigeren naar "${routeName}", parameters zijn niet correct.`,
         );
       }
-      const url = routeUrlMapping[routeName].url;
       const queryParams = this.filterService.asUrlQueryParams;
-      this.client.navigation.openNewEmbed(`${url}${queryParams}`);
+      this.client.navigation.openNewEmbed(`${data.url}${queryParams}`);
+      if (data.backLinkLabel) {
+        this.client.ui.setBacklinkLabel(data.backLinkLabel);
+      }
     }
   }
 }
