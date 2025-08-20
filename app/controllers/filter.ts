@@ -225,15 +225,9 @@ export default class FilterController extends Controller {
     if (this.model.previousRoute) {
       routeName = this.model.previousRoute.name;
     }
-    if (this.mbpEmbed.isConnected) {
-      this.mbpEmbed.openNewEmbed({
-        routeName: 'agenda-items.index',
-      });
-    } else {
-      this.router.transitionTo(routeName, {
-        queryParams: this.filterService.asQueryParams,
-      });
-    }
+    this.router.transitionTo(routeName, {
+      queryParams: this.filterService.asQueryParams,
+    });
   }
 
   @action
