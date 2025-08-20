@@ -23,8 +23,9 @@ export default class ApplicationRoute extends Route {
   constructor(args: { Args: any }) {
     super(args);
 
-    this.router.on('routeDidChange', (transition) => {
+    this.router.on('routeDidChange', async (transition: Transition) => {
       this.mbpEmbed.setRouteTitle(transition);
+      await this.mbpEmbed.manageRouting(transition);
     });
   }
   beforeModel(transition: Transition): void {
