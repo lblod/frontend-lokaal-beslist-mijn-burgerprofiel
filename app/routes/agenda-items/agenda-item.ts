@@ -33,7 +33,9 @@ export default class AgendaItemRoute extends Route {
   @service declare mbpEmbed: MbpEmbedService;
 
   async loading(): Promise<void> {
+    alert('loading');
     await this.mbpEmbed.client?.ui.setStatusLoading(true);
+    alert('loading set to TRUE');
   }
 
   async model(params: DetailParams) {
@@ -95,7 +97,10 @@ export default class AgendaItemRoute extends Route {
       locationId,
       agendaItem,
     );
+    alert('fetched all data');
     await this.mbpEmbed.client?.ui.setStatusLoading(false);
+    alert('loading set to FALSE');
+
     return {
       resolutions,
       agendaItem,
