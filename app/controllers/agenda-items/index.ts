@@ -41,9 +41,9 @@ export default class AgendaItemsIndexController extends Controller {
   }
 
   @action
-  async goToFilters() {
+  goToFilters() {
     if (this.mbpEmbed.isConnected) {
-      await this.mbpEmbed.openNewEmbed({
+      this.mbpEmbed.openNewEmbed({
         routeName: 'filter',
       });
     } else {

@@ -17,9 +17,9 @@ export default class SessionItemCard extends Component<SessionItemCardSignature>
   @service declare mbpEmbed: MbpEmbedService;
 
   @action
-  async goToSessionItem() {
+  goToSessionItem() {
     if (this.mbpEmbed.isConnected) {
-      await this.mbpEmbed.openNewEmbed({
+      this.mbpEmbed.openNewEmbed({
         routeName: 'sessions.session',
         id: this.args.item.id,
       });

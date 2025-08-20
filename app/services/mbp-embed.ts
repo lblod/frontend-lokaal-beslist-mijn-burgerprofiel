@@ -4,11 +4,10 @@ import config from '../config/environment';
 
 import type { MbpEmbedClient, Tenant } from '@govflanders/mbp-embed-sdk';
 import type FilterService from './filter-service';
+import type Transition from '@ember/routing/transition';
 
 import { createMbpEmbedClient } from '@govflanders/mbp-embed-sdk';
 import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
-
-const HIDDEN_SPACE = '‎';
 
 export default class MbpEmbedService extends Service {
   @service declare filterService: FilterService;
@@ -78,7 +77,26 @@ export default class MbpEmbedService extends Service {
     );
   }
 
-  async openNewEmbed(parameters: { routeName: string; id?: string }) {
+  setRouteTitle(transition?: Transition) {
+    if (!transition) {
+      this.client?.ui.setTitle('');
+      return;
+    }
+
+    const routeTitleMap: Record<string, string> = {
+      ['agenda-items.agenda-item']: 'Agendapunt',
+      ['sessions.session']: 'Zitting',
+      ['filter']: 'Filters',
+    };
+    const hiddenSpace = '‎';
+    let routeTitle = hiddenSpace;
+    if (transition.to?.name && routeTitleMap[transition.to.name]) {
+      routeTitle = routeTitleMap[transition.to.name] || hiddenSpace;
+    }
+    this.client?.ui.setTitle(routeTitle);
+  }
+
+  openNewEmbed(parameters: { routeName: string; id?: string }) {
     const { routeName, id } = parameters;
     const baseUrl = window.location.origin;
     const routeUrlMapping: Record<
@@ -86,27 +104,19 @@ export default class MbpEmbedService extends Service {
       {
         isValid: boolean;
         url: string;
-        backLinkLabel: string | null;
-        pageTitle: string | null;
       }
     > = {
       ['agenda-items.agenda-item']: {
         isValid: !!id,
         url: `${baseUrl}/${id}`,
-        backLinkLabel: 'Agendapunten',
-        pageTitle: 'Agendapunt',
       },
       ['sessions.session']: {
         isValid: !!id,
         url: `${baseUrl}/zittingen/${id}`,
-        backLinkLabel: 'Zittingen',
-        pageTitle: 'Zitting',
       },
       ['filter']: {
         isValid: true,
         url: `${baseUrl}/filters`,
-        backLinkLabel: null,
-        pageTitle: 'Filters',
       },
     };
     const data = routeUrlMapping[routeName];
@@ -117,12 +127,7 @@ export default class MbpEmbedService extends Service {
         );
       }
       const queryParams = this.filterService.asUrlQueryParams;
-      await this.client.navigation.openNewEmbed(`${data.url}${queryParams}`);
-      this.client?.ui.setTitle(data.pageTitle || HIDDEN_SPACE);
-      this.client.ui.setBacklinkLabel(data.backLinkLabel ?? HIDDEN_SPACE);
-    } else {
-      this.client?.ui.setTitle(HIDDEN_SPACE);
-      this.client.ui.setBacklinkLabel(HIDDEN_SPACE);
+      this.client.navigation.openNewEmbed(`${data.url}${queryParams}`);
     }
   }
 }

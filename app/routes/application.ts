@@ -17,6 +17,16 @@ export default class ApplicationRoute extends Route {
   @service declare governingBodyList: GoverningBodyListService;
   @service declare themeList: ThemeListService;
   @service declare mbpEmbed: MbpEmbedService;
+  @service declare router: Route;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(args: { Args: any }) {
+    super(args);
+
+    this.router.on('routeDidChange', (transition) => {
+      this.mbpEmbed.setRouteTitle(transition);
+    });
+  }
 
   beforeModel(transition: Transition): void {
     this.startAnalytics();
