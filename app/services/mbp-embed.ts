@@ -3,11 +3,12 @@ import Service, { service } from '@ember/service';
 import config from '../config/environment';
 
 import type { MbpEmbedClient, Tenant } from '@govflanders/mbp-embed-sdk';
-import type Transition from '@ember/routing/transition';
 import type FilterService from './filter-service';
 
 import { createMbpEmbedClient } from '@govflanders/mbp-embed-sdk';
 import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
+
+const HIDDEN_SPACE = '‎';
 
 export default class MbpEmbedService extends Service {
   @service declare filterService: FilterService;
@@ -77,51 +78,39 @@ export default class MbpEmbedService extends Service {
     );
   }
 
-  setRouteTitle(transition?: Transition) {
-    if (!transition) {
-      this.client?.ui.setTitle('');
-      return;
-    }
-
-    const routeTitleMap: Record<string, string> = {
-      ['agenda-items.agenda-item']: 'Agendapunt',
-      ['sessions.session']: 'Zitting',
-      ['filter']: 'Filters',
-    };
-    const hiddenSpace = '‎';
-    let routeTitle = hiddenSpace;
-    if (transition.to?.name && routeTitleMap[transition.to.name]) {
-      routeTitle = routeTitleMap[transition.to.name] || hiddenSpace;
-    }
-    this.client?.ui.setTitle(routeTitle);
-  }
-
   openNewEmbed(parameters: { routeName: string; id?: string }) {
     const { routeName, id } = parameters;
     const baseUrl = window.location.origin;
     const routeUrlMapping: Record<
       string,
-      { isValid: boolean; url: string; backLinkLabel: string | null }
+      {
+        isValid: boolean;
+        url: string;
+        backLinkLabel: string | null;
+        pageTitle: string | null;
+      }
     > = {
       ['agenda-items.agenda-item']: {
         isValid: !!id,
         url: `${baseUrl}/${id}`,
         backLinkLabel: 'Agendapunten',
+        pageTitle: 'Agendapunt',
       },
       ['sessions.session']: {
         isValid: !!id,
         url: `${baseUrl}/zittingen/${id}`,
-        backLinkLabel: 'Agendapunten',
+        backLinkLabel: 'Zittingen',
+        pageTitle: 'Zitting',
       },
       ['filter']: {
         isValid: true,
         url: `${baseUrl}/filters`,
         backLinkLabel: null,
+        pageTitle: 'Filters',
       },
     };
     const data = routeUrlMapping[routeName];
     if (data) {
-      alert(JSON.stringify(data));
       if (!data.isValid) {
         throw new Error(
           `Kon niet navigeren naar "${routeName}", parameters zijn niet correct.`,
@@ -129,9 +118,8 @@ export default class MbpEmbedService extends Service {
       }
       const queryParams = this.filterService.asUrlQueryParams;
       this.client.navigation.openNewEmbed(`${data.url}${queryParams}`);
-      if (data.backLinkLabel) {
-        this.client.ui.setBacklinkLabel(data.backLinkLabel);
-      }
+      this.client.ui.setBacklinkLabel(data.backLinkLabel ?? HIDDEN_SPACE);
+      this.client?.ui.setTitle(data.pageTitle || HIDDEN_SPACE);
     }
   }
 }
