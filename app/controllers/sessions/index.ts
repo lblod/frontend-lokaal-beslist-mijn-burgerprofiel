@@ -41,9 +41,9 @@ export default class SessionsIndexController extends Controller {
   }
 
   @action
-  goToFilters() {
+  async goToFilters() {
     if (this.mbpEmbed.isConnected) {
-      this.mbpEmbed.openNewEmbed({
+      await this.mbpEmbed.openNewEmbed({
         routeName: 'filter',
       });
     } else {

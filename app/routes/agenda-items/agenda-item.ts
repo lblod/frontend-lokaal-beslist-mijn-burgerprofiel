@@ -1,13 +1,16 @@
-import type Store from '@ember-data/store';
 import Route from '@ember/routing/route';
-import type Transition from '@ember/routing/transition';
+
 import { service } from '@ember/service';
+
+import type Store from '@ember-data/store';
+import type Transition from '@ember/routing/transition';
 import type AgendaItemController from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/agenda-item';
 import type AgendaItemModel from 'frontend-burgernabije-besluitendatabank/models/agenda-item';
 import type ArticleModel from 'frontend-burgernabije-besluitendatabank/models/article';
 import type VoteModel from 'frontend-burgernabije-besluitendatabank/models/vote';
 import type GoverningBodyDisabledList from 'frontend-burgernabije-besluitendatabank/services/governing-body-disabled-list';
 import type KeywordStoreService from 'frontend-burgernabije-besluitendatabank/services/keyword-store';
+import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 import { sortObjectsByTitle } from 'frontend-burgernabije-besluitendatabank/utils/array-utils';
 
 interface DetailParams {
@@ -27,6 +30,11 @@ export default class AgendaItemRoute extends Route {
   @service declare store: Store;
   @service declare keywordStore: KeywordStoreService;
   @service declare governingBodyDisabledList: GoverningBodyDisabledList;
+  @service declare mbpEmbed: MbpEmbedService;
+
+  async loading(): Promise<void> {
+    await this.mbpEmbed.client?.ui.setStatusLoading(true);
+  }
 
   async model(params: DetailParams) {
     const agendaItem = await this.store.findRecord('agenda-item', params.id);
@@ -87,7 +95,7 @@ export default class AgendaItemRoute extends Route {
       locationId,
       agendaItem,
     );
-
+    await this.mbpEmbed.client?.ui.setStatusLoading(false);
     return {
       resolutions,
       agendaItem,

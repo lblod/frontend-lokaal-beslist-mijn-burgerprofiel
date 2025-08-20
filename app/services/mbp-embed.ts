@@ -78,7 +78,7 @@ export default class MbpEmbedService extends Service {
     );
   }
 
-  openNewEmbed(parameters: { routeName: string; id?: string }) {
+  async openNewEmbed(parameters: { routeName: string; id?: string }) {
     const { routeName, id } = parameters;
     const baseUrl = window.location.origin;
     const routeUrlMapping: Record<
@@ -117,12 +117,9 @@ export default class MbpEmbedService extends Service {
         );
       }
       const queryParams = this.filterService.asUrlQueryParams;
-      this.client.navigation
-        .openNewEmbed(`${data.url}${queryParams}`)
-        .then(() => {
-          this.client.ui.setBacklinkLabel(data.backLinkLabel ?? HIDDEN_SPACE);
-          this.client?.ui.setTitle(data.pageTitle || HIDDEN_SPACE);
-        });
+      await this.client.navigation.openNewEmbed(`${data.url}${queryParams}`);
+      await this.client?.ui.setTitle(data.pageTitle || HIDDEN_SPACE);
+      await this.client.ui.setBacklinkLabel(data.backLinkLabel ?? HIDDEN_SPACE);
     }
   }
 }
