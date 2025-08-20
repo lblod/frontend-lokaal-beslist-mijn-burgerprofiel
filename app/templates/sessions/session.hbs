@@ -70,8 +70,12 @@
             <ol type="1" class="less-margin">
               {{#each this.agendaItems as |item|}}
                 <Item class="au-u-flex au-u-margin-bottom-small">
-                  <AuLink @route="agenda-items.agenda-item" @model={{item.id}}>
-                    {{item.titleFormatted}}</AuLink>
+                  <OpenLinkAsEmbed
+                    @id={{item.id}}
+                    @routeName="agenda-items.agenda-item"
+                  >
+                    {{item.titleFormatted}}
+                  </OpenLinkAsEmbed>
                 </Item>
               {{else}}
                 <AuAlert
@@ -109,11 +113,12 @@
               <ol type="1" class="less-margin">
                 {{#each this.otherSessions.sessions as |otherSessions|}}
                   <Item class="au-u-flex au-u-margin-bottom-small">
-                    <AuLink
-                      @route="sessions.session"
-                      @model={{otherSessions.id}}
+                    <OpenLinkAsEmbed
+                      @id={{otherSessions.id}}
+                      @routeName="essions.session"
                     >
-                      {{otherSessions.dateFormatted}}</AuLink>
+                      {{otherSessions.dateFormatted}}
+                    </OpenLinkAsEmbed>
                   </Item>
                 {{/each}}
               </ol>
