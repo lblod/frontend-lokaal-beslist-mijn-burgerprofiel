@@ -33,7 +33,6 @@ export default class OpenInFirstOverviewEmbed extends Component<OpenInFirstOverv
   }
 
   openNewEmbedWhenOverviewPage() {
-    this.mbpEmbed.client.navigation.back();
     if (
       window.location.pathname === '/' ||
       window.location.pathname === '/zittingen'
@@ -42,6 +41,7 @@ export default class OpenInFirstOverviewEmbed extends Component<OpenInFirstOverv
         routeName: this.args.routeName,
       });
     } else {
+      this.mbpEmbed.client.navigation.back();
       this.openNewEmbedWhenOverviewPage();
     }
   }
