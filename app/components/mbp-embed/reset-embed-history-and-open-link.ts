@@ -40,10 +40,7 @@ export default class MbpEmbedResetEmbedHistoryAndOpenLink extends Component<MbpE
       });
     } else {
       this.mbpEmbed.client.navigation.back();
-      alert('back');
       this.mbpEmbed.client.navigation.back();
-      alert('back');
-      this.openNewEmbedWhenOverviewPage();
     }
   }
 }
