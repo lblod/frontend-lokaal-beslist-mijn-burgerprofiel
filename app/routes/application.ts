@@ -25,12 +25,6 @@ export default class ApplicationRoute extends Route {
 
     this.router.on('routeDidChange', (transition) => {
       this.mbpEmbed.setRouteTitle(transition);
-      if (
-        ['agenda-items.index', 'sessions.index'].includes(transition.to.name)
-      ) {
-        alert('reset views');
-        this.mbpEmbed.openViews = 0;
-      }
     });
   }
 

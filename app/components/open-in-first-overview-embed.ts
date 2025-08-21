@@ -23,18 +23,28 @@ export default class OpenInFirstOverviewEmbed extends Component<OpenInFirstOverv
   @action
   openInFirstOverviewEmbed() {
     if (this.mbpEmbed.isConnected) {
-      alert('going back' + this.mbpEmbed.openViews);
-      for (let view = 0; view < this.mbpEmbed.openViews; view++) {
-        this.mbpEmbed.client.navigation.back();
-      }
-      this.mbpEmbed.openNewEmbed({
-        routeName: this.args.routeName,
-      });
+      this.openNewEmbedWhenOverviewPage();
     } else {
       this.router.transitionTo(
         this.args.routeName,
         this.filterService.asQueryParams,
       );
+    }
+  }
+
+  openNewEmbedWhenOverviewPage() {
+    this.mbpEmbed.client.navigation.back();
+
+    const baseUrl = window.location.origin;
+    if (
+      window.location.href.startsWith(baseUrl) ||
+      window.location.href.startsWith(`${baseUrl}/zittingen`)
+    ) {
+      this.openNewEmbedWhenOverviewPage();
+    } else {
+      this.mbpEmbed.openNewEmbed({
+        routeName: this.args.routeName,
+      });
     }
   }
 }
