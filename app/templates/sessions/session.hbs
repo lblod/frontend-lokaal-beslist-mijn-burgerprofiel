@@ -148,15 +148,15 @@
             <ol type="1" class="less-margin">
               {{#each this.governingBodies as |govBody|}}
                 <Item class="au-u-flex au-u-margin-bottom-small">
-                  <AuLink
-                    @route="sessions.index"
+                  <MbpEmbed::ResetEmbedHistoryAndOpenLink
+                    @routeName="sessions.index"
                     @query={{hash
                       bestuursorganen=govBody.id
                       gemeentes=@model.session.municipality
                     }}
                   >
                     {{govBody.label}}
-                  </AuLink>
+                  </MbpEmbed::ResetEmbedHistoryAndOpenLink>
                 </Item>
               {{/each}}
             </ol>
