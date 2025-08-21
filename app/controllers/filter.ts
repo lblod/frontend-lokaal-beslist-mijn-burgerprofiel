@@ -231,6 +231,11 @@ export default class FilterController extends Controller {
   }
 
   @action
+  closeFilters() {
+    this.goToAgendaItems();
+  }
+
+  @action
   async resetFilters() {
     this.governingBodyList.selectedIds = [];
     this.address.selectedAddress = undefined;
