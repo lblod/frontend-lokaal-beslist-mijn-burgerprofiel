@@ -232,7 +232,13 @@ export default class FilterController extends Controller {
 
   @action
   closeFilters() {
-    this.goToAgendaItems();
+    let routeName = 'agenda-items.index';
+    if (this.model.previousRoute) {
+      routeName = this.model.previousRoute.name;
+    }
+    this.router.transitionTo(routeName, {
+      queryParams: this.model.initialQueryParams,
+    });
   }
 
   @action
