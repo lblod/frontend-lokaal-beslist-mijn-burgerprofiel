@@ -23,7 +23,7 @@ export default class OpenInFirstOverviewEmbed extends Component<OpenInFirstOverv
   @action
   async openAsEmbed() {
     if (this.mbpEmbed.isConnected) {
-      await this.recursiveBackTillOverview();
+      this.recursiveBackTillOverview();
       this.mbpEmbed.openNewEmbed({
         routeName: this.args.routeName,
       });
@@ -35,10 +35,10 @@ export default class OpenInFirstOverviewEmbed extends Component<OpenInFirstOverv
     }
   }
 
-  async recursiveBackTillOverview() {
-    await this.mbpEmbed.client.navigation.back();
-    console.log('1', this.router.currentRouteName);
-    await this.mbpEmbed.client.navigation.back();
-    console.log('2', this.router.currentRouteName);
+  recursiveBackTillOverview() {
+    this.mbpEmbed.client.navigation.back();
+    alert(this.router.currentRouteName);
+    this.mbpEmbed.client.navigation.back();
+    alert(this.router.currentRouteName);
   }
 }
