@@ -2,7 +2,7 @@
   {{! template-lint-disable no-invalid-interactive }}
   <article class="c-agenda-item-card" {{on "click" this.goToAgendaItem}}>
     <AuHeading @level="2" @skin="5">
-      <AuLink @route="agenda-items.agenda-item" @model={{@item.id}}>
+      <AuLink @route="agenda-items.agenda-item" @model={{@item.id}} class="link-without-line">
         {{@item.titleResolved}}
       </AuLink>
     </AuHeading>

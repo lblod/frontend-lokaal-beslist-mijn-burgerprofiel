@@ -2,7 +2,7 @@
   {{! template-lint-disable no-invalid-interactive }}
   <article class="c-agenda-item-card" {{on "click" this.goToSessionItem}}>
     <AuHeading @level="2" @skin="5">
-      <AuLink @route="sessions.session" @model={{@item.id}}>
+      <AuLink @route="sessions.session" @model={{@item.id}} class="link-without-line">
         {{@item.governingBodyClassificationNameResolved}}
         {{@item.dateFormatted}}
       </AuLink>
