@@ -6,6 +6,7 @@ import { service } from '@ember/service';
 import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 import type RouterService from '@ember/routing/router-service';
 import type { FiltersAsQueryParams } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
+import { timeout } from 'ember-concurrency';
 
 export interface OpenInFirstOverviewEmbedSignature {
   Args: {
@@ -19,9 +20,9 @@ export default class OpenInFirstOverviewEmbed extends Component<OpenInFirstOverv
   @service declare router: RouterService;
 
   @action
-  openInFirstOverviewEmbed() {
+  async openInFirstOverviewEmbed() {
     if (this.mbpEmbed.isConnected) {
-      this.openNewEmbedWhenOverviewPage();
+      await this.openNewEmbedWhenOverviewPage();
     } else {
       this.router.transitionTo(this.args.routeName, {
         queryParams: this.args.query,
@@ -29,7 +30,7 @@ export default class OpenInFirstOverviewEmbed extends Component<OpenInFirstOverv
     }
   }
 
-  openNewEmbedWhenOverviewPage() {
+  async openNewEmbedWhenOverviewPage() {
     if (
       window.location.pathname === '/' ||
       window.location.pathname === '/zittingen'
@@ -39,7 +40,8 @@ export default class OpenInFirstOverviewEmbed extends Component<OpenInFirstOverv
       });
     } else {
       this.mbpEmbed.client.navigation.back();
-      this.openNewEmbedWhenOverviewPage();
+      await timeout(100);
+      await this.openNewEmbedWhenOverviewPage();
     }
   }
 }
