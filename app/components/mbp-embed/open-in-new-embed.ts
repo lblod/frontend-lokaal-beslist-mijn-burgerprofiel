@@ -24,6 +24,10 @@ export default class MbpEmbedOpenInNewEmbed extends Component<MbpEmbedOpenInNewE
         routeName: this.args.routeName,
         id: this.args.id,
       });
+      this.mbpEmbed.openNewEmbed({
+        routeName: this.args.routeName,
+        id: this.args.id,
+      });
     } else {
       this.router.transitionTo(this.args.routeName, this.args.id);
     }
