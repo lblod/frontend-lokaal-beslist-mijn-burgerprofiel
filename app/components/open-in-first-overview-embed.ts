@@ -23,7 +23,9 @@ export default class OpenInFirstOverviewEmbed extends Component<OpenInFirstOverv
   @action
   openInFirstOverviewEmbed() {
     if (this.mbpEmbed.isConnected) {
-      this.recursiveBackTillOverview();
+      for (let view = 0; view < this.mbpEmbed.openViews; view++) {
+        this.mbpEmbed.client.navigation.back();
+      }
       this.mbpEmbed.openNewEmbed({
         routeName: this.args.routeName,
       });
@@ -33,13 +35,5 @@ export default class OpenInFirstOverviewEmbed extends Component<OpenInFirstOverv
         this.filterService.asQueryParams,
       );
     }
-  }
-
-  recursiveBackTillOverview() {
-    alert(`w:${window.location.href} r: ${this.router.currentURL}`);
-    this.mbpEmbed.client.navigation.back();
-    alert(window.location.href);
-    this.mbpEmbed.client.navigation.back();
-    alert(window.location.href);
   }
 }

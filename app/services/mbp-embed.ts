@@ -16,6 +16,7 @@ export default class MbpEmbedService extends Service {
   declare tenant: Tenant;
   declare municipalityLabel?: string;
   declare isConnected: boolean;
+  declare openViews: number;
 
   get clientId() {
     return config.APP.MBP_CLIENT_ID;
@@ -124,6 +125,7 @@ export default class MbpEmbedService extends Service {
       }
       const queryParams = this.filterService.asUrlQueryParams;
       this.client.navigation.openNewEmbed(`${data.url}${queryParams}`);
+      this.openViews++;
     }
   }
 }
