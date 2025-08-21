@@ -45,3 +45,7 @@ $au-flex-utilities-responsive: true;
 
 // Overrides
 @import "shame";
+
+:root {
+  --au-outline: var(--au-blue-700) 0.3rem solid;
+}

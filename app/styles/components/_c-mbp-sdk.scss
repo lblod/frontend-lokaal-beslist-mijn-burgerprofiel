@@ -1,13 +1,6 @@
 $primary: var(--au-blue-700);
 $action: var(--au-gray-900);
 
-.icon-color--primary {
-  .au-c-icon {
-    stroke: $primary !important;
-    fill: $primary !important;
-  }
-}
-
 .au-c-tabs {
   .au-c-tabs-list__item .au-c-link.active {
     color: $primary !important;
@@ -25,6 +18,11 @@ $action: var(--au-gray-900);
 
 .primary-sdk-color {
   color: $primary !important;
+
+  .au-c-icon {
+    stroke: $primary !important;
+    fill: $primary !important;
+  }
 }
 
 .action-sdk-color {
