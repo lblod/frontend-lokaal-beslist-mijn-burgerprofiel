@@ -28,6 +28,7 @@ export default class ApplicationRoute extends Route {
       if (
         ['agenda-items.index', 'sessions.index'].includes(transition.to.name)
       ) {
+        alert('reset views');
         this.mbpEmbed.openViews = 0;
       }
     });

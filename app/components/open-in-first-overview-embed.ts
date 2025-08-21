@@ -23,6 +23,7 @@ export default class OpenInFirstOverviewEmbed extends Component<OpenInFirstOverv
   @action
   openInFirstOverviewEmbed() {
     if (this.mbpEmbed.isConnected) {
+      alert('going back' + this.mbpEmbed.openViews);
       for (let view = 0; view < this.mbpEmbed.openViews; view++) {
         this.mbpEmbed.client.navigation.back();
       }
