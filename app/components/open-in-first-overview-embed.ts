@@ -38,11 +38,11 @@ export default class OpenInFirstOverviewEmbed extends Component<OpenInFirstOverv
       window.location.pathname === '/' ||
       window.location.pathname === '/zittingen'
     ) {
-      this.openNewEmbedWhenOverviewPage();
-    } else {
       this.mbpEmbed.openNewEmbed({
         routeName: this.args.routeName,
       });
+    } else {
+      this.openNewEmbedWhenOverviewPage();
     }
   }
 }
