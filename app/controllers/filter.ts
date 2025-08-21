@@ -220,7 +220,7 @@ export default class FilterController extends Controller {
   }
 
   @action
-  goToAgendaItems() {
+  goToPreviousOverviewPage() {
     let routeName = 'agenda-items.index';
     if (this.model.previousRoute) {
       routeName = this.model.previousRoute.name;

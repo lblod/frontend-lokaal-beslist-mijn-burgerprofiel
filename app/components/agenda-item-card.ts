@@ -18,7 +18,14 @@ export default class AgendaItemCard extends Component<AgendaItemCardSignature> {
 
   @action
   goToAgendaItem() {
-    this.router.transitionTo('agenda-items.agenda-item', this.args.item.id);
+    if (this.mbpEmbed.isConnected) {
+      this.mbpEmbed.openNewEmbed({
+        routeName: 'agenda-items.agenda-item',
+        id: this.args.item.id,
+      });
+    } else {
+      this.router.transitionTo('agenda-items.agenda-item', this.args.item.id);
+    }
   }
 
   get showMunicipality() {

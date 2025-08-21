@@ -1,17 +1,21 @@
-import Service from '@ember/service';
+import Service, { service } from '@ember/service';
 
 import config from '../config/environment';
-
-import type { MbpEmbedClient, Tenant } from '@govflanders/mbp-embed-sdk';
-import type Transition from '@ember/routing/transition';
 
 import { createMbpEmbedClient } from '@govflanders/mbp-embed-sdk';
 import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 
+import type { MbpEmbedClient, Tenant } from '@govflanders/mbp-embed-sdk';
+import type Transition from '@ember/routing/transition';
+import type FilterService from './filter-service';
+
 export default class MbpEmbedService extends Service {
+  @service declare filterService: FilterService;
+
   declare client: MbpEmbedClient;
   declare tenant: Tenant;
   declare municipalityLabel?: string;
+  declare isConnected: boolean;
 
   get clientId() {
     return config.APP.MBP_CLIENT_ID;
@@ -49,9 +53,10 @@ export default class MbpEmbedService extends Service {
 
     try {
       await this.client.connect();
-      console.log('MBP SDK connected!');
+      this.isConnected = true;
       this.client.ui.setStatusLoading(false);
     } catch (e) {
+      this.isConnected = false;
       console.error('MBP SDK connection failed:', e);
     }
   }
@@ -92,6 +97,37 @@ export default class MbpEmbedService extends Service {
       routeTitle = routeTitleMap[transition.to.name] || hiddenSpace;
     }
     this.client?.ui.setTitle(routeTitle);
+  }
+
+  openNewEmbed(parameters: { routeName: string; id?: string }) {
+    const { routeName, id } = parameters;
+    const baseUrl = window.location.origin;
+    const routeUrlMapping: Record<
+      string,
+      {
+        isValid: boolean;
+        url: string;
+      }
+    > = {
+      ['agenda-items.agenda-item']: {
+        isValid: !!id,
+        url: `${baseUrl}/${id}`,
+      },
+      ['sessions.session']: {
+        isValid: !!id,
+        url: `${baseUrl}/zittingen/${id}`,
+      },
+    };
+    const data = routeUrlMapping[routeName];
+    if (data) {
+      if (!data.isValid) {
+        throw new Error(
+          `Kon niet navigeren naar "${routeName}", parameters zijn niet correct.`,
+        );
+      }
+      const queryParams = this.filterService.asUrlQueryParams;
+      this.client.navigation.openNewEmbed(`${data.url}${queryParams}`);
+    }
   }
 }
 
