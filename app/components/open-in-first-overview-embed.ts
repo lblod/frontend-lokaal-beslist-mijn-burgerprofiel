@@ -34,11 +34,9 @@ export default class OpenInFirstOverviewEmbed extends Component<OpenInFirstOverv
 
   openNewEmbedWhenOverviewPage() {
     this.mbpEmbed.client.navigation.back();
-
-    const baseUrl = window.location.origin;
     if (
-      window.location.href.startsWith(baseUrl) ||
-      window.location.href.startsWith(`${baseUrl}/zittingen`)
+      window.location.pathname === '/' ||
+      window.location.pathname === '/zittingen'
     ) {
       this.openNewEmbedWhenOverviewPage();
     } else {
