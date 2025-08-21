@@ -6,7 +6,6 @@ import { service } from '@ember/service';
 import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 import type RouterService from '@ember/routing/router-service';
 import type { FiltersAsQueryParams } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
-import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
 
 export interface OpenInFirstOverviewEmbedSignature {
   Args: {
@@ -18,35 +17,29 @@ export interface OpenInFirstOverviewEmbedSignature {
 export default class OpenInFirstOverviewEmbed extends Component<OpenInFirstOverviewEmbedSignature> {
   @service declare mbpEmbed: MbpEmbedService;
   @service declare router: RouterService;
-  @service declare filterService: FilterService;
 
   @action
   openInFirstOverviewEmbed() {
     if (this.mbpEmbed.isConnected) {
       this.openNewEmbedWhenOverviewPage();
     } else {
-      this.router.transitionTo(
-        this.args.routeName,
-        this.filterService.asQueryParams,
-      );
+      this.router.transitionTo(this.args.routeName, {
+        queryParams: this.args.query,
+      });
     }
   }
 
   openNewEmbedWhenOverviewPage() {
-    alert(window.location.pathname);
     if (
       window.location.pathname === '/' ||
       window.location.pathname === '/zittingen'
     ) {
-      alert('ember routing');
-      this.router.transitionTo(
-        this.args.routeName,
-        this.filterService.asQueryParams,
-      );
+      this.router.transitionTo(this.args.routeName, {
+        queryParams: this.args.query,
+      });
     } else {
-      this.mbpEmbed.client.navigation
-        .back()
-        .then(() => this.openNewEmbedWhenOverviewPage());
+      this.mbpEmbed.client.navigation.back();
+      this.openNewEmbedWhenOverviewPage();
     }
   }
 }
