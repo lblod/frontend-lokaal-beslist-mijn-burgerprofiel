@@ -56,6 +56,10 @@ export default class MbpEmbedService extends Service {
     }
   }
 
+  setLoadingStateFalse() {
+    this.client?.ui.setStatusLoading(false);
+  }
+
   setAppColors() {
     if (!this.tenant) {
       return;

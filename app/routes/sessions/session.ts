@@ -8,9 +8,11 @@ import type ArrayProxy from '@ember/array/proxy';
 import type AgendaItemModel from 'frontend-burgernabije-besluitendatabank/models/agenda-item';
 import type { AdapterPopulatedRecordArrayWithMeta } from 'frontend-burgernabije-besluitendatabank/utils/ember-data';
 import type GoverningBodyModel from 'frontend-burgernabije-besluitendatabank/models/governing-body';
+import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 
 export default class SessionRoute extends Route {
   @service declare store: Store;
+  @service declare mbpEmbed: MbpEmbedService;
 
   @tracked governingBodies: { label: string }[] | null = null;
   @tracked otherSessions: {
@@ -18,6 +20,10 @@ export default class SessionRoute extends Route {
     count?: number;
   } | null = null;
   @tracked sortedAgendaItems: AgendaItemModel[] | null = null;
+
+  beforeModel() {
+    this.mbpEmbed.setLoadingStateFalse();
+  }
 
   async model({ session_id }: { session_id: string }) {
     const session = await this.store.findRecord('session', session_id, {

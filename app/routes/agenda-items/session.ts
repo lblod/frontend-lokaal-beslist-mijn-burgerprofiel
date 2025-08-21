@@ -1,14 +1,21 @@
-import type Store from '@ember-data/store';
 import Route from '@ember/routing/route';
-import { service } from '@ember/service';
-import type SessionModel from 'frontend-burgernabije-besluitendatabank/models/session';
 
+import { service } from '@ember/service';
+
+import type Store from '@ember-data/store';
+import type SessionModel from 'frontend-burgernabije-besluitendatabank/models/session';
+import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 interface Params {
   id: string;
 }
 
 export default class AgendaItemsAgendaItemSessionRoute extends Route {
   @service declare store: Store;
+  @service declare mbpEmbed: MbpEmbedService;
+
+  beforeModel() {
+    this.mbpEmbed.setLoadingStateFalse();
+  }
 
   async model({ id }: Params) {
     const agendaItem = await this.store.findRecord('agenda-item', id);
