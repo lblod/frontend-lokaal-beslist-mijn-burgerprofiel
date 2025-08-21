@@ -30,17 +30,11 @@ export default class MbpEmbedResetEmbedHistoryAndOpenLink extends Component<MbpE
   }
 
   openNewEmbedWhenOverviewPage() {
-    alert(window.location.pathname);
-    if (
-      window.location.pathname === '/' ||
-      window.location.pathname === '/zittingen'
-    ) {
-      this.router.transitionTo(this.args.routeName, {
-        queryParams: this.args.query,
-      });
-    } else {
-      this.mbpEmbed.client.navigation.back();
+    for (let view = 0; view < this.mbpEmbed.openViews; view++) {
       this.mbpEmbed.client.navigation.back();
     }
+    this.router.transitionTo(this.args.routeName, {
+      queryParams: this.args.query,
+    });
   }
 }
