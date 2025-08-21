@@ -38,8 +38,8 @@ export default class InfiniteList extends Component<ArgsInterface> {
     const scrollTopMax = scrollHeight - clientHeight;
     const scrollPercentage = scrollTop / scrollTopMax;
 
-    // trigger loadMore when >80% is scrolled
-    if (scrollPercentage > 0.9 && !this.args.isLoading) {
+    // trigger loadMore when > 60% is scrolled
+    if (scrollPercentage >= 0.6 && !this.args.isLoading) {
       this.loadMore();
     }
     this.manageScrollToTopButton.perform(scrollTop, clientHeight);

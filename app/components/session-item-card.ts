@@ -6,19 +6,19 @@ import { service } from '@ember/service';
 import type RouterService from '@ember/routing/router-service';
 import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 
-export interface AgendaItemCardSignature {
+export interface SessionItemCardSignature {
   Args: {
     item: { id: string };
   };
 }
 
-export default class AgendaItemCard extends Component<AgendaItemCardSignature> {
+export default class SessionItemCard extends Component<SessionItemCardSignature> {
   @service declare router: RouterService;
   @service declare mbpEmbed: MbpEmbedService;
 
   @action
-  goToAgendaItem() {
-    this.router.transitionTo('agenda-items.agenda-item', this.args.item.id);
+  goToSessionItem() {
+    this.router.transitionTo('sessions.session', this.args.item.id);
   }
 
   get showMunicipality() {

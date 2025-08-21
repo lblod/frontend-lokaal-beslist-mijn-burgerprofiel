@@ -20,7 +20,7 @@ export default class SessionsIndexRoute extends Route {
       as: QueryParameterKeys.provinces,
       refreshModel: true,
     },
-    governingBodyClassifications: {
+    governingBodyClassificationIds: {
       as: QueryParameterKeys.governingBodies,
       refreshModel: true,
     },
@@ -36,12 +36,28 @@ export default class SessionsIndexRoute extends Route {
       as: QueryParameterKeys.keyword,
       refreshModel: true,
     },
+    keywordSearchOnlyInTitle: {
+      as: QueryParameterKeys.keywordSearchOnlyInTitle,
+      refreshModel: true,
+    },
     dateSort: {
       as: QueryParameterKeys.dateSort,
       refreshModel: true,
     },
     status: {
       as: QueryParameterKeys.status,
+      refreshModel: true,
+    },
+    themeIds: {
+      as: QueryParameterKeys.themes,
+      refreshModel: true,
+    },
+    street: {
+      as: QueryParameterKeys.street,
+      refreshModel: true,
+    },
+    distance: {
+      as: QueryParameterKeys.distance,
       refreshModel: true,
     },
   };

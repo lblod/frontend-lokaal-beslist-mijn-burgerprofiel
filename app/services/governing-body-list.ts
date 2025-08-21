@@ -1,5 +1,6 @@
 import Service, { service } from '@ember/service';
 
+import { A } from '@ember/array';
 import { tracked } from '@glimmer/tracking';
 import { QueryParameterKeys } from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
 import {
@@ -16,6 +17,7 @@ import type { AdapterPopulatedRecordArrayWithMeta } from 'frontend-burgernabije-
 import type GovernmentListService from './government-list';
 import type FilterService from './filter-service';
 import type ProvinceListService from './province-list';
+import type NativeArray from '@ember/array/-private/native-array';
 
 export interface GoverningBodyOption {
   id: string;
@@ -33,6 +35,7 @@ export default class GoverningBodyListService extends Service {
 
   @tracked selectedIds: Array<string> = [];
   @tracked options: GoverningBodyOption[] = [];
+  @tracked lookupOptions: NativeArray<GoverningBodyOption> = A([]);
 
   /**
    * Get the governing body classification ids from the given labels.
@@ -75,6 +78,14 @@ export default class GoverningBodyListService extends Service {
     return this.sortOptions(
       this.getUniqueClassifications(governingBodyClassifications),
     );
+  }
+
+  getIdsForLabel(label: string): Array<string> | undefined {
+    const matches = this.lookupOptions.filter(
+      (option) => option.label === label,
+    );
+
+    return matches.map((m) => m.id);
   }
 
   async loadOptions() {
@@ -182,6 +193,25 @@ export default class GoverningBodyListService extends Service {
         label: classification.label,
         type: QueryParameterKeys.governingBodies,
       }));
+  }
+
+  async setLookupForOptions(): Promise<void> {
+    const governingBodyClassifications = await this.store.query(
+      'governing-body-classification-code',
+      {
+        page: { size: 100 },
+        sort: 'label',
+      },
+    );
+    const allOptions = this.sortOptions(
+      governingBodyClassifications.map((classification) => ({
+        id: classification.id,
+        label: classification.label,
+        type: QueryParameterKeys.governingBodies,
+      })),
+    );
+    this.lookupOptions.clear();
+    this.lookupOptions.pushObjects(A(allOptions));
   }
 }
 declare module '@ember/service' {

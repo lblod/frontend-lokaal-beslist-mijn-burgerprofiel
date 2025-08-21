@@ -10,6 +10,8 @@ import type ItemListService from 'frontend-burgernabije-besluitendatabank/servic
 import type AddressService from 'frontend-burgernabije-besluitendatabank/services/address';
 import type GovernmentListService from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
+import type ThemeListService from 'frontend-burgernabije-besluitendatabank/services/theme-list';
+import type GoverningBodyListService from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
 
 import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
 import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
@@ -30,6 +32,8 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   @service declare distanceList: DistanceListService;
   @service declare address: AddressService;
   @service declare governmentList: GovernmentListService;
+  @service declare governingBodyList: GoverningBodyListService;
+  @service declare themeList: ThemeListService;
   @service declare mbpEmbed: MbpEmbedService;
 
   get hasFilters() {
@@ -87,6 +91,9 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
       [QueryParameterKeys.keyword]: this.createKeywordFilterLabel(),
       [QueryParameterKeys.municipalities]:
         this.createMunicipalityFilterLabels(),
+      [QueryParameterKeys.themes]: this.createThemaFilterLabels(),
+      [QueryParameterKeys.governingBodies]:
+        this.createBestuursorgaanFilterLabels(),
     };
   }
 
@@ -181,6 +188,32 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
     return [...municipalities, ...provinces];
   }
 
+  createThemaFilterLabels() {
+    const themaIds = deserializeArray(this.args.filters.thema);
+    const options = this.themeList.getOptionsForIds(themaIds);
+    return options.map((option) => {
+      return {
+        key: QueryParameterKeys.themes,
+        value: option.label,
+      };
+    });
+  }
+
+  createBestuursorgaanFilterLabels() {
+    const bestuursorgaanIds = deserializeArray(
+      this.args.filters.bestuursorganen,
+    );
+    const options = this.governingBodyList.lookupOptions.filter((o) =>
+      bestuursorgaanIds.includes(o.id),
+    );
+    return options.map((option) => {
+      return {
+        key: QueryParameterKeys.governingBodies,
+        value: option.label,
+      };
+    });
+  }
+
   @action
   async removeFilter(keyValue: { key: string; value: string }) {
     const extraActionsForKey = {
@@ -224,6 +257,40 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
         const selected = asArray.filter((label) => label !== keyValue.value);
         this.filterService.updateFilterFromQueryParamKey(
           QueryParameterKeys.provinces as keyof FiltersAsQueryParams,
+          selected.length >= 1 ? selected : null,
+        );
+      },
+      [QueryParameterKeys.themes]: async () => {
+        const asArray = deserializeArray(this.args.filters.thema ?? '');
+        const themeIdForLabel = this.themeList.getIdForLabel(keyValue.value);
+        if (!themeIdForLabel) {
+          console.error(`Could not find theme id for label ${keyValue.value}`);
+          return;
+        }
+        const selected = asArray.filter((id) => id !== themeIdForLabel);
+        this.filterService.updateFilterFromQueryParamKey(
+          QueryParameterKeys.themes as keyof FiltersAsQueryParams,
+          selected.length >= 1 ? selected : null,
+        );
+      },
+      [QueryParameterKeys.governingBodies]: async () => {
+        const asArray = deserializeArray(
+          this.args.filters.bestuursorganen ?? '',
+        );
+        const bestuursorgaanIdsForLabel = this.governingBodyList.getIdsForLabel(
+          keyValue.value,
+        );
+        if (!bestuursorgaanIdsForLabel) {
+          console.error(
+            `Could not find bestuursorgaan id for label ${keyValue.value}`,
+          );
+          return;
+        }
+        const selected = asArray.filter(
+          (id) => !bestuursorgaanIdsForLabel.includes(id),
+        );
+        this.filterService.updateFilterFromQueryParamKey(
+          QueryParameterKeys.governingBodies as keyof FiltersAsQueryParams,
           selected.length >= 1 ? selected : null,
         );
       },

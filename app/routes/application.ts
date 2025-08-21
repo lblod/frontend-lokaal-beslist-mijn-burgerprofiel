@@ -9,10 +9,12 @@ import type GoverningBodyDisabledList from 'frontend-burgernabije-besluitendatab
 import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 import type Transition from '@ember/routing/transition';
 import type ThemeListService from 'frontend-burgernabije-besluitendatabank/services/theme-list';
+import type GoverningBodyListService from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
 
 export default class ApplicationRoute extends Route {
   @service declare plausible: PlausibleService;
   @service declare governingBodyDisabledList: GoverningBodyDisabledList;
+  @service declare governingBodyList: GoverningBodyListService;
   @service declare themeList: ThemeListService;
   @service declare mbpEmbed: MbpEmbedService;
   @service declare router: Route;
@@ -21,9 +23,8 @@ export default class ApplicationRoute extends Route {
   constructor(args: { Args: any }) {
     super(args);
 
-    this.router.on('routeDidChange', (transition) => {
+    this.router.on('routeDidChange', (transition: Transition) => {
       this.mbpEmbed.setRouteTitle(transition);
-      // alert(window.location.href);
     });
   }
   beforeModel(transition: Transition): void {
@@ -33,6 +34,7 @@ export default class ApplicationRoute extends Route {
     if (transition.to?.queryParams) {
       gemeentes = transition.to?.queryParams['gemeentes'];
     }
+    this.governingBodyList.setLookupForOptions();
     this.mbpEmbed.setup(gemeentes);
     this.themeList.fetchThemes();
   }

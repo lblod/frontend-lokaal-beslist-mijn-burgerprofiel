@@ -35,6 +35,12 @@ export default class ThemeListService extends Service {
   getOptionsForIds(ids: Array<string>) {
     return this.asOptions.filter((option) => ids?.includes(option.id));
   }
+
+  getIdForLabel(label: string): string | undefined {
+    const match = this.asOptions.find((option) => option.label === label);
+
+    return match?.id;
+  }
 }
 
 declare module '@ember/service' {

@@ -4,11 +4,11 @@
   </Group>
   <Group>
     <AuButton
-      class="au-u-padding-right"
+      class="au-u-padding-right link-without-line"
       @skin="link"
       @disabled={{this.isFiltersDisabled}}
       {{on "click" @onShowFiltersPage}}
-    >Sorteer en filter</AuButton>
+    >Filter</AuButton>
   </Group>
 </AuToolbar>
 {{#if this.hasFilters}}
@@ -27,8 +27,8 @@
       <AuButton
         @skin="link"
         {{on "click" @onFilterReset}}
-        class="au-u-bold"
-      >Reset filters</AuButton>
+        class="au-u-bold link-without-line"
+      >Wis filters</AuButton>
     </div>
   </div>
 {{/if}}

@@ -229,7 +229,7 @@
           {{#if this.model.agendaItemOnSameSession}}
             <h2 class="au-u-h4 au-u-medium">
               <AuLink
-                class="au-u-medium"
+                class="au-u-medium link-without-line"
                 @route="agenda-items.session"
                 @model="{{this.model.agendaItem.id}}"
               >
@@ -305,7 +305,7 @@
                     <AuLink
                       @route="agenda-items"
                       @query={{this.municipalityQuery}}
-                      class="au-u-medium"
+                      class="au-u-medium link-without-line"
                     >{{this.model.agendaItem.session.municipality}}</AuLink>
                   {{/if}}
                 </AuHeading>
