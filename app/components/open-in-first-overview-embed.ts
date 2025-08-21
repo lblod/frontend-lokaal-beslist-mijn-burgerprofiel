@@ -36,10 +36,10 @@ export default class OpenInFirstOverviewEmbed extends Component<OpenInFirstOverv
   }
 
   recursiveBackTillOverview() {
-    alert(this.router.currentRouteName);
+    alert(`w:${window.location.href} r: ${this.router.currentURL}`);
     this.mbpEmbed.client.navigation.back();
-    alert(this.router.currentRouteName);
+    alert(window.location.href);
     this.mbpEmbed.client.navigation.back();
-    alert(this.router.currentRouteName);
+    alert(window.location.href);
   }
 }
