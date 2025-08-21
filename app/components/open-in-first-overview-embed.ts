@@ -44,8 +44,9 @@ export default class OpenInFirstOverviewEmbed extends Component<OpenInFirstOverv
         this.filterService.asQueryParams,
       );
     } else {
-      this.mbpEmbed.client.navigation.back();
-      this.openNewEmbedWhenOverviewPage();
+      this.mbpEmbed.client.navigation
+        .back()
+        .then(() => this.openNewEmbedWhenOverviewPage());
     }
   }
 }
