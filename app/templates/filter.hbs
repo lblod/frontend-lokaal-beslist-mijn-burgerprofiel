@@ -1,9 +1,15 @@
 {{page-title "Filter"}}
 <AuToolbar @border="bottom" class="sticky-top" as |Group|>
-  <Group />
   <Group>
     <AuButton
-      class="au-u-padding au-u-padding-bottom-small link-without-line"
+      class="au-u-padding au-u-padding-bottom-small link-without-line action-sdk-color"
+      @skin="link"
+      {{on "click" this.closeFilters}}
+    >Sluiten</AuButton>
+  </Group>
+  <Group>
+    <AuButton
+      class="au-u-padding au-u-padding-bottom-small link-without-line action-sdk-color"
       @skin="link"
       {{on "click" this.resetFilters}}
     >Wis filters</AuButton>

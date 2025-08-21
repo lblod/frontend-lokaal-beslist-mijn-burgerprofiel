@@ -1,18 +1,23 @@
-import type Store from '@ember-data/store';
-import { action } from '@ember/object';
 import Route from '@ember/routing/route';
-import type Transition from '@ember/routing/transition';
+
+import { action } from '@ember/object';
 import { service } from '@ember/service';
+
+import { getCount } from 'frontend-burgernabije-besluitendatabank/utils/ember-data';
+
+import type Store from '@ember-data/store';
+import type Transition from '@ember/routing/transition';
 import type DataQualityController from 'frontend-burgernabije-besluitendatabank/controllers/data-quality';
 import type AgendaItemModel from 'frontend-burgernabije-besluitendatabank/models/agenda-item';
 import type VoteModel from 'frontend-burgernabije-besluitendatabank/models/vote';
 import type FeaturesService from 'frontend-burgernabije-besluitendatabank/services/features';
+import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 import type { AdapterPopulatedRecordArrayWithMeta } from 'frontend-burgernabije-besluitendatabank/utils/ember-data';
-import { getCount } from 'frontend-burgernabije-besluitendatabank/utils/ember-data';
 
 export default class DataQualityRoute extends Route {
   @service declare store: Store;
   @service declare features: FeaturesService;
+  @service declare mbpEmbed: MbpEmbedService;
 
   @action
   loading(transition: Transition) {
@@ -32,6 +37,10 @@ export default class DataQualityRoute extends Route {
       refreshModel: true,
     },
   };
+
+  beforeModel() {
+    this.mbpEmbed.setLoadingStateFalse();
+  }
 
   async model(params: { municipalityLabel: string[] }) {
     if (this.features.isEnabled('statistics-page-feature')) {

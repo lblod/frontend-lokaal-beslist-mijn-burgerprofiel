@@ -1,17 +1,24 @@
 import Route from '@ember/routing/route';
+
 import { service } from '@ember/service';
 
 import { QueryParameterKeys } from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
-import type { AgendaItemsParams } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
 
+import type { AgendaItemsParams } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
 import type FeaturesService from 'frontend-burgernabije-besluitendatabank/services/features';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
 import type ItemListService from 'frontend-burgernabije-besluitendatabank/services/item-list';
+import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 
 export default class AgendaItemsIndexRoute extends Route {
   @service declare features: FeaturesService;
   @service declare filterService: FilterService;
   @service('item-list') declare itemsService: ItemListService;
+  @service declare mbpEmbed: MbpEmbedService;
+
+  beforeModel() {
+    this.mbpEmbed.setLoadingStateFalse();
+  }
 
   queryParams = {
     municipalityLabels: {

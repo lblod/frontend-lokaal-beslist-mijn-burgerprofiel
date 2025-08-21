@@ -231,6 +231,17 @@ export default class FilterController extends Controller {
   }
 
   @action
+  closeFilters() {
+    let routeName = 'agenda-items.index';
+    if (this.model.previousRoute) {
+      routeName = this.model.previousRoute.name;
+    }
+    this.router.transitionTo(routeName, {
+      queryParams: this.model.initialQueryParams,
+    });
+  }
+
+  @action
   async resetFilters() {
     this.governingBodyList.selectedIds = [];
     this.address.selectedAddress = undefined;

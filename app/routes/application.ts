@@ -27,6 +27,7 @@ export default class ApplicationRoute extends Route {
       this.mbpEmbed.setRouteTitle(transition);
     });
   }
+
   beforeModel(transition: Transition): void {
     this.startAnalytics();
     this.setGoverningBodyDisabledList();
@@ -35,7 +36,9 @@ export default class ApplicationRoute extends Route {
       gemeentes = transition.to?.queryParams['gemeentes'];
     }
     this.governingBodyList.setLookupForOptions();
-    this.mbpEmbed.setup(gemeentes);
+    this.mbpEmbed
+      .setup(gemeentes)
+      .then(() => this.mbpEmbed.setLoadingStateFalse());
     this.themeList.fetchThemes();
   }
 

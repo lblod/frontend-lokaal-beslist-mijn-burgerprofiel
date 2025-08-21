@@ -1,11 +1,5 @@
 $primary: var(--au-blue-700);
-
-.icon-color--primary {
-  .au-c-icon {
-    stroke: $primary !important;
-    fill: $primary !important;
-  }
-}
+$action: var(--au-gray-900);
 
 .au-c-tabs {
   .au-c-tabs-list__item .au-c-link.active {
@@ -14,10 +8,28 @@ $primary: var(--au-blue-700);
   }
 
   .au-c-tabs-list__item .au-c-link {
-    color: var(--au-gray-900) !important;
+    color: $action !important;
   }
 }
 
 .link-without-line {
   text-decoration: none !important;
+}
+
+.primary-sdk-color {
+  color: $primary !important;
+
+  .au-c-icon {
+    stroke: $primary !important;
+    fill: $primary !important;
+  }
+}
+
+.action-sdk-color {
+  color: $action !important;
+
+  .au-c-icon {
+    stroke: $action !important;
+    fill: $action !important;
+  }
 }
