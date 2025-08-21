@@ -37,9 +37,10 @@ export default class OpenInFirstOverviewEmbed extends Component<OpenInFirstOverv
       window.location.pathname === '/' ||
       window.location.pathname === '/zittingen'
     ) {
-      this.mbpEmbed.openNewEmbed({
-        routeName: this.args.routeName,
-      });
+      this.router.transitionTo(
+        this.args.routeName,
+        this.filterService.asQueryParams,
+      );
     } else {
       this.mbpEmbed.client.navigation.back();
       this.openNewEmbedWhenOverviewPage();
