@@ -21,7 +21,7 @@ export default class OpenInFirstOverviewEmbed extends Component<OpenInFirstOverv
   @service declare filterService: FilterService;
 
   @action
-  async openAsEmbed() {
+  openInFirstOverviewEmbed() {
     if (this.mbpEmbed.isConnected) {
       this.recursiveBackTillOverview();
       this.mbpEmbed.openNewEmbed({
@@ -36,6 +36,7 @@ export default class OpenInFirstOverviewEmbed extends Component<OpenInFirstOverv
   }
 
   recursiveBackTillOverview() {
+    alert(this.router.currentRouteName);
     this.mbpEmbed.client.navigation.back();
     alert(this.router.currentRouteName);
     this.mbpEmbed.client.navigation.back();
