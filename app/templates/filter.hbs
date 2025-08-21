@@ -116,16 +116,23 @@
   </section>
 </div>
 <div class="c-interface__sidebar-submit-buttons">
-  <AuHr />
-  <AuButton
-    @skin="primary"
-    @width="block"
-    @disabled={{or this.isApplyingFilters this.filtersHaveErrors}}
-    @loading={{this.isApplyingFilters}}
-    @loadingMessage="hidden"
-    @hideText={{this.isApplyingFilters}}
-    {{on "click" this.goToAgendaItems}}
-  >
-    {{this.showResultsText}}
-  </AuButton>
+  {{#if this.hasDivergingFilters}}
+    <div class="warning-values-changed--filters">
+      <p>Filters zijn gewijzigd!</p>
+    </div>
+  {{/if}}
+  <div class="au-u-padding">
+    <AuButton
+      @skin="primary"
+      @width="block"
+      @disabled={{or this.isApplyingFilters this.filtersHaveErrors}}
+      @loading={{this.isApplyingFilters}}
+      @loadingMessage="hidden"
+      @hideText={{this.isApplyingFilters}}
+      class=""
+      {{on "click" this.goToAgendaItems}}
+    >
+      {{this.showResultsText}}
+    </AuButton>
+  </div>
 </div>
