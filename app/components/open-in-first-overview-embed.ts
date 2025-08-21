@@ -33,10 +33,12 @@ export default class OpenInFirstOverviewEmbed extends Component<OpenInFirstOverv
   }
 
   openNewEmbedWhenOverviewPage() {
+    alert(window.location.pathname);
     if (
       window.location.pathname === '/' ||
       window.location.pathname === '/zittingen'
     ) {
+      alert('ember routing');
       this.router.transitionTo(
         this.args.routeName,
         this.filterService.asQueryParams,
