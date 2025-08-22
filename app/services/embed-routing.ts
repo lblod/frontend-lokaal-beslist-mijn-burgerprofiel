@@ -18,11 +18,14 @@ export default class EmbedRoutingService extends Service {
     client.navigation.onBackNavigation(this.cbForOnBackNavigation);
     this.router.on('routeDidChange', (transition: Transition) => {
       this.historyTransitions.unshift(transition);
+      alert('current: ' + this.currentTransition?.to?.name);
     });
   }
 
   cbForOnBackNavigation() {
+    alert('back CB');
     if (!this.currentTransition || this.currentRouteIsOverview) {
+      alert('no current or page is overview');
       return true;
     }
     const previousRouteInfo = this.currentTransition.from;
