@@ -1,12 +1,9 @@
 import Service, { service } from '@ember/service';
 
-import { tracked } from '@glimmer/tracking';
-
 import type Transition from '@ember/routing/transition';
 import type RouterService from '@ember/routing/router-service';
 import type MbpEmbedService from './mbp-embed';
-
-import type { MbpEmbedClient } from '@govflanders/mbp-embed-sdk';
+import { tracked } from '@glimmer/tracking';
 
 export default class EmbedRoutingService extends Service {
   @service declare router: RouterService;
@@ -20,57 +17,39 @@ export default class EmbedRoutingService extends Service {
       return;
     }
     this.mbpEmbed.client.navigation.onBackNavigation(() => {
-      return this.trigger;
+      this.blackHole = this.trigger;
+      return false;
     });
   }
 
   get trigger() {
-    return this.cbForOnBackNavigation({
-      router: this.router,
-      mbpClient: this.mbpEmbed.client,
-      current: this.currentTransition,
-      isOnOverview: this.currentRouteIsOverview,
-      historyItems: this.historyTransitions,
-    });
+    return this.cbForOnBackNavigation();
   }
 
-  cbForOnBackNavigation({
-    router,
-    mbpClient,
-    current,
-    isOnOverview,
-    historyItems,
-  }: {
-    router: RouterService;
-    mbpClient: MbpEmbedClient;
-    current: Transition | undefined;
-    isOnOverview: boolean;
-    historyItems: Array<Transition>;
-  }): boolean {
+  cbForOnBackNavigation(): boolean {
     alert('in cb');
-    Promise.resolve(() => {
-      alert('in resolve');
-      if (!current?.from || isOnOverview) {
-        alert('no previous or overview');
-        mbpClient.navigation.back();
-        return false;
-      }
-      alert('to ember route ');
-      alert(current.from.name);
-      if (current.from.params['id']) {
-        router.transitionTo(current.from.name, current.from.params['id'], {
-          queryParams: current.from.queryParams,
-        });
-      } else {
-        router.transitionTo(current.from.name, {
-          queryParams: current.from.queryParams,
-        });
-      }
-      historyItems.shift();
-
+    alert(this.historyTransitions?.length);
+    alert(this.currentTransition?.from?.name);
+    const previousRouteInfo = this.currentTransition?.from;
+    if (!previousRouteInfo || this.currentRouteIsOverview) {
+      this.mbpEmbed.client.navigation.back();
       return false;
-    });
-    alert('return false to cb');
+    }
+    if (previousRouteInfo && previousRouteInfo.params['id']) {
+      this.router.transitionTo(
+        previousRouteInfo.name,
+        previousRouteInfo.params['id'],
+        {
+          queryParams: previousRouteInfo.queryParams,
+        },
+      );
+    } else {
+      this.router.transitionTo(previousRouteInfo.name, {
+        queryParams: previousRouteInfo.queryParams,
+      });
+    }
+    this.historyTransitions.shift();
+
     return false;
   }
 
