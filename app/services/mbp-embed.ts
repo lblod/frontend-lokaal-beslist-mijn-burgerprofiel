@@ -1,14 +1,17 @@
-import Service from '@ember/service';
+import Service, { service } from '@ember/service';
 
 import config from '../config/environment';
 
 import type { MbpEmbedClient, Tenant } from '@govflanders/mbp-embed-sdk';
 import type Transition from '@ember/routing/transition';
+import type EmbedRoutingService from './embed-routing';
 
 import { createMbpEmbedClient } from '@govflanders/mbp-embed-sdk';
 import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 
 export default class MbpEmbedService extends Service {
+  @service declare embedRouting: EmbedRoutingService;
+
   declare client: MbpEmbedClient;
   declare tenant: Tenant;
   declare municipalityLabel?: string;
@@ -28,6 +31,7 @@ export default class MbpEmbedService extends Service {
     await this.connectToClient();
     this.tenant = await this.client?.context.getTenant();
     this.setAppColors();
+    this.embedRouting.setup(this.client);
   }
 
   async connectToClient() {
