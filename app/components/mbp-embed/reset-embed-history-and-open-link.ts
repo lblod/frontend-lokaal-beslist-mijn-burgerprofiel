@@ -19,9 +19,9 @@ export default class MbpEmbedResetEmbedHistoryAndOpenLink extends Component<MbpE
   @service declare router: RouterService;
 
   @action
-  async resetViewsAndOpenLink() {
+  resetViewsAndOpenLink() {
     if (this.mbpEmbed.isConnected) {
-      await this.openNewEmbedWhenOverviewPage();
+      this.openNewEmbedWhenOverviewPage();
     } else {
       this.router.transitionTo(this.args.routeName, {
         queryParams: this.args.query,
@@ -29,12 +29,13 @@ export default class MbpEmbedResetEmbedHistoryAndOpenLink extends Component<MbpE
     }
   }
 
-  async openNewEmbedWhenOverviewPage() {
-    for (let view = 0; view < this.mbpEmbed.openViews; view++) {
-      await this.mbpEmbed.client.navigation
-        .back()
-        .catch((e) => alert(JSON.stringify(e)));
-    }
+  openNewEmbedWhenOverviewPage() {
+    const backs = Array.from({ length: this.mbpEmbed.openViews }).map(() =>
+      this.mbpEmbed.client.navigation.back(),
+    );
+    Promise.allSettled(backs).then(() => {
+      alert('done');
+    });
     // this.router.transitionTo(this.args.routeName, {
     //   queryParams: this.args.query,
     // });
