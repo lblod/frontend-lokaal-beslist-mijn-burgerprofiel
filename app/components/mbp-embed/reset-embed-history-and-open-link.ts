@@ -3,6 +3,8 @@ import Component from '@glimmer/component';
 import { action } from '@ember/object';
 import { service } from '@ember/service';
 
+import { timeout } from 'ember-concurrency';
+
 import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 import type RouterService from '@ember/routing/router-service';
 import type { FiltersAsQueryParams } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
@@ -19,9 +21,9 @@ export default class MbpEmbedResetEmbedHistoryAndOpenLink extends Component<MbpE
   @service declare router: RouterService;
 
   @action
-  resetViewsAndOpenLink() {
+  async resetViewsAndOpenLink() {
     if (this.mbpEmbed.isConnected) {
-      this.openNewEmbedWhenOverviewPage();
+      await this.openNewEmbedWhenOverviewPage();
     } else {
       this.router.transitionTo(this.args.routeName, {
         queryParams: this.args.query,
@@ -29,9 +31,10 @@ export default class MbpEmbedResetEmbedHistoryAndOpenLink extends Component<MbpE
     }
   }
 
-  openNewEmbedWhenOverviewPage() {
+  async openNewEmbedWhenOverviewPage() {
     for (let view = 0; view < this.mbpEmbed.openViews; view++) {
       this.mbpEmbed.client.navigation.back();
+      await timeout(120);
     }
     this.router.transitionTo(this.args.routeName, {
       queryParams: this.args.query,
