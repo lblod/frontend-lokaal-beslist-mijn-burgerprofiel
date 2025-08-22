@@ -207,6 +207,21 @@ export default class FilterService extends Service {
     return queryParams;
   }
 
+  get asUrlQueryParams(): string {
+    const keyValues = Object.entries(this.asQueryParams).map(([key, value]) => {
+      return { key, value };
+    });
+    const withValues = keyValues.filter((kv) => kv.value);
+    if (withValues.length === 0) {
+      return '';
+    }
+
+    const asUrlParamStrings = withValues.map(
+      ({ key, value }) => `${key}=${value}`,
+    );
+    return '?' + asUrlParamStrings.join('&');
+  }
+
   get resetQueryParams() {
     const params = {
       gemeentes: this.mbpEmbed.municipalityLabel,

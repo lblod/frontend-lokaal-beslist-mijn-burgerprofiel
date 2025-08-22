@@ -246,14 +246,14 @@
                     {{#if (eq agendaItem.id this.model.agendaItem.id)}}
                       <p class="au-u-medium">Huidige agendapunt</p>
                     {{else}}
-                      <AuLink
-                        @route="agenda-items.agenda-item"
-                        @model={{agendaItem.id}}
+                      <MbpEmbed::OpenInNewEmbed
+                        @id={{agendaItem.id}}
+                        @routeName="agenda-items.agenda-item"
                       >
                         <p class="truncate">
                           {{agendaItem.titleFormatted}}
                         </p>
-                      </AuLink>
+                      </MbpEmbed::OpenInNewEmbed>
                     {{/if}}
                   </li>
                 {{/each}}
@@ -312,14 +312,14 @@
                 <ol class="less-margin">
                   {{#each similarAgendaItems as |agendaItem|}}
                     <li class="au-u-margin-top-small">
-                      <AuLink
-                        @model={{agendaItem.id}}
-                        @route="agenda-items.agenda-item"
+                      <MbpEmbed::OpenInNewEmbed
+                        @id={{agendaItem.id}}
+                        @routeName="agenda-items.agenda-item"
                       >
                         <p class="truncate">
                           {{agendaItem.titleFormatted}}
                         </p>
-                      </AuLink>
+                      </MbpEmbed::OpenInNewEmbed>
                     </li>
                   {{/each}}
                 </ol>
