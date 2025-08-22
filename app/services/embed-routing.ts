@@ -25,8 +25,9 @@ export default class EmbedRoutingService extends Service {
   }
 
   cbForOnBackNavigation() {
-    setTimeout(() => {
-      alert('triggered in timeout');
+    return false;
+    Promise.resolve().then(() => {
+      alert('triggered in resolve');
       const previousRouteInfo = this.currentTransition?.from;
       if (!previousRouteInfo || this.currentRouteIsOverview) {
         this.mbpEmbed.client.navigation.back();
