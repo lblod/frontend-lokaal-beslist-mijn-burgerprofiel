@@ -3,6 +3,7 @@ import Service, { service } from '@ember/service';
 import type Transition from '@ember/routing/transition';
 import type RouterService from '@ember/routing/router-service';
 import type MbpEmbedService from './mbp-embed';
+import { tracked } from '@glimmer/tracking';
 
 export default class EmbedRoutingService extends Service {
   @service declare router: RouterService;
@@ -10,44 +11,48 @@ export default class EmbedRoutingService extends Service {
 
   declare historyTransitions: Array<Transition>;
 
+  @tracked blackHole = false;
+
   setup() {
     if (!this.mbpEmbed.clientId) {
       return;
     }
 
     this.historyTransitions = [];
-    this.mbpEmbed.client.navigation.onBackNavigation(
-      this.cbForOnBackNavigation,
-    );
+    this.mbpEmbed.client.navigation.onBackNavigation(() => {
+      this.blackHole = this.trigger;
+      return false;
+    });
     this.router.on('routeDidChange', (transition: Transition) => {
       this.historyTransitions.unshift(transition);
     });
   }
 
-  cbForOnBackNavigation() {
-    return false;
-    Promise.resolve().then(() => {
-      alert('triggered in resolve');
-      const previousRouteInfo = this.currentTransition?.from;
-      if (!previousRouteInfo || this.currentRouteIsOverview) {
-        this.mbpEmbed.client.navigation.back();
-        return;
-      }
-      if (previousRouteInfo && previousRouteInfo.params['id']) {
-        this.router.transitionTo(
-          previousRouteInfo.name,
-          previousRouteInfo.params['id'],
-          {
-            queryParams: previousRouteInfo.queryParams,
-          },
-        );
-      } else {
-        this.router.transitionTo(previousRouteInfo.name, {
+  get trigger() {
+    return this.cbForOnBackNavigation();
+  }
+
+  cbForOnBackNavigation(): boolean {
+    alert('triggered ');
+    const previousRouteInfo = this.currentTransition?.from;
+    if (!previousRouteInfo || this.currentRouteIsOverview) {
+      this.mbpEmbed.client.navigation.back();
+      return false;
+    }
+    if (previousRouteInfo && previousRouteInfo.params['id']) {
+      this.router.transitionTo(
+        previousRouteInfo.name,
+        previousRouteInfo.params['id'],
+        {
           queryParams: previousRouteInfo.queryParams,
-        });
-      }
-      this.historyTransitions.shift();
-    });
+        },
+      );
+    } else {
+      this.router.transitionTo(previousRouteInfo.name, {
+        queryParams: previousRouteInfo.queryParams,
+      });
+    }
+    this.historyTransitions.shift();
 
     return false;
   }
