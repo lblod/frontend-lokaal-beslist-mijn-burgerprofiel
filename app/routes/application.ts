@@ -10,6 +10,7 @@ import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/servic
 import type Transition from '@ember/routing/transition';
 import type ThemeListService from 'frontend-burgernabije-besluitendatabank/services/theme-list';
 import type GoverningBodyListService from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
+import type EmbedRoutingService from 'frontend-burgernabije-besluitendatabank/services/embed-routing';
 
 export default class ApplicationRoute extends Route {
   @service declare plausible: PlausibleService;
@@ -17,6 +18,7 @@ export default class ApplicationRoute extends Route {
   @service declare governingBodyList: GoverningBodyListService;
   @service declare themeList: ThemeListService;
   @service declare mbpEmbed: MbpEmbedService;
+  @service declare embedRouting: EmbedRoutingService;
   @service declare router: Route;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -25,6 +27,7 @@ export default class ApplicationRoute extends Route {
 
     this.router.on('routeDidChange', (transition: Transition) => {
       this.mbpEmbed.setRouteTitle(transition);
+      this.embedRouting.historyTransitions.unshift(transition);
     });
   }
 

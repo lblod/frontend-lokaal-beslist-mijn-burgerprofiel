@@ -9,22 +9,16 @@ export default class EmbedRoutingService extends Service {
   @service declare router: RouterService;
   @service declare mbpEmbed: MbpEmbedService;
 
-  declare historyTransitions: Array<Transition>;
-
+  @tracked historyTransitions: Array<Transition> = [];
   @tracked blackHole = false;
 
   setup() {
     if (!this.mbpEmbed.clientId) {
       return;
     }
-
-    this.historyTransitions = [];
     this.mbpEmbed.client.navigation.onBackNavigation(() => {
       this.blackHole = this.trigger;
       return false;
-    });
-    this.router.on('routeDidChange', (transition: Transition) => {
-      this.historyTransitions.unshift(transition);
     });
   }
 
@@ -33,8 +27,9 @@ export default class EmbedRoutingService extends Service {
   }
 
   cbForOnBackNavigation(): boolean {
-    alert('triggered ');
     const previousRouteInfo = this.currentTransition?.from;
+    alert('current transition ' + JSON.stringify(this.currentTransition));
+    alert('routeinfo ' + JSON.stringify(previousRouteInfo));
     if (!previousRouteInfo || this.currentRouteIsOverview) {
       this.mbpEmbed.client.navigation.back();
       return false;
