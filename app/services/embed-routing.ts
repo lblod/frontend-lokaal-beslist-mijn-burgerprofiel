@@ -27,9 +27,10 @@ export default class EmbedRoutingService extends Service {
   }
 
   cbForOnBackNavigation(): boolean {
+    alert('in cb');
+    alert(this.historyTransitions?.length);
+    alert(this.currentTransition?.from?.name);
     const previousRouteInfo = this.currentTransition?.from;
-    alert('current transition ' + JSON.stringify(this.currentTransition));
-    alert('routeinfo ' + JSON.stringify(previousRouteInfo));
     if (!previousRouteInfo || this.currentRouteIsOverview) {
       this.mbpEmbed.client.navigation.back();
       return false;
