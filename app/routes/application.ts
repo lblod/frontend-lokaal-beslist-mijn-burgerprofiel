@@ -27,6 +27,7 @@ export default class ApplicationRoute extends Route {
 
     this.router.on('routeDidChange', (transition: Transition) => {
       this.mbpEmbed.setRouteTitle(transition);
+      alert('adding transition');
       this.embedRouting.historyTransitions.unshift(transition);
     });
   }

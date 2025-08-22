@@ -27,30 +27,29 @@ export default class EmbedRoutingService extends Service {
   }
 
   cbForOnBackNavigation(): boolean {
-    alert('in cb');
-    alert(this.historyTransitions?.length);
-    alert(this.currentTransition?.from?.name);
-    const previousRouteInfo = this.currentTransition?.from;
-    if (!previousRouteInfo || this.currentRouteIsOverview) {
-      this.mbpEmbed.client.navigation.back();
-      return false;
-    }
-    if (previousRouteInfo && previousRouteInfo.params['id']) {
-      this.router.transitionTo(
-        previousRouteInfo.name,
-        previousRouteInfo.params['id'],
-        {
-          queryParams: previousRouteInfo.queryParams,
-        },
-      );
-    } else {
-      this.router.transitionTo(previousRouteInfo.name, {
-        queryParams: previousRouteInfo.queryParams,
-      });
-    }
-    this.historyTransitions.shift();
-
+    this.router.transitionTo('agenda-items.index');
     return false;
+    // const previousRouteInfo = this.currentTransition?.from;
+    // if (!previousRouteInfo || this.currentRouteIsOverview) {
+    //   this.mbpEmbed.client.navigation.back();
+    //   return false;
+    // }
+    // if (previousRouteInfo && previousRouteInfo.params['id']) {
+    //   this.router.transitionTo(
+    //     previousRouteInfo.name,
+    //     previousRouteInfo.params['id'],
+    //     {
+    //       queryParams: previousRouteInfo.queryParams,
+    //     },
+    //   );
+    // } else {
+    //   this.router.transitionTo(previousRouteInfo.name, {
+    //     queryParams: previousRouteInfo.queryParams,
+    //   });
+    // }
+    // this.historyTransitions.shift();
+
+    // return false;
   }
 
   get currentTransition() {
