@@ -2,48 +2,51 @@ import Service, { service } from '@ember/service';
 
 import type Transition from '@ember/routing/transition';
 import type RouterService from '@ember/routing/router-service';
-import type { MbpEmbedClient } from '@govflanders/mbp-embed-sdk';
+import type MbpEmbedService from './mbp-embed';
 
 export default class EmbedRoutingService extends Service {
   @service declare router: RouterService;
+  @service declare mbpEmbed: MbpEmbedService;
 
   declare historyTransitions: Array<Transition>;
 
-  setup(client?: MbpEmbedClient) {
-    if (!client) {
+  setup() {
+    if (!this.mbpEmbed.clientId) {
       return;
     }
 
     this.historyTransitions = [];
-    client.navigation.onBackNavigation(this.cbForOnBackNavigation);
+    this.mbpEmbed.client.navigation.onBackNavigation(
+      this.cbForOnBackNavigation,
+    );
     this.router.on('routeDidChange', (transition: Transition) => {
       this.historyTransitions.unshift(transition);
-      alert('current: ' + this.currentTransition?.to?.name);
     });
   }
 
   cbForOnBackNavigation() {
-    alert('back CB');
-    if (!this.currentTransition || this.currentRouteIsOverview) {
-      alert('no current or page is overview');
-      return true;
-    }
-    const previousRouteInfo = this.currentTransition.from;
-    if (previousRouteInfo && previousRouteInfo.params['id']) {
-      this.router.transitionTo(
-        previousRouteInfo.name,
-        previousRouteInfo.params['id'],
-        {
+    setTimeout(() => {
+      alert('triggered in timeout');
+      const previousRouteInfo = this.currentTransition?.from;
+      if (!previousRouteInfo || this.currentRouteIsOverview) {
+        this.mbpEmbed.client.navigation.back();
+        return;
+      }
+      if (previousRouteInfo && previousRouteInfo.params['id']) {
+        this.router.transitionTo(
+          previousRouteInfo.name,
+          previousRouteInfo.params['id'],
+          {
+            queryParams: previousRouteInfo.queryParams,
+          },
+        );
+      } else {
+        this.router.transitionTo(previousRouteInfo.name, {
           queryParams: previousRouteInfo.queryParams,
-        },
-      );
-    }
-    if (previousRouteInfo) {
-      this.router.transitionTo(previousRouteInfo.name, {
-        queryParams: previousRouteInfo.queryParams,
-      });
-    }
-    this.historyTransitions.shift();
+        });
+      }
+      this.historyTransitions.shift();
+    });
 
     return false;
   }

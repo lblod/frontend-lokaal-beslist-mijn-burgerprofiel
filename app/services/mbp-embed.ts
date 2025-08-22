@@ -31,7 +31,7 @@ export default class MbpEmbedService extends Service {
     await this.connectToClient();
     this.tenant = await this.client?.context.getTenant();
     this.setAppColors();
-    this.embedRouting.setup(this.client);
+    this.embedRouting.setup();
   }
 
   async connectToClient() {
