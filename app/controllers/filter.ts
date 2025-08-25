@@ -230,6 +230,20 @@ export default class FilterController extends Controller {
     });
   }
 
+  get hasDivergingFilters() {
+    const initial = Object.entries(this.model.initialQueryParams).filter(
+      (value) => value[1],
+    );
+    const current = Object.entries(this.filterService.asQueryParams).filter(
+      (value) => value[1],
+    );
+
+    if (initial.length !== current.length) {
+      return true;
+    }
+    return false;
+  }
+
   @action
   closeFilters() {
     let routeName = 'agenda-items.index';
