@@ -27,6 +27,11 @@ import { type MuSearchResponse } from './mu-search';
 
 type ModelIndex = 'agenda-items' | 'session';
 
+interface FetchItemOptions {
+  loadMore?: boolean;
+  size?: number;
+}
+
 export default class ItemListService extends Service {
   @service declare municipalityList: MunicipalityListService;
   @service declare provinceList: ProvinceListService;
@@ -69,19 +74,20 @@ export default class ItemListService extends Service {
 
   loadFirstPage(filters: AgendaItemsParams) {
     this.filterService.filters = filters;
-    this.fetchItems.perform(this.currentPage, false);
+    this.fetchItems.perform(this.currentPage);
   }
 
   loadMoreItems() {
     this.currentPage++;
-    this.fetchItems.perform(this.currentPage, true);
+    this.fetchItems.perform(this.currentPage, { loadMore: true });
   }
 
   fetchItems = task(
     { restartable: true },
-    async (page: number, loadMore = false) => {
+    async (page: number, options: FetchItemOptions = {}) => {
       if (!this.filters) return;
 
+      const { size, loadMore = false } = options;
       const locationIds = await this.fetchLocationIds();
       const themeIds = this.filterService.asQueryParams.thema;
       const distance = this.distanceList.getSelectedDistance(
@@ -106,6 +112,7 @@ export default class ItemListService extends Service {
               governingBodyClassificationIds,
               address,
               filters: { ...this.filters, distance: distance?.value ?? null },
+              size,
             }),
           );
         this.totalItemCount = results.count || 0;
@@ -127,6 +134,7 @@ export default class ItemListService extends Service {
             dateSort: this.filters.dateSort,
             status: this.filters.status,
             keyword: this.filters.keyword,
+            size,
           }),
         );
         this.totalItemCount = results.count || 0;

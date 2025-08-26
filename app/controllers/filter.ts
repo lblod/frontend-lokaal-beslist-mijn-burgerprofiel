@@ -109,7 +109,7 @@ export default class FilterController extends Controller {
     this.filterService.updateFilters({
       themeIds: selected.map((theme) => theme.id),
     });
-    this.itemsService.fetchItems.perform(0, false);
+    this.itemsService.fetchItems.perform(0, { size: 1 });
   }
 
   get status() {
@@ -119,7 +119,7 @@ export default class FilterController extends Controller {
   @action
   setStatus(value: string) {
     this.filterService.updateFilters({ status: value });
-    this.itemsService.fetchItems.perform(0, false);
+    this.itemsService.fetchItems.perform(0, { size: 1 });
   }
 
   @action
@@ -128,7 +128,7 @@ export default class FilterController extends Controller {
     this.filterService.updateFilters({
       governingBodyClassificationIds: selectedIds,
     });
-    this.itemsService.fetchItems.perform(0, false);
+    this.itemsService.fetchItems.perform(0, { size: 1 });
   }
 
   @action
@@ -154,7 +154,7 @@ export default class FilterController extends Controller {
 
     await this.governingBodyList.loadOptions();
     await this.setBestuursorgaanOptions();
-    this.itemsService.fetchItems.perform(0, false);
+    this.itemsService.fetchItems.perform(0, { size: 1 });
   }
 
   get startDate() {
@@ -175,7 +175,7 @@ export default class FilterController extends Controller {
       plannedStartMin: start,
       plannedStartMax: end,
     });
-    this.itemsService.fetchItems.perform(0, false);
+    this.itemsService.fetchItems.perform(0, { size: 1 });
   }
 
   @action
@@ -189,7 +189,7 @@ export default class FilterController extends Controller {
       keyword,
     });
     this.filterService.searchOnTitleOnly(onlyOnTitle);
-    this.itemsService.fetchItems.perform(0, false);
+    this.itemsService.fetchItems.perform(0, { size: 1 });
   }
 
   @action
@@ -198,7 +198,7 @@ export default class FilterController extends Controller {
     this.filterService.updateFilters({
       distance: selectedDistance?.id,
     });
-    this.itemsService.fetchItems.perform(0, false);
+    this.itemsService.fetchItems.perform(0, { size: 1 });
   }
 
   async setBestuursorgaanOptions() {
@@ -220,7 +220,7 @@ export default class FilterController extends Controller {
   }
 
   @action
-  goToAgendaItems() {
+  goToOverview() {
     let routeName = 'agenda-items.index';
     if (this.model.previousRoute) {
       routeName = this.model.previousRoute.name;
@@ -249,6 +249,6 @@ export default class FilterController extends Controller {
     this.distanceList.selected = null;
     this.governmentList.selected = [];
     this.filterService.resetFiltersToInitialView();
-    this.itemsService.fetchItems.perform(0, false);
+    this.itemsService.fetchItems.perform(0, { size: 1 });
   }
 }
