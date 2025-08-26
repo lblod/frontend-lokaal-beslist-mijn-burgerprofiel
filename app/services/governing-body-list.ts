@@ -3,10 +3,7 @@ import Service, { service } from '@ember/service';
 import { A } from '@ember/array';
 import { tracked } from '@glimmer/tracking';
 import { QueryParameterKeys } from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
-import {
-  deserializeArray,
-  serializeArray,
-} from 'frontend-burgernabije-besluitendatabank/utils/query-params';
+import { serializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 
 import type Store from '@ember-data/store';
 import type RouterService from '@ember/routing/router-service';
@@ -36,36 +33,6 @@ export default class GoverningBodyListService extends Service {
   @tracked selectedIds: Array<string> = [];
   @tracked options: GoverningBodyOption[] = [];
   @tracked lookupOptions: NativeArray<GoverningBodyOption> = A([]);
-
-  /**
-   * Get the governing body classification ids from the given labels.
-   * @returns The governing body classification ids.
-   **/
-
-  async getGoverningBodyClassificationIdsFromLabels(
-    governingBodyLabels: Array<string> | string | null,
-  ): Promise<string | null> {
-    if (!governingBodyLabels) {
-      return null;
-    }
-
-    const options = await this.loadOptions();
-
-    const governingBodyLabelsArray = Array.isArray(governingBodyLabels)
-      ? governingBodyLabels
-      : deserializeArray(governingBodyLabels);
-    const governingBodyClassificationIds = options.reduce(
-      (acc, governingBody) => {
-        if (governingBodyLabelsArray.includes(governingBody.label)) {
-          acc.push(governingBody.id);
-        }
-        return acc;
-      },
-      [] as Array<string>,
-    );
-
-    return governingBodyClassificationIds.join(',');
-  }
 
   async getAll(): Promise<Array<GoverningBodyOption>> {
     const governingBodyClassifications = await this.store.query(
