@@ -79,6 +79,7 @@ export default class FilterService extends Service {
       ...params,
       governingBodyClassificationIds: deserializeArray(
         bestuursorgaanIdsAsString,
+        ',',
       ),
       themeIds: deserializeArray(themeIdsAsString),
       municipalityLabels: deserializeArray(municipalityLabelsAsString),
@@ -163,6 +164,7 @@ export default class FilterService extends Service {
     if (this.filters.governingBodyClassificationIds?.length >= 1) {
       governingBodyClassificationIds = serializeArray(
         this.filters.governingBodyClassificationIds,
+        ',',
       );
     }
     if (this.filters.themeIds?.length >= 1) {

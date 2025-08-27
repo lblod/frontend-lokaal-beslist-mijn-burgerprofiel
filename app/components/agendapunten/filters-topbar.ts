@@ -36,6 +36,14 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   @service declare themeList: ThemeListService;
   @service declare mbpEmbed: MbpEmbedService;
 
+  constructor(
+    owner: unknown,
+    args: AgendapuntenFiltersTopbarSignature['Args'],
+  ) {
+    super(owner, args);
+    this.governingBodyList.loadOptions();
+  }
+
   get hasFilters() {
     return this.filterValues.length >= 1;
   }
@@ -200,16 +208,11 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   }
 
   createBestuursorgaanFilterLabels() {
-    const bestuursorgaanIds = deserializeArray(
-      this.args.filters.bestuursorganen,
-    );
-    const options = this.governingBodyList.lookupOptions.filter((o) =>
-      bestuursorgaanIds.includes(o.id),
-    );
-    return options.map((option) => {
+    const labels = this.governingBodyList.labelsForSelectedIds;
+    return labels.map((label) => {
       return {
         key: QueryParameterKeys.governingBodies,
-        value: option.label,
+        value: label,
       };
     });
   }
@@ -275,23 +278,23 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
       },
       [QueryParameterKeys.governingBodies]: async () => {
         const asArray = deserializeArray(
-          this.args.filters.bestuursorganen ?? '',
+          this.args.filters.bestuursorganen,
+          ',',
         );
-        const bestuursorgaanIdsForLabel = this.governingBodyList.getIdsForLabel(
-          keyValue.value,
-        );
+        const bestuursorgaanIdsForLabel =
+          await this.governingBodyList.getIdsForLabel(keyValue.value);
         if (!bestuursorgaanIdsForLabel) {
           console.error(
             `Could not find bestuursorgaan id for label ${keyValue.value}`,
           );
           return;
         }
-        const selected = asArray.filter(
+        const selectedIds = asArray.filter(
           (id) => !bestuursorgaanIdsForLabel.includes(id),
         );
         this.filterService.updateFilterFromQueryParamKey(
           QueryParameterKeys.governingBodies as keyof FiltersAsQueryParams,
-          selected.length >= 1 ? selected : null,
+          selectedIds.length >= 1 ? selectedIds : null,
         );
       },
     };

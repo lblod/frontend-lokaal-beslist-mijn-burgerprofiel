@@ -21,6 +21,7 @@ import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/servic
 
 import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import { formatNumber } from 'frontend-burgernabije-besluitendatabank/helpers/format-number';
+import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 
 export default class FilterController extends Controller {
   @service declare governingBodyList: GoverningBodyListService;
@@ -38,7 +39,7 @@ export default class FilterController extends Controller {
   @tracked dateRangeHasErrors = false;
 
   get selectedBestuursorgaanIds() {
-    return this.governingBodyList.selectedIds;
+    return this.filterService.filters.governingBodyClassificationIds;
   }
 
   get themaOptions() {
@@ -112,8 +113,13 @@ export default class FilterController extends Controller {
   }
 
   @action
-  updateSelectedGoverningBodyClassifications(selectedIds: Array<string>) {
-    this.governingBodyList.selectedIds = selectedIds;
+  updateSelectedGoverningBodyClassifications(selected: Array<string>) {
+    const selectedIds: Array<string> = [];
+    selected
+      .map((idsString) => {
+        selectedIds.push(...deserializeArray(idsString, ','));
+      })
+      .flat();
     this.filterService.updateFilters({
       governingBodyClassificationIds: selectedIds,
     });
@@ -214,7 +220,6 @@ export default class FilterController extends Controller {
 
   @action
   async resetFilters() {
-    this.governingBodyList.selectedIds = [];
     this.address.selectedAddress = undefined;
     this.distanceList.selected = null;
     this.governmentList.selected = [];

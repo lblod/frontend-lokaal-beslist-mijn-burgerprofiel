@@ -99,6 +99,7 @@ export default class ItemListService extends Service {
 
       const governingBodyClassificationIds = serializeArray(
         this.filters.governingBodyClassificationIds,
+        ',',
       );
       let newItems: Array<AgendaItem | Session> = [];
       if (this.modelIndexToFetch === 'agenda-items') {

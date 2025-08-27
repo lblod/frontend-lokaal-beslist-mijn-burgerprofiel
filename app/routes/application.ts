@@ -35,7 +35,6 @@ export default class ApplicationRoute extends Route {
     if (transition.to?.queryParams) {
       gemeentes = transition.to?.queryParams['gemeentes'];
     }
-    this.governingBodyList.setLookupForOptions();
     this.mbpEmbed
       .setup(gemeentes)
       .then(() => this.mbpEmbed.setLoadingStateFalse());

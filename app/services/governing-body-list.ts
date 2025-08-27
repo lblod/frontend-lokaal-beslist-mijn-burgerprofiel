@@ -1,6 +1,5 @@
 import Service, { service } from '@ember/service';
 
-import { A } from '@ember/array';
 import { tracked } from '@glimmer/tracking';
 import { QueryParameterKeys } from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
 import { serializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
@@ -11,7 +10,6 @@ import type MunicipalityListService from './municipality-list';
 import type GovernmentListService from './government-list';
 import type FilterService from './filter-service';
 import type ProvinceListService from './province-list';
-import type NativeArray from '@ember/array/-private/native-array';
 import type GoverningBodyClassificationCodeModel from 'frontend-burgernabije-besluitendatabank/models/governing-body-classification-code';
 
 export interface GoverningBodyOption {
@@ -28,24 +26,32 @@ export default class GoverningBodyListService extends Service {
   @service declare governmentList: GovernmentListService;
   @service declare filterService: FilterService;
 
-  @tracked selectedIds: Array<string> = [];
   @tracked options: GoverningBodyOption[] = [];
-  @tracked lookupOptions: NativeArray<GoverningBodyOption> = A([]);
 
-  getIdsForLabel(label: string): Array<string> | undefined {
-    const matches = this.lookupOptions.filter(
-      (option) => option.label === label,
+  async getIdsForLabel(label: string): Promise<Array<string>> {
+    const classifications = await this.store.query(
+      'governing-body-classification-code',
+      {
+        'filter[label]': label,
+      },
     );
 
-    return matches.map((m) => m.id);
+    return classifications.slice().map((c) => c.id);
+  }
+
+  get labelsForSelectedIds() {
+    return this.options
+      .filter(
+        (o) =>
+          this.filterService.filters.governingBodyClassificationIds.filter(
+            (id) => new RegExp('\\b' + id + '\\b').test(o.id),
+          ).length >= 1,
+      )
+      .map((o) => o.label);
   }
 
   async loadOptions() {
-    const {
-      municipalityLabels,
-      governingBodyClassificationIds,
-      provinceLabels,
-    } = this.filterService.filters;
+    const { municipalityLabels, provinceLabels } = this.filterService.filters;
     let classifications: Array<GoverningBodyClassificationCodeModel> = [];
     const isGovernmentSet =
       municipalityLabels?.length >= 1 || provinceLabels?.length >= 1;
@@ -94,7 +100,6 @@ export default class GoverningBodyListService extends Service {
     this.options = this.sortOptions(
       await this.getUniqueClassifications(classifications),
     );
-    this.selectedIds = governingBodyClassificationIds;
 
     return this.options;
   }
@@ -118,31 +123,12 @@ export default class GoverningBodyListService extends Service {
     return Object.entries(labelsWithIdsMap).map(
       ([label, ids]: [string, Array<string>]) => {
         return {
-          id: ids.join(','),
+          id: serializeArray(ids, ','),
           label,
           type: QueryParameterKeys.governingBodies,
         };
       },
     );
-  }
-
-  async setLookupForOptions(): Promise<void> {
-    const governingBodyClassifications = await this.store.query(
-      'governing-body-classification-code',
-      {
-        page: { size: 100 },
-        sort: 'label',
-      },
-    );
-    const allOptions = this.sortOptions(
-      governingBodyClassifications.map((classification) => ({
-        id: classification.id,
-        label: classification.label,
-        type: QueryParameterKeys.governingBodies,
-      })),
-    );
-    this.lookupOptions.clear();
-    this.lookupOptions.pushObjects(A(allOptions));
   }
 }
 declare module '@ember/service' {
