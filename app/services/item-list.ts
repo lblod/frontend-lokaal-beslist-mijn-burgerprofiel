@@ -24,6 +24,7 @@ import { createSessionsQuery } from 'frontend-burgernabije-besluitendatabank/uti
 import { serializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 import type { AgendaItemsParams } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
 import { type MuSearchResponse } from './mu-search';
+import type Transition from '@ember/routing/transition';
 
 type ModelIndex = 'agenda-items' | 'session';
 
@@ -74,6 +75,7 @@ export default class ItemListService extends Service {
 
   loadFirstPage(filters: AgendaItemsParams) {
     this.filterService.filters = filters;
+    this.currentPage = 0;
     this.fetchItems.perform(this.currentPage);
   }
 
@@ -87,6 +89,7 @@ export default class ItemListService extends Service {
     async (page: number, options: FetchItemOptions = {}) => {
       if (!this.filters) return;
 
+      this.currentPage = page;
       const { size, loadMore = false } = options;
       const locationIds = await this.fetchLocationIds();
       const themeIds = this.filterService.asQueryParams.thema;
@@ -155,6 +158,16 @@ export default class ItemListService extends Service {
       this.filters?.provinceLabels || [],
     );
     return [...municipalityIds, ...provinceIds].join(',');
+  }
+
+  resetCurrentPageWhenComingBackOnOverview(transition: Transition) {
+    const routes = ['agenda-items.index', 'sessions.index'];
+    const isGoingToOverviewPage =
+      routes.includes(transition.to?.name ?? '') &&
+      !routes.includes(transition.from?.name ?? '');
+    if (isGoingToOverviewPage) {
+      this.currentPage = 0;
+    }
   }
 }
 

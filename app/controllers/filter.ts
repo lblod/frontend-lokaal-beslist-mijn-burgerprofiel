@@ -121,7 +121,6 @@ export default class FilterController extends Controller {
 
   @action
   updateSelectedGoverningBodyClassifications(selected: Array<string>) {
-    console.log(`selected ids`, selected);
     const selectedIds: Array<string> = [];
     selected
       .map((idsString) => {
@@ -209,7 +208,6 @@ export default class FilterController extends Controller {
     if (this.model.previousRoute) {
       routeName = this.model.previousRoute.name;
     }
-    this.itemsService.currentPage = 0;
     this.router.transitionTo(routeName, {
       queryParams: this.filterService.asQueryParams,
     });

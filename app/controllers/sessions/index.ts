@@ -33,7 +33,7 @@ export default class SessionsIndexController extends Controller {
       this.governmentList.selected = [];
     }
     this.filterService.resetFiltersToInitialView();
-    this.itemsService.fetchItems.perform(0);
+    this.itemsService.currentPage = 0;
     this.router.transitionTo(this.router.currentRouteName, {
       queryParams: this.filterService.resetQueryParams,
     });
