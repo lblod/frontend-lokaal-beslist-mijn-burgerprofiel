@@ -18,7 +18,14 @@ export default class SessionItemCard extends Component<SessionItemCardSignature>
 
   @action
   goToSessionItem() {
-    this.router.transitionTo('sessions.session', this.args.item.id);
+    if (this.mbpEmbed.isConnected) {
+      this.mbpEmbed.openNewEmbed({
+        routeName: 'sessions.session',
+        id: this.args.item.id,
+      });
+    } else {
+      this.router.transitionTo('sessions.session', this.args.item.id);
+    }
   }
 
   get showMunicipality() {
