@@ -504,3 +504,15 @@ ol.less-margin {
     touch-action: none;
   }
 }
+
+.warning-values-changed--filters {
+  font-size: smaller;
+  display: flex;
+  justify-content: center;
+  padding: 5px 0;
+  background-color: var(--au-orange-500);
+  color: var(--au-orange-200);
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  font-weight: var(--au-medium);
+}
