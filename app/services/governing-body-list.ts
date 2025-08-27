@@ -68,6 +68,7 @@ export default class GoverningBodyListService extends Service {
       filter: queryFilter,
       'filter[:has:classification]': true,
       'filter[:has:sessions]': true,
+      page: { size: 100 },
     });
     this.options = this.sortOptions(
       await this.getUniqueGoverningBodies(governingBodies),
@@ -84,28 +85,30 @@ export default class GoverningBodyListService extends Service {
   async getUniqueGoverningBodies(
     govBodies: AdapterPopulatedRecordArrayWithMeta<GoverningBodyModel>,
   ) {
-    const uniqueLabels = new Set();
     const classifications = await this.store.query(
       'governing-body-classification-code',
       {
         'filter[governing-bodies][:id:]': govBodies.map((b) => b.id).join(','),
       },
     );
-
-    return classifications
-      .filter((classification) => {
-        const label = classification.label;
-        if (label && !uniqueLabels.has(label)) {
-          uniqueLabels.add(label);
-          return true;
-        }
-        return false;
-      })
-      .map((classification) => ({
-        id: classification.id ?? '',
-        label: classification.label ?? '',
-        type: QueryParameterKeys.governingBodies,
-      }));
+    const labelsWithIdsMap: { [label: string]: string[] } = {};
+    classifications.map((classification) => {
+      if (!(classification.label in labelsWithIdsMap)) {
+        labelsWithIdsMap[classification.label] = [];
+      }
+      (labelsWithIdsMap[classification.label] as Array<string>).push(
+        classification.id,
+      );
+    });
+    return Object.entries(labelsWithIdsMap).map(
+      ([label, ids]: [string, Array<string>]) => {
+        return {
+          id: ids.join(','),
+          label,
+          type: QueryParameterKeys.governingBodies,
+        };
+      },
+    );
   }
 
   async setLookupForOptions(): Promise<void> {
