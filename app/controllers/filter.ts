@@ -39,7 +39,14 @@ export default class FilterController extends Controller {
   @tracked dateRangeHasErrors = false;
 
   get selectedBestuursorgaanIds() {
-    return this.filterService.filters.governingBodyClassificationIds;
+    return this.governingBodyList.options
+      .filter(
+        (o) =>
+          this.filterService.filters.governingBodyClassificationIds.filter(
+            (id) => new RegExp('\\b' + id + '\\b').test(o.id),
+          ).length >= 1,
+      )
+      .map((o) => o.id);
   }
 
   get themaOptions() {
@@ -114,6 +121,7 @@ export default class FilterController extends Controller {
 
   @action
   updateSelectedGoverningBodyClassifications(selected: Array<string>) {
+    console.log(`selected ids`, selected);
     const selectedIds: Array<string> = [];
     selected
       .map((idsString) => {
