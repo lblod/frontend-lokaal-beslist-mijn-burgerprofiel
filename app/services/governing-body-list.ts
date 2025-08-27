@@ -8,12 +8,11 @@ import { serializeArray } from 'frontend-burgernabije-besluitendatabank/utils/qu
 import type Store from '@ember-data/store';
 import type RouterService from '@ember/routing/router-service';
 import type MunicipalityListService from './municipality-list';
-import type GoverningBodyModel from 'frontend-burgernabije-besluitendatabank/models/governing-body';
-import type { AdapterPopulatedRecordArrayWithMeta } from 'frontend-burgernabije-besluitendatabank/utils/ember-data';
 import type GovernmentListService from './government-list';
 import type FilterService from './filter-service';
 import type ProvinceListService from './province-list';
 import type NativeArray from '@ember/array/-private/native-array';
+import type GoverningBodyClassificationCodeModel from 'frontend-burgernabije-besluitendatabank/models/governing-body-classification-code';
 
 export interface GoverningBodyOption {
   id: string;
@@ -47,8 +46,10 @@ export default class GoverningBodyListService extends Service {
       governingBodyClassificationIds,
       provinceLabels,
     } = this.filterService.filters;
-    let queryFilter = {};
-    if (municipalityLabels?.length >= 1 || provinceLabels?.length >= 1) {
+    let classifications: Array<GoverningBodyClassificationCodeModel> = [];
+    const isGovernmentSet =
+      municipalityLabels?.length >= 1 || provinceLabels?.length >= 1;
+    if (isGovernmentSet) {
       const municipalityIds =
         await this.municipalityList.getLocationIdsFromLabels(
           serializeArray(municipalityLabels),
@@ -56,22 +57,42 @@ export default class GoverningBodyListService extends Service {
       const provinceIds = await this.provinceList.getProvinceIdsFromLabels(
         serializeArray(provinceLabels),
       );
-      queryFilter = {
-        'administrative-unit': {
-          location: {
-            ':id:': [...municipalityIds, ...provinceIds].join(','),
+      const governingBodies = await this.store.query('governing-body', {
+        filter: {
+          'administrative-unit': {
+            location: {
+              ':id:': [...municipalityIds, ...provinceIds].join(','),
+            },
           },
         },
-      };
+        'filter[:has:classification]': true,
+        // 'filter[:has:sessions]': true, Not suer if we actually want this, maybe people think there are missing bodies
+        page: { size: 100 },
+      });
+
+      const adapterClassifications = await this.store.query(
+        'governing-body-classification-code',
+        {
+          'filter[governing-bodies][:id:]': governingBodies
+            .map((b) => b.id)
+            .join(','),
+          sort: 'label',
+          page: { size: 999 },
+        },
+      );
+      classifications = adapterClassifications.slice();
+    } else {
+      const adapterClassifications = await this.store.query(
+        'governing-body-classification-code',
+        {
+          sort: 'label',
+          page: { size: 999 },
+        },
+      );
+      classifications = adapterClassifications.slice();
     }
-    const governingBodies = await this.store.query('governing-body', {
-      filter: queryFilter,
-      'filter[:has:classification]': true,
-      'filter[:has:sessions]': true,
-      page: { size: 100 },
-    });
     this.options = this.sortOptions(
-      await this.getUniqueGoverningBodies(governingBodies),
+      await this.getUniqueClassifications(classifications),
     );
     this.selectedIds = governingBodyClassificationIds;
 
@@ -82,15 +103,9 @@ export default class GoverningBodyListService extends Service {
     return options.sort((a, b) => a.label.localeCompare(b.label));
   }
 
-  async getUniqueGoverningBodies(
-    govBodies: AdapterPopulatedRecordArrayWithMeta<GoverningBodyModel>,
+  async getUniqueClassifications(
+    classifications: Array<GoverningBodyClassificationCodeModel>,
   ) {
-    const classifications = await this.store.query(
-      'governing-body-classification-code',
-      {
-        'filter[governing-bodies][:id:]': govBodies.map((b) => b.id).join(','),
-      },
-    );
     const labelsWithIdsMap: { [label: string]: string[] } = {};
     classifications.map((classification) => {
       if (!(classification.label in labelsWithIdsMap)) {
