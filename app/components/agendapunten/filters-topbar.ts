@@ -304,7 +304,7 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
         null,
       );
     }
-
+    this.itemsService.currentPage = 0;
     this.args.onFiltersUpdated?.();
   }
 }

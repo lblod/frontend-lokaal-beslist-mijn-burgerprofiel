@@ -225,6 +225,7 @@ export default class FilterController extends Controller {
     if (this.model.previousRoute) {
       routeName = this.model.previousRoute.name;
     }
+    this.itemsService.currentPage = 0;
     this.router.transitionTo(routeName, {
       queryParams: this.filterService.asQueryParams,
     });
