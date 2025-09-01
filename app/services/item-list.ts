@@ -24,8 +24,14 @@ import { createSessionsQuery } from 'frontend-burgernabije-besluitendatabank/uti
 import { serializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 import type { AgendaItemsParams } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
 import { type MuSearchResponse } from './mu-search';
+import type Transition from '@ember/routing/transition';
 
 type ModelIndex = 'agenda-items' | 'session';
+
+interface FetchItemOptions {
+  loadMore?: boolean;
+  size?: number;
+}
 
 export default class ItemListService extends Service {
   @service declare municipalityList: MunicipalityListService;
@@ -69,19 +75,22 @@ export default class ItemListService extends Service {
 
   loadFirstPage(filters: AgendaItemsParams) {
     this.filterService.filters = filters;
-    this.fetchItems.perform(this.currentPage, false);
+    this.currentPage = 0;
+    this.fetchItems.perform(this.currentPage);
   }
 
   loadMoreItems() {
     this.currentPage++;
-    this.fetchItems.perform(this.currentPage, true);
+    this.fetchItems.perform(this.currentPage, { loadMore: true });
   }
 
   fetchItems = task(
     { restartable: true },
-    async (page: number, loadMore = false) => {
+    async (page: number, options: FetchItemOptions = {}) => {
       if (!this.filters) return;
 
+      this.currentPage = page;
+      const { size, loadMore = false } = options;
       const locationIds = await this.fetchLocationIds();
       const themeIds = this.filterService.asQueryParams.thema;
       const distance = this.distanceList.getSelectedDistance(
@@ -93,6 +102,7 @@ export default class ItemListService extends Service {
 
       const governingBodyClassificationIds = serializeArray(
         this.filters.governingBodyClassificationIds,
+        ',',
       );
       let newItems: Array<AgendaItem | Session> = [];
       if (this.modelIndexToFetch === 'agenda-items') {
@@ -106,6 +116,7 @@ export default class ItemListService extends Service {
               governingBodyClassificationIds,
               address,
               filters: { ...this.filters, distance: distance?.value ?? null },
+              size,
             }),
           );
         this.totalItemCount = results.count || 0;
@@ -127,6 +138,7 @@ export default class ItemListService extends Service {
             dateSort: this.filters.dateSort,
             status: this.filters.status,
             keyword: this.filters.keyword,
+            size,
           }),
         );
         this.totalItemCount = results.count || 0;
@@ -146,6 +158,16 @@ export default class ItemListService extends Service {
       this.filters?.provinceLabels || [],
     );
     return [...municipalityIds, ...provinceIds].join(',');
+  }
+
+  resetCurrentPageWhenComingBackOnOverview(transition: Transition) {
+    const routes = ['agenda-items.index', 'sessions.index'];
+    const isGoingToOverviewPage =
+      routes.includes(transition.to?.name ?? '') &&
+      !routes.includes(transition.from?.name ?? '');
+    if (isGoingToOverviewPage) {
+      this.currentPage = 0;
+    }
   }
 }
 

@@ -37,7 +37,7 @@ export default class GoverningBodyModel extends Model {
 
   @belongsTo('governing-body-classification-code', {
     async: true,
-    inverse: null,
+    inverse: 'governingBodies',
   })
   declare classification: AsyncBelongsTo<GoverningBodyClassificationCodeModel>;
 

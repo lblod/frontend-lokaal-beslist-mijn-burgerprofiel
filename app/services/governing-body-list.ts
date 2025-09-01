@@ -1,23 +1,16 @@
 import Service, { service } from '@ember/service';
 
-import { A } from '@ember/array';
 import { tracked } from '@glimmer/tracking';
 import { QueryParameterKeys } from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
-import {
-  deserializeArray,
-  serializeArray,
-} from 'frontend-burgernabije-besluitendatabank/utils/query-params';
+import { serializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 
 import type Store from '@ember-data/store';
 import type RouterService from '@ember/routing/router-service';
 import type MunicipalityListService from './municipality-list';
-import type GoverningBodyModel from 'frontend-burgernabije-besluitendatabank/models/governing-body';
-import type GoverningBodyClassificationCodeModel from 'frontend-burgernabije-besluitendatabank/models/governing-body-classification-code';
-import type { AdapterPopulatedRecordArrayWithMeta } from 'frontend-burgernabije-besluitendatabank/utils/ember-data';
 import type GovernmentListService from './government-list';
 import type FilterService from './filter-service';
 import type ProvinceListService from './province-list';
-import type NativeArray from '@ember/array/-private/native-array';
+import type GoverningBodyClassificationCodeModel from 'frontend-burgernabije-besluitendatabank/models/governing-body-classification-code';
 
 export interface GoverningBodyOption {
   id: string;
@@ -33,70 +26,36 @@ export default class GoverningBodyListService extends Service {
   @service declare governmentList: GovernmentListService;
   @service declare filterService: FilterService;
 
-  @tracked selectedIds: Array<string> = [];
   @tracked options: GoverningBodyOption[] = [];
-  @tracked lookupOptions: NativeArray<GoverningBodyOption> = A([]);
 
-  /**
-   * Get the governing body classification ids from the given labels.
-   * @returns The governing body classification ids.
-   **/
-
-  async getGoverningBodyClassificationIdsFromLabels(
-    governingBodyLabels: Array<string> | string | null,
-  ): Promise<string | null> {
-    if (!governingBodyLabels) {
-      return null;
-    }
-
-    const options = await this.loadOptions();
-
-    const governingBodyLabelsArray = Array.isArray(governingBodyLabels)
-      ? governingBodyLabels
-      : deserializeArray(governingBodyLabels);
-    const governingBodyClassificationIds = options.reduce(
-      (acc, governingBody) => {
-        if (governingBodyLabelsArray.includes(governingBody.label)) {
-          acc.push(governingBody.id);
-        }
-        return acc;
-      },
-      [] as Array<string>,
-    );
-
-    return governingBodyClassificationIds.join(',');
-  }
-
-  async getAll(): Promise<Array<GoverningBodyOption>> {
-    const governingBodyClassifications = await this.store.query(
+  async getIdsForLabel(label: string): Promise<Array<string>> {
+    const classifications = await this.store.query(
       'governing-body-classification-code',
       {
-        page: { size: 100 },
-        sort: 'label',
+        'filter[label]': label,
       },
     );
-    return this.sortOptions(
-      this.getUniqueClassifications(governingBodyClassifications),
-    );
+
+    return classifications.slice().map((c) => c.id);
   }
 
-  getIdsForLabel(label: string): Array<string> | undefined {
-    const matches = this.lookupOptions.filter(
-      (option) => option.label === label,
-    );
-
-    return matches.map((m) => m.id);
+  get labelsForSelectedIds() {
+    return this.options
+      .filter(
+        (o) =>
+          this.filterService.filters.governingBodyClassificationIds.filter(
+            (id) => new RegExp('\\b' + id + '\\b').test(o.id),
+          ).length >= 1,
+      )
+      .map((o) => o.label);
   }
 
   async loadOptions() {
-    const {
-      municipalityLabels,
-      governingBodyClassificationIds,
-      provinceLabels,
-    } = this.filterService.filters;
-    if (municipalityLabels?.length === 0 && provinceLabels?.length === 0) {
-      this.options = await this.getAll();
-    } else {
+    const { municipalityLabels, provinceLabels } = this.filterService.filters;
+    let classifications: Array<GoverningBodyClassificationCodeModel> = [];
+    const isGovernmentSet =
+      municipalityLabels?.length >= 1 || provinceLabels?.length >= 1;
+    if (isGovernmentSet) {
       const municipalityIds =
         await this.municipalityList.getLocationIdsFromLabels(
           serializeArray(municipalityLabels),
@@ -108,43 +67,38 @@ export default class GoverningBodyListService extends Service {
         filter: {
           'administrative-unit': {
             location: {
-              ':id:': municipalityIds.join(',') + provinceIds.join(','),
+              ':id:': [...municipalityIds, ...provinceIds].join(','),
             },
           },
         },
-        include: 'classification',
+        'filter[:has:classification]': true,
+        // 'filter[:has:sessions]': true, Not suer if we actually want this, maybe people think there are missing bodies
         page: { size: 100 },
       });
-      this.options = this.sortOptions(
-        this.getUniqueGoverningBodies(governingBodies),
-      );
-    }
-    this.selectedIds = governingBodyClassificationIds;
 
-    return this.options;
-  }
-
-  async fetchBestuursorgaanOptions(
-    gemeenteLabel?: string,
-  ): Promise<Array<GoverningBodyOption>> {
-    if (!gemeenteLabel) {
-      return [];
-    }
-
-    const municipalityIds =
-      await this.municipalityList.getLocationIdsFromLabels(gemeenteLabel);
-    const governingBodies = await this.store.query('governing-body', {
-      filter: {
-        'administrative-unit': {
-          location: {
-            ':id:': municipalityIds.join(','),
-          },
+      const adapterClassifications = await this.store.query(
+        'governing-body-classification-code',
+        {
+          'filter[governing-bodies][:id:]': governingBodies
+            .map((b) => b.id)
+            .join(','),
+          sort: 'label',
+          page: { size: 999 },
         },
-      },
-      include: 'classification',
-    });
+      );
+      classifications = adapterClassifications.slice();
+    } else {
+      const adapterClassifications = await this.store.query(
+        'governing-body-classification-code',
+        {
+          sort: 'label',
+          page: { size: 999 },
+        },
+      );
+      classifications = adapterClassifications.slice();
+    }
     this.options = this.sortOptions(
-      this.getUniqueGoverningBodies(governingBodies),
+      await this.getUniqueClassifications(classifications),
     );
 
     return this.options;
@@ -154,64 +108,27 @@ export default class GoverningBodyListService extends Service {
     return options.sort((a, b) => a.label.localeCompare(b.label));
   }
 
-  getUniqueGoverningBodies(
-    govBodies: AdapterPopulatedRecordArrayWithMeta<GoverningBodyModel>,
+  async getUniqueClassifications(
+    classifications: Array<GoverningBodyClassificationCodeModel>,
   ) {
-    const uniqueLabels = new Set();
-
-    return govBodies
-      .filter((govBody) => {
-        const label = govBody.classification.get('label');
-        if (label && !uniqueLabels.has(label)) {
-          uniqueLabels.add(label);
-          return true;
-        }
-        return false;
-      })
-      .map((govBody) => ({
-        id: govBody.classification.get('id') ?? '',
-        label: govBody.classification.get('label') ?? '',
-        type: QueryParameterKeys.governingBodies,
-      }));
-  }
-
-  getUniqueClassifications(
-    classifications: AdapterPopulatedRecordArrayWithMeta<GoverningBodyClassificationCodeModel>,
-  ) {
-    const uniqueLabels = new Set();
-
-    return classifications
-      .filter((classification) => {
-        if (!uniqueLabels.has(classification.label)) {
-          uniqueLabels.add(classification.label);
-          return true;
-        }
-        return false;
-      })
-      .map((classification) => ({
-        id: classification.id,
-        label: classification.label,
-        type: QueryParameterKeys.governingBodies,
-      }));
-  }
-
-  async setLookupForOptions(): Promise<void> {
-    const governingBodyClassifications = await this.store.query(
-      'governing-body-classification-code',
-      {
-        page: { size: 100 },
-        sort: 'label',
+    const labelsWithIdsMap: { [label: string]: string[] } = {};
+    classifications.map((classification) => {
+      if (!(classification.label in labelsWithIdsMap)) {
+        labelsWithIdsMap[classification.label] = [];
+      }
+      (labelsWithIdsMap[classification.label] as Array<string>).push(
+        classification.id,
+      );
+    });
+    return Object.entries(labelsWithIdsMap).map(
+      ([label, ids]: [string, Array<string>]) => {
+        return {
+          id: serializeArray(ids, ','),
+          label,
+          type: QueryParameterKeys.governingBodies,
+        };
       },
     );
-    const allOptions = this.sortOptions(
-      governingBodyClassifications.map((classification) => ({
-        id: classification.id,
-        label: classification.label,
-        type: QueryParameterKeys.governingBodies,
-      })),
-    );
-    this.lookupOptions.clear();
-    this.lookupOptions.pushObjects(A(allOptions));
   }
 }
 declare module '@ember/service' {

@@ -10,6 +10,7 @@ import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/servic
 import type Transition from '@ember/routing/transition';
 import type ThemeListService from 'frontend-burgernabije-besluitendatabank/services/theme-list';
 import type GoverningBodyListService from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
+import type ItemListService from 'frontend-burgernabije-besluitendatabank/services/item-list';
 
 export default class ApplicationRoute extends Route {
   @service declare plausible: PlausibleService;
@@ -18,6 +19,7 @@ export default class ApplicationRoute extends Route {
   @service declare themeList: ThemeListService;
   @service declare mbpEmbed: MbpEmbedService;
   @service declare router: Route;
+  @service('item-list') declare itemsService: ItemListService;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(args: { Args: any }) {
@@ -25,6 +27,7 @@ export default class ApplicationRoute extends Route {
 
     this.router.on('routeDidChange', (transition: Transition) => {
       this.mbpEmbed.setRouteTitle(transition);
+      this.itemsService.resetCurrentPageWhenComingBackOnOverview(transition);
     });
   }
 
@@ -35,7 +38,6 @@ export default class ApplicationRoute extends Route {
     if (transition.to?.queryParams) {
       gemeentes = transition.to?.queryParams['gemeentes'];
     }
-    this.governingBodyList.setLookupForOptions();
     this.mbpEmbed
       .setup(gemeentes)
       .then(() => this.mbpEmbed.setLoadingStateFalse());

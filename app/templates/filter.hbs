@@ -106,7 +106,7 @@
       <Filters::SelectMultipleCheckboxFilter
         @id="governing-body"
         @label="Bestuursorganen"
-        @options={{this.bestuursorgaanOptions}}
+        @options={{this.governingBodyList.options}}
         @selected={{this.selectedBestuursorgaanIds}}
         @updateSelected={{this.updateSelectedGoverningBodyClassifications}}
         @searchField="label"
@@ -124,7 +124,7 @@
     @loading={{this.isApplyingFilters}}
     @loadingMessage="hidden"
     @hideText={{this.isApplyingFilters}}
-    {{on "click" this.goToAgendaItems}}
+    {{on "click" this.goToOverview}}
   >
     {{this.showResultsText}}
   </AuButton>

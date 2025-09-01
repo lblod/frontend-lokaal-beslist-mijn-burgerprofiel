@@ -27,14 +27,13 @@ export default class SessionsIndexController extends Controller {
 
   @action
   resetFilters() {
-    this.governingBodyList.selectedIds = [];
     this.address.selectedAddress = undefined;
     this.distanceList.selected = null;
     if (this.mbpEmbed.isLoggedInAsVlaanderen) {
       this.governmentList.selected = [];
     }
     this.filterService.resetFiltersToInitialView();
-    this.itemsService.fetchItems.perform(0, false);
+    this.itemsService.currentPage = 0;
     this.router.transitionTo(this.router.currentRouteName, {
       queryParams: this.filterService.resetQueryParams,
     });
@@ -47,7 +46,7 @@ export default class SessionsIndexController extends Controller {
 
   @action
   refreshRoute() {
-    this.itemsService.fetchItems.perform(0, false);
+    this.itemsService.fetchItems.perform(0);
     this.router.transitionTo(this.router.currentRouteName, {
       queryParams: this.filterService.asQueryParams,
     });
