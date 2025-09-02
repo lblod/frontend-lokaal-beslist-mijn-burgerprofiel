@@ -11,6 +11,7 @@ import type GovernmentListService from './government-list';
 import type FilterService from './filter-service';
 import type ProvinceListService from './province-list';
 import type GoverningBodyClassificationCodeModel from 'frontend-burgernabije-besluitendatabank/models/governing-body-classification-code';
+import type GoverningBodyModel from 'frontend-burgernabije-besluitendatabank/models/governing-body';
 
 export interface GoverningBodyOption {
   id: string;
@@ -76,17 +77,9 @@ export default class GoverningBodyListService extends Service {
         page: { size: 100 },
       });
 
-      const adapterClassifications = await this.store.query(
-        'governing-body-classification-code',
-        {
-          'filter[governing-bodies][:id:]': governingBodies
-            .map((b) => b.id)
-            .join(','),
-          sort: 'label',
-          page: { size: 999 },
-        },
+      classifications = await this.getClassificationsForGoverningBodies(
+        governingBodies.slice(),
       );
-      classifications = adapterClassifications.slice();
     } else {
       const adapterClassifications = await this.store.query(
         'governing-body-classification-code',
@@ -98,7 +91,7 @@ export default class GoverningBodyListService extends Service {
       classifications = adapterClassifications.slice();
     }
     this.options = this.sortOptions(
-      await this.getUniqueClassifications(classifications),
+      this.getUniqueClassifications(classifications),
     );
 
     return this.options;
@@ -108,7 +101,24 @@ export default class GoverningBodyListService extends Service {
     return options.sort((a, b) => a.label.localeCompare(b.label));
   }
 
-  async getUniqueClassifications(
+  async getClassificationsForGoverningBodies(
+    governingBodies: Array<GoverningBodyModel>,
+  ): Promise<Array<GoverningBodyClassificationCodeModel>> {
+    const adapterClassifications = await this.store.query(
+      'governing-body-classification-code',
+      {
+        'filter[governing-bodies][:id:]': governingBodies
+          .map((b) => b.id)
+          .join(','),
+        sort: 'label',
+        page: { size: 999 },
+      },
+    );
+
+    return adapterClassifications.slice();
+  }
+
+  getUniqueClassifications(
     classifications: Array<GoverningBodyClassificationCodeModel>,
   ) {
     const labelsWithIdsMap: { [label: string]: string[] } = {};
