@@ -4,15 +4,16 @@ import { task } from 'ember-concurrency';
 import { tracked } from '@glimmer/tracking';
 import type Store from '@ember-data/store';
 import type SessionModel from 'frontend-burgernabije-besluitendatabank/models/session';
-import type ArrayProxy from '@ember/array/proxy';
 import type AgendaItemModel from 'frontend-burgernabije-besluitendatabank/models/agenda-item';
 import type { AdapterPopulatedRecordArrayWithMeta } from 'frontend-burgernabije-besluitendatabank/utils/ember-data';
 import type GoverningBodyModel from 'frontend-burgernabije-besluitendatabank/models/governing-body';
 import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
+import type GoverningBodyListService from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
 
 export default class SessionRoute extends Route {
   @service declare store: Store;
   @service declare mbpEmbed: MbpEmbedService;
+  @service declare governingBodyList: GoverningBodyListService;
 
   @tracked governingBodies: { label: string }[] | null = null;
   @tracked otherSessions: {
@@ -26,24 +27,14 @@ export default class SessionRoute extends Route {
   }
 
   async model({ session_id }: { session_id: string }) {
-    const session = await this.store.findRecord('session', session_id, {
-      include: [
-        'governing-body.is-time-specialization-of.administrative-unit.location',
-        'governing-body.administrative-unit.location',
-        'agenda-items.handled-by.resolutions',
-      ].join(','),
-    });
-    const agendaItems = await session.get('agendaItems');
+    const session = await this.store.findRecord('session', session_id);
     const govBody = await session.get('governingBody');
     const resolvedGovBody = await govBody?.get('isTimeSpecializationOf');
     const governingBody = resolvedGovBody ?? govBody;
     const classification = await governingBody.get('classification');
     return {
       session,
-      agendaItems: this.loadAgendaItemsTask.perform(
-        agendaItems,
-        'titleFormatted',
-      ),
+      agendaItems: this.loadAgendaItemsTask.perform(session, 'titleFormatted'),
       otherSessions: this.loadOtherSessionsTask.perform(governingBody, session),
       governingBodies: this.loadGoverningBodiesTask.perform(governingBody),
       classification,
@@ -53,10 +44,11 @@ export default class SessionRoute extends Route {
   readonly loadAgendaItemsTask = task(
     { restartable: true },
     async (
-      agendaItems: ArrayProxy<AgendaItemModel>,
+      session: SessionModel,
       sortKey: keyof { titleFormatted: string },
     ) => {
       try {
+        const agendaItems = await session.get('agendaItems');
         if (!agendaItems || !sortKey) {
           return;
         }
@@ -120,38 +112,24 @@ export default class SessionRoute extends Route {
         const municipality = await resolvedGovBody?.get('administrativeUnit');
         const location = await municipality?.get('location');
         const governingBodies = await this.store.query('governing-body', {
-          include: 'classification',
           filter: {
             'administrative-unit': {
               location: { ':id:': location.id },
             },
           },
+          'filter[:has:classification]': true,
         });
-        return getUniqueGoverningBodies(governingBodies);
+        const classifications =
+          await this.governingBodyList.getClassificationsForGoverningBodies(
+            governingBodies.slice(),
+          );
+        return this.governingBodyList
+          .getUniqueClassifications(classifications)
+          .sort((a, b) => a.label.localeCompare(b.label));
       } catch (error) {
         console.error('Error fetching governing bodies:', error);
         return;
       }
     },
   );
-}
-
-function getUniqueGoverningBodies(
-  governingBodies: AdapterPopulatedRecordArrayWithMeta<GoverningBodyModel>,
-) {
-  const uniqueLabels = new Set();
-  return governingBodies
-    .reduce(
-      (unique, govBody) => {
-        const label = govBody.get('classification').get('label');
-        const id = govBody.get('classification').get('id');
-        if (id && label && !uniqueLabels.has(label)) {
-          uniqueLabels.add(label);
-          unique.push({ id, label });
-        }
-        return unique;
-      },
-      [] as { id: string; label: string }[],
-    )
-    .sort((a, b) => a.label.localeCompare(b.label));
 }
