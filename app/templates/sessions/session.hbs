@@ -1,8 +1,17 @@
 {{page-title "Zitting"}}
-
 <AuModalContainer />
+
 <div id="route-detail">
-  <div class="au-u-flex au-u-flex--column">
+  <AuToolbar @border="bottom" class="sticky-top" as |Group|>
+    <Group>
+      <AuButton
+        class="au-u-padding au-u-padding-bottom-small link-without-line action-sdk-color"
+        @skin="link"
+        {{on "click" this.goToPreviousRoute}}
+      >Terug</AuButton>
+    </Group>
+  </AuToolbar>
+  <div class="au-u-flex au-u-flex--column au-u-margin-top-large">
     <AuHeading @level="1" @skin="3" class="au-o-box au-u-padding-right-small">
       {{@model.session.titleFormatted}}
     </AuHeading>

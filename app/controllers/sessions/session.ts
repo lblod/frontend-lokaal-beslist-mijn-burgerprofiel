@@ -1,5 +1,6 @@
 import Controller from '@ember/controller';
 
+import { action } from '@ember/object';
 import { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 
@@ -9,9 +10,11 @@ import type GoverningBodyModel from 'frontend-burgernabije-besluitendatabank/mod
 import type AgendaItemModel from 'frontend-burgernabije-besluitendatabank/models/agenda-item';
 import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 import type GoverningBodyClassificationCodeModel from 'frontend-burgernabije-besluitendatabank/models/governing-body-classification-code';
+import type NavigationService from 'frontend-burgernabije-besluitendatabank/services/navigation';
 export default class SessionsSessionController extends Controller {
   @service declare store: Store;
   @service declare mbpEmbed: MbpEmbedService;
+  @service declare navigation: NavigationService;
 
   queryParams = ['gemeentes', 'bestuursorganen'];
 
@@ -69,5 +72,10 @@ export default class SessionsSessionController extends Controller {
 
   get showMunicipality() {
     return this.mbpEmbed.isLoggedInAsVlaanderen;
+  }
+
+  @action
+  goToPreviousRoute() {
+    this.navigation.goToPreviousRoute();
   }
 }

@@ -11,6 +11,7 @@ import type Transition from '@ember/routing/transition';
 import type ThemeListService from 'frontend-burgernabije-besluitendatabank/services/theme-list';
 import type GoverningBodyListService from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
 import type ItemListService from 'frontend-burgernabije-besluitendatabank/services/item-list';
+import type NavigationService from 'frontend-burgernabije-besluitendatabank/services/navigation';
 
 export default class ApplicationRoute extends Route {
   @service declare plausible: PlausibleService;
@@ -19,6 +20,7 @@ export default class ApplicationRoute extends Route {
   @service declare themeList: ThemeListService;
   @service declare mbpEmbed: MbpEmbedService;
   @service declare router: Route;
+  @service declare navigation: NavigationService;
   @service('item-list') declare itemsService: ItemListService;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -26,6 +28,7 @@ export default class ApplicationRoute extends Route {
     super(args);
 
     this.router.on('routeDidChange', (transition: Transition) => {
+      this.navigation.onIncomingTransition(transition);
       this.mbpEmbed.setRouteTitle(transition);
       this.itemsService.resetCurrentPageWhenComingBackOnOverview(transition);
     });
