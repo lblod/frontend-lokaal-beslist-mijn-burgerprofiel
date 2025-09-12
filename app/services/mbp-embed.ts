@@ -27,6 +27,12 @@ export default class MbpEmbedService extends Service {
     }
     await this.connectToClient();
     this.tenant = await this.client?.context.getTenant();
+    this.client?.navigation.enableExitConfirmation({
+      title: 'Sluiten',
+      message: 'Weet je zeker dat je Lokaalbeslist wilt verlaten?',
+      confirm: 'Sluit Lokaalbeslist',
+      ignore: 'Blijf op de huidige pagina',
+    });
     this.setAppColors();
   }
 
