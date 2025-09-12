@@ -19,7 +19,14 @@ export default class NavigationService extends Service {
 
     if (this.canGoBack && transition?.from) {
       this.transitionHistory.shift();
+      const previousUrl = window.location.href;
       window.history.back();
+      setTimeout(() => {
+        if (window.location.href === previousUrl) {
+          // nothing happened → fallback
+          this.router.transitionTo('agenda-items.index');
+        }
+      }, 200);
       return;
     }
 
