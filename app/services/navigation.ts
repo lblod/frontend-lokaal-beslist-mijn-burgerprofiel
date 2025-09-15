@@ -9,13 +9,43 @@ export default class NavigationService extends Service {
   @service declare router: RouterService;
 
   @tracked transition?: Transition;
+  @tracked beforeTransition?: Transition;
 
   onIncomingTransition(transition: Transition) {
+    this.beforeTransition = this.transition;
     this.transition = transition;
   }
 
   goToPreviousRoute() {
-    if (this.transition?.from) {
+    if (!this.transition) {
+      return;
+    }
+    const current = this.transition.to;
+    const previous = this.transition.from;
+
+    if (
+      previous?.name === 'agenda-items.session' &&
+      current?.name === 'agenda-items.agenda-item'
+    ) {
+      if (
+        previous.params &&
+        'id' in previous.params &&
+        previous?.name !== 'agenda-items.session'
+      ) {
+        this.router.transitionTo(
+          previous.name,
+          this.transition.to?.params['id'] as string,
+        );
+      } else {
+        if (previous.parent) {
+          this.router.transitionTo(previous.parent.name + '.index');
+        }
+      }
+
+      return;
+    }
+
+    if (previous) {
       const previousUrl = window.location.href;
       window.history.back();
       setTimeout(() => {
