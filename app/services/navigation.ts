@@ -8,17 +8,14 @@ import type Transition from '@ember/routing/transition';
 export default class NavigationService extends Service {
   @service declare router: RouterService;
 
-  @tracked transitionHistory: Array<Transition> = [];
+  @tracked transition?: Transition;
 
   onIncomingTransition(transition: Transition) {
-    this.transitionHistory.unshift(transition);
+    this.transition = transition;
   }
 
   goToPreviousRoute() {
-    const transition = this.transitionHistory[0];
-
-    if (this.canGoBack && transition?.from) {
-      this.transitionHistory.shift();
+    if (this.transition?.from) {
       const previousUrl = window.location.href;
       window.history.back();
       setTimeout(() => {
@@ -43,12 +40,6 @@ export default class NavigationService extends Service {
     } else {
       this.router.transitionTo('agenda-items.index');
     }
-  }
-
-  get canGoBack() {
-    return (
-      this.transitionHistory.length >= 1 && this.transitionHistory[0]?.from
-    );
   }
 }
 
