@@ -4,59 +4,74 @@ import { tracked } from '@glimmer/tracking';
 
 import type RouterService from '@ember/routing/router-service';
 import type Transition from '@ember/routing/transition';
+import type RouteInfo from '@ember/routing/route-info';
+import type { RouteInfoWithAttributes } from '@ember/routing/route-info';
 
 export default class NavigationService extends Service {
   @service declare router: RouterService;
 
-  @tracked transition?: Transition;
-  @tracked beforeTransition?: Transition;
+  @tracked history: Array<RouteInfo | RouteInfoWithAttributes> = [];
+  @tracked isNavigatingBack = false;
 
   onIncomingTransition(transition: Transition) {
-    this.beforeTransition = this.transition;
-    this.transition = transition;
+    if (this.isNavigatingBack) {
+      this.isNavigatingBack = false;
+    } else {
+      const toRoute = transition.to;
+      if (toRoute) {
+        this.history.unshift(toRoute);
+      }
+
+      if (this.history.length > 20) {
+        alert('cleanup');
+        this.history.pop(); // Cleanup
+      }
+    }
   }
 
   goToPreviousRoute() {
-    if (!this.transition) {
-      return;
-    }
-    const current = this.transition.to;
-    const previous = this.transition.from;
-
-    if (
-      previous?.name === 'agenda-items.session' &&
-      current?.name === 'agenda-items.agenda-item'
-    ) {
-      if (
-        previous.params &&
-        'id' in previous.params &&
-        previous?.name !== 'agenda-items.session'
-      ) {
-        this.router.transitionTo(
-          previous.name,
-          this.transition.to?.params['id'] as string,
-        );
-      } else {
-        if (previous.parent) {
-          this.router.transitionTo(previous.parent.name + '.index');
-        }
-      }
-
-      return;
+    if (this.history.length < 2) {
+      return this.fallbackRouteToParent();
     }
 
+    this.history.shift();
+    const previous = this.history[0];
     if (previous) {
-      const previousUrl = window.location.href;
-      window.history.back();
-      setTimeout(() => {
-        if (window.location.href === previousUrl) {
-          // nothing happened → fallback
-          this.router.transitionTo('agenda-items.index');
-        }
-      }, 200);
-      return;
+      this.isNavigatingBack = true;
+      this.transitionToRoute(previous);
+    }
+  }
+
+  get backLabel() {
+    const route = this.history[1];
+
+    if (!route) {
+      return 'Terug';
     }
 
+    return (
+      {
+        ['agenda-items.index']: 'Alle agendapunten',
+        ['agenda-items.agenda-item']: 'Agendapunt',
+        ['sessions.index']: 'Alle zittingen',
+        ['sessions.session']: 'Zitting',
+      }[route.name] || 'Terug'
+    );
+  }
+
+  transitionToRoute(route: RouteInfo | RouteInfoWithAttributes) {
+    if (route.params && 'id' in route.params) {
+      this.router.transitionTo(route.name, route?.params['id'] as string);
+    } else {
+      if (route.parent) {
+        this.router.transitionTo(route.parent.name + '.index');
+      } else {
+        this.router.transitionTo('agenda-items.index');
+      }
+    }
+  }
+
+  fallbackRouteToParent() {
     const params = this.router.currentRoute.parent?.queryParams;
     if (
       this.router.currentRoute.parent &&
