@@ -1,14 +1,12 @@
 {{page-title "Zitting"}}
 
-<AuToolbar @size="medium" @skin="tint" @border="bottom" as |Group|>
+<AuToolbar @border="bottom" class="sticky-top" as |Group|>
   <Group>
-    <ul class="au-c-list-horizontal au-c-list-horizontal--small">
-      <li class="au-c-list-horizontal__item">
-        <AuLink @route="agenda-items.agenda-item" @model={{this.model.agendaItem.id}} @icon="arrow-left">
-          Terug naar agendapunt
-        </AuLink>
-      </li>
-    </ul>
+    <AuButton
+      class="au-u-padding au-u-padding-bottom-small link-without-line action-sdk-color"
+      @skin="link"
+      {{on "click" this.toAgendapunt}}
+    >Terug</AuButton>
   </Group>
 </AuToolbar>
 
