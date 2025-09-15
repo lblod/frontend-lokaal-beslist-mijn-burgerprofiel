@@ -30,10 +30,15 @@ export default class NavigationService extends Service {
       return;
     }
 
-    if (this.router.currentRoute.parent) {
+    const params = this.router.currentRoute.parent?.queryParams;
+    if (
+      this.router.currentRoute.parent &&
+      params &&
+      Object.keys(params).length >= 1
+    ) {
       this.router.transitionTo(
         this.router.currentRoute.parent.name + '.index',
-        this.router.currentRoute.parent.queryParams,
+        params,
       );
     } else {
       this.router.transitionTo('agenda-items.index');
