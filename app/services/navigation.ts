@@ -53,6 +53,7 @@ export default class NavigationService extends Service {
       {
         ['agenda-items.index']: 'Alle agendapunten',
         ['agenda-items.agenda-item']: 'Agendapunt',
+        ['agenda-items.session']: 'Volledige agenda',
         ['sessions.index']: 'Alle zittingen',
         ['sessions.session']: 'Zitting',
       }[route.name] || 'Terug'
