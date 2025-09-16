@@ -60,8 +60,12 @@ export default class NavigationService extends Service {
   }
 
   transitionToRoute(route: RouteInfo | RouteInfoWithAttributes) {
-    if (route.params && 'id' in route.params) {
-      this.router.transitionTo(route.name, route?.params['id'] as string);
+    const allowedParamKeys = ['id', 'session_id'];
+    const paramKey = route.paramNames.find((key) =>
+      allowedParamKeys.includes(key),
+    );
+    if (paramKey) {
+      this.router.transitionTo(route.name, route?.params[paramKey] as string);
     } else {
       if (route.parent) {
         this.router.transitionTo(route.parent.name + '.index');
