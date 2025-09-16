@@ -1,5 +1,6 @@
 import Controller from '@ember/controller';
 
+import { action } from '@ember/object';
 import { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 
@@ -9,10 +10,12 @@ import type { ModelFrom } from '../../lib/type-utils';
 import type ResolutionModel from 'frontend-burgernabije-besluitendatabank/models/resolution';
 import type ArrayProxy from '@ember/array/proxy';
 import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
+import type NavigationService from 'frontend-burgernabije-besluitendatabank/services/navigation';
 
 export default class AgendaItemController extends Controller {
   @service declare keywordStore: KeywordStoreService;
   @service declare mbpEmbed: MbpEmbedService;
+  @service declare navigation: NavigationService;
 
   declare model: ModelFrom<AgendaItemRoute>;
 
@@ -60,4 +63,9 @@ export default class AgendaItemController extends Controller {
       this.modalOpen = false;
     }
   };
+
+  @action
+  goToPreviousRoute() {
+    this.navigation.goToPreviousRoute();
+  }
 }
