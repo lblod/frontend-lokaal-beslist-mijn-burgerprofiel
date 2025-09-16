@@ -7,6 +7,10 @@ import type Transition from '@ember/routing/transition';
 import type RouteInfo from '@ember/routing/route-info';
 import type { RouteInfoWithAttributes } from '@ember/routing/route-info';
 
+/**
+ * Please replace this service with the navigation of the embed-sdk
+ * This is not released but a WIP for the MBP development team
+ */
 export default class NavigationService extends Service {
   @service declare router: RouterService;
 
@@ -23,7 +27,6 @@ export default class NavigationService extends Service {
       }
 
       if (this.history.length > 20) {
-        alert('cleanup');
         this.history.pop(); // Cleanup
       }
     }
