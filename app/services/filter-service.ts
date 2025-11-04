@@ -15,6 +15,7 @@ import {
   deserializeArray,
   serializeArray,
 } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
+import { action } from '@ember/object';
 
 export default class FilterService extends Service {
   @service declare router: RouterService;
@@ -36,6 +37,11 @@ export default class FilterService extends Service {
     street: null,
     distance: null,
   };
+
+  @action
+  setFilters(newFilters: Partial<AgendaItemsParams>) {
+    this.filters = { ...this.filters, ...newFilters };
+  }
 
   updateFilters(newFilters: Partial<AgendaItemsParams>) {
     if (newFilters.keyword && newFilters.keyword !== this.filters.keyword) {

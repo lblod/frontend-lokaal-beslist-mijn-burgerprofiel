@@ -1,20 +1,45 @@
 {{page-title "Filter"}}
-<AuToolbar @border="bottom" class="sticky-top" as |Group|>
+<AuToolbar
+  @border="bottom"
+  class="au-u-padding link-without-line action-sdk-color sticky-top au-u-padding-top-none au-u-padding-bottom-none"
+  as |Group|
+>
   <Group>
     <AuButton
-      class="au-u-padding au-u-padding-bottom-small link-without-line action-sdk-color"
+      class="link-without-line action-sdk-color"
       @skin="link"
       {{on "click" this.closeFilters}}
     >Sluiten</AuButton>
   </Group>
+
   <Group>
-    <AuButton
-      class="au-u-padding au-u-padding-bottom-small link-without-line action-sdk-color"
-      @skin="link"
-      {{on "click" this.resetFilters}}
-    >Wis filters</AuButton>
+    <AuDropdown
+      @title="Opties"
+      @alignment="right"
+      class="action-sdk-color"
+      @skin="naked"
+      @icon="three-dots"
+      @iconAlignment="right"
+    >
+      <AuButton
+        class="au-u-padding link-without-line action-sdk-color border-bottom-light"
+        @skin="link"
+        {{on "click" this.toggleSaveFilterModal}}
+      >Sla deze filter op</AuButton>
+      <AuButton
+        class="au-u-padding link-without-line action-sdk-color border-bottom-light"
+        @skin="link"
+        {{on "click" this.toggleShowFilterModal}}
+      >Bekijk opgeslagen filters</AuButton>
+      <AuButton
+        class="au-u-padding link-without-line action-sdk-color border-top"
+        @skin="link"
+        {{on "click" this.resetFilters}}
+      >Wis huidige filters</AuButton>
+    </AuDropdown>
   </Group>
 </AuToolbar>
+
 <div
   class="c-interface__sidebar-main au-u-padding-left au-u-padding-right au-u-margin-top-large"
 >
@@ -129,3 +154,139 @@
     {{this.showResultsText}}
   </AuButton>
 </div>
+
+<AuModalContainer />
+<AuModal
+  @modalOpen={{this.showSaveFilterModal}}
+  @closable={{true}}
+  @closeModal={{this.toggleSaveFilterModal}}
+  @size={{this.size}}
+  @padding={{this.padding}}
+  @overflow={{this.overflow}}
+>
+  <:title>Filter opslaan</:title>
+  <:body>
+    <form>
+      <AuLabel for="filter-name">Hoe wil je deze filter noemen?</AuLabel>
+      <AuInput
+        @value={{this.filterName}}
+        @id="filter-name"
+        @width="block"
+        {{on "input" this.updateFilterName}}
+      />
+    </form>
+  </:body>
+  <:footer>
+    <AuButton
+      @skin="primary"
+      @isLoading={{this.isSavingFilters}}
+      {{on "click" this.saveFilters}}
+    >
+      Opslaan
+    </AuButton>
+  </:footer>
+</AuModal>
+<AuModal
+  @modalOpen={{this.showFiltersModal}}
+  @closable={{true}}
+  @closeModal={{this.toggleShowFilterModal}}
+  @size={{this.size}}
+  @padding={{this.padding}}
+  @overflow={{this.overflow}}
+>
+  <:title>Opgeslagen filters</:title>
+  <:body>
+    <div class="border-top">
+      {{#if this.savedFilters.length}}
+
+        <div
+          class="au-u-margin-none au-u-padding-none au-u-flex au-u-flex--column au-u-flex--spaced-tiny"
+        >
+          {{#each this.savedFilters key="name" as |savedFilter index|}}
+            <AuCard
+              @size="small"
+              @expandable={{true}}
+              @isOpenInitially={{false}}
+              as |c|
+            >
+              <c.header>
+                <div class="au-u-1-1 au-u-flex au-u-flex--between">
+                  <span class="au-u-h5">{{savedFilter.name}}</span>
+                </div>
+              </c.header>
+              <c.content>
+                <div
+                  class="au-u-flex au-u-flex--column au-u-flex--start au-u-flex--vertical-start au-u-flex--spaced-tiny"
+                >
+                  <div
+                    class="au-u-flex au-u-flex--between au-u-1-1 border-bottom-light au-u-padding-bottom-tiny"
+                  >
+                    <AuToggleSwitch
+                      @alignment="right"
+                      @checked={{savedFilter.notify}}
+                      @name="notification-toggle-{{index}}"
+                      @toggle="identifier"
+                      {{on "change" (fn this.toggleNotification index)}}
+                    >
+                      Notificatie
+                    </AuToggleSwitch>
+                    <div
+                      class="tooltip-wrapper au-u-flex au-u-margin-left-tiny au-u-flex--end au-u-flex--vertical-center"
+                    >
+                      <AuIcon @icon="circle-question" @size="large" />
+                      <EmberTooltip
+                        @text="Als je deze optie activeert, ontvang je een notificatie wanneer er nieuwe agendapunten zijn die aan deze filter voldoen"
+                        @side="left"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    class="au-u-flex au-u-flex--between au-u-1-1 border-bottom-light au-u-padding-bottom-tiny"
+                  >
+                    <AuButton
+                      @skin="link"
+                      class="au-u-padding-none au-u-margin-none action-sdk-color link-without-line"
+                      {{on "click" (fn this.loadFilter savedFilter)}}
+                    >
+                      Toepassen
+                    </AuButton>
+                    <div
+                      class="tooltip-wrapper au-u-flex au-u-margin-left-tiny au-u-flex--end au-u-flex--vertical-center"
+                    >
+                      <AuIcon @icon="circle-question" @size="large" />
+                      <EmberTooltip
+                        @text="Deze filter zal toegepast worden"
+                        @side="left"
+                      />
+                    </div>
+                  </div>
+                  <div class="au-u-flex au-u-flex--between au-u-1-1">
+                    <AuButton
+                      @skin="link"
+                      @alert={{true}}
+                      class="au-u-padding-none au-u-margin-none"
+                      {{on "click" (fn this.deleteFilter index)}}
+                    >
+                      Verwijderen
+                    </AuButton>
+                    <div
+                      class="tooltip-wrapper au-u-flex au-u-margin-left-tiny au-u-flex--end au-u-flex--vertical-center"
+                    >
+                      <AuIcon @icon="circle-question" @size="large" />
+                      <EmberTooltip
+                        @text="Deze filter zal permanent verwijderd worden"
+                        @side="left"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </c.content>
+            </AuCard>
+          {{/each}}
+        </div>
+      {{else}}
+        <p class="au-u-text-muted au-u-padding-tiny">Geen filters opgeslagen</p>
+      {{/if}}
+    </div>
+  </:body>
+</AuModal>
