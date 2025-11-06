@@ -37,6 +37,14 @@ interface ToastOptions {
   closable?: boolean;
 }
 
+interface Filter {
+  name: string;
+  filters: AgendaItemsParams;
+  notify: boolean;
+  savedAt: string;
+  resultCount: number;
+}
+
 export default class FilterController extends Controller {
   @service declare governingBodyList: GoverningBodyListService;
   @service declare governmentList: GovernmentListService;
@@ -56,11 +64,7 @@ export default class FilterController extends Controller {
   @tracked showFiltersModal = false;
   @tracked isSavingFilters = false;
   @tracked filterName = '';
-  @tracked savedFilters: {
-    name: string;
-    filters: AgendaItemsParams;
-    notify?: boolean;
-  }[] = [];
+  @tracked savedFilters: Filter[] = [];
 
   constructor(...args: []) {
     super(...args);
@@ -275,18 +279,23 @@ export default class FilterController extends Controller {
 
   @action
   toggleNotification(index: number) {
-    const updatedFilters = this.savedFilters.map((filter, i) => {
-      if (i === index) {
-        return { ...filter, notify: !filter.notify };
-      }
-      return filter;
+    this.savedFilters = this.savedFilters.map((filter, i) => {
+      if (i !== index) return filter;
+
+      const updatedFilter = { ...filter, notify: !filter.notify };
+
+      this.toaster.success(
+        `"${updatedFilter.name}" filter notificatie ${
+          updatedFilter.notify ? 'ingeschakeld' : 'uitgeschakeld'
+        }`,
+        '',
+        { timeOut: 2000 },
+      );
+
+      return updatedFilter;
     });
 
-    this.savedFilters = updatedFilters;
-    localStorage.setItem('savedFilters', JSON.stringify(updatedFilters));
-    this.toaster.success('Filter notificatie aangepast', '', {
-      timeOut: 2000,
-    });
+    localStorage.setItem('savedFilters', JSON.stringify(this.savedFilters));
   }
 
   @action
@@ -312,7 +321,7 @@ export default class FilterController extends Controller {
 
     localStorage.setItem('savedFilters', JSON.stringify(updatedSavedFilters));
     this.savedFilters = updatedSavedFilters;
-    this.toaster.success(`${this.filterName} filter opgeslagen`, '', {
+    this.toaster.success(`"${this.filterName}" filter opgeslagen`, '', {
       timeOut: 2000,
     });
     this.filterName = '';
@@ -334,20 +343,29 @@ export default class FilterController extends Controller {
   }
 
   @action
-  loadFilter(savedFilter: { name: string; filters: AgendaItemsParams }) {
+  loadFilter(savedFilter: Filter) {
     this.filterService.setFilters(savedFilter.filters);
     this.filterName = '';
     this.showFiltersModal = false;
-    this.toaster.success('Filter geladen', '', {
+    this.toaster.success(`"${savedFilter?.name}" filter geladen`, '', {
       timeOut: 2000,
     });
   }
 
   @action
   deleteFilter(index: number) {
+    const savedFilter = this.savedFilters[index];
+
+    const confirmed = window.confirm(
+      `Weet je zeker dat je "${savedFilter?.name}" filter wilt verwijderen?`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
     this.savedFilters = this.savedFilters.filter((_, i) => i !== index);
     localStorage.setItem('savedFilters', JSON.stringify(this.savedFilters));
-    this.toaster.success('Filter verwijderd', '', {
+    this.toaster.success(`"${savedFilter?.name}" filter verwijderd`, '', {
       timeOut: 2000,
     });
   }
