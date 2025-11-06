@@ -263,6 +263,7 @@ export default class FilterController extends Controller {
     this.distanceList.selected = null;
     this.governmentList.selected = [];
     this.filterService.resetFiltersToInitialView();
+    this.filterService.resetDateRange();
     await this.governingBodyList.loadOptions();
     this.itemsService.fetchItems.perform(0, { size: 1 });
   }
@@ -306,17 +307,32 @@ export default class FilterController extends Controller {
       });
       return;
     }
+    const saved = JSON.parse(localStorage.getItem('savedFilters') || '[]');
+
+    const duplicate = saved.some(
+      (f: { name: string }) =>
+        f.name.toLowerCase() === this.filterName.toLowerCase(),
+    );
+    if (duplicate) {
+      this.toaster.error(
+        `Een filter met de naam "${this.filterName}" bestaat al.`,
+        '',
+        {
+          timeOut: 2000,
+        },
+      );
+      return;
+    }
     this.isSavingFilters = true;
     const filters = this.filterService.filters;
     const newFilter = {
       name: this.filterName,
       filters,
-      notify: false,
+      notify: true,
       savedAt: new Date().toISOString(),
       resultCount: this.itemsService.totalItemCount || 0,
     };
 
-    const saved = JSON.parse(localStorage.getItem('savedFilters') || '[]');
     const updatedSavedFilters = [...saved, newFilter];
 
     localStorage.setItem('savedFilters', JSON.stringify(updatedSavedFilters));
@@ -343,8 +359,23 @@ export default class FilterController extends Controller {
   }
 
   @action
-  loadFilter(savedFilter: Filter) {
+  async loadFilter(savedFilter: Filter) {
+    this.resetFilters();
+    if (savedFilter.filters.street) {
+      const address = await this.address.getSelectedAddress.perform(
+        savedFilter.filters.street,
+      );
+      if (address) this.address.setSelectedAddress(address);
+    }
     this.filterService.setFilters(savedFilter.filters);
+    this.governmentList.loadSelectedGoverningBodiesByLabels();
+    this.distanceList.selected = this.distanceList.getSelectedDistance(
+      savedFilter.filters.distance,
+    );
+    this.filterService.loadDateRange(
+      savedFilter.filters.plannedStartMin || '',
+      savedFilter.filters.plannedStartMax || '',
+    );
     this.filterName = '';
     this.showFiltersModal = false;
     this.toaster.success(`"${savedFilter?.name}" filter geladen`, '', {

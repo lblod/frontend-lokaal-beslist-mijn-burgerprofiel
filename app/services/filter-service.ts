@@ -56,7 +56,7 @@ export default class FilterService extends Service {
     } else if (newFilters.keyword === '') {
       this.keywordAdvancedSearch = null;
     }
-    this.filters = { ...this.filters, ...newFilters };
+    this.setFilters(newFilters);
   }
 
   searchOnTitleOnly(searchOnTitleOnly: boolean) {
@@ -102,20 +102,18 @@ export default class FilterService extends Service {
       plannedStartMax: null,
       dateSort: 'desc' as SortType,
       governingBodyClassificationIds: [],
-      dataQualityList: null,
+      dataQualityList: [],
       status: 'Alles',
       themeIds: [],
       street: null,
       distance: null,
+      municipalityLabels: this.mbpEmbed.isLoggedInAsVlaanderen
+        ? []
+        : this.filters.municipalityLabels,
     });
-
-    if (this.mbpEmbed.isLoggedInAsVlaanderen) {
-      this.updateFilters({
-        municipalityLabels: [],
-      });
-    }
   }
-
+  resetDateRange!: () => void;
+  loadDateRange!: (start: string, end: string) => void;
   updateFilterFromQueryParamKey(
     key: keyof FiltersAsQueryParams,
     value: string | string[] | null,

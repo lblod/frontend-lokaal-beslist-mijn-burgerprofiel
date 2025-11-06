@@ -14,6 +14,7 @@ import {
   startOfYear,
   sub,
 } from 'date-fns';
+import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
 type ISODateString = string;
 
 interface Signature {
@@ -45,6 +46,8 @@ export default class DateRangeFilterComponent extends Component<Signature> {
   readonly MAX = '2100-12-31';
   readonly MIN_DATE = new Date(this.MIN);
   readonly MAX_DATE = new Date(this.MAX);
+
+  @service declare filterService: FilterService;
 
   @service declare router: RouterService;
   @tracked start: ISODateString | null;
@@ -117,6 +120,18 @@ export default class DateRangeFilterComponent extends Component<Signature> {
     this.start = start ? start : null;
     this.end = end ? end : null;
     this.setInitialPreset();
+
+    this.filterService.resetDateRange = () => {
+      this.resetQueryParams();
+    };
+    this.filterService.loadDateRange = (
+      plannedStartMin: string,
+      plannedStartMax: string,
+    ) => {
+      this.start = plannedStartMin ? plannedStartMin : null;
+      this.end = plannedStartMax ? plannedStartMax : null;
+      this.setInitialPreset();
+    };
   }
 
   @action handleSelectionChange(selectedPreset: Preset | null): void {
@@ -186,6 +201,7 @@ export default class DateRangeFilterComponent extends Component<Signature> {
     const maybePreset = this.findPreset(this.start, this.end);
     if (maybePreset) {
       this.selectedPreset = maybePreset;
+      this.isChoosingPresets = true;
     } else {
       // The dates don't match a preset, so we switch to the custom date inputs instead
       this.isChoosingPresets = false;
@@ -240,6 +256,8 @@ export default class DateRangeFilterComponent extends Component<Signature> {
   }
 
   resetQueryParams(): void {
+    this.isChoosingPresets = true;
+    this.selectedPreset = null;
     this.start = null;
     this.end = null;
     this.updateQueryParams();

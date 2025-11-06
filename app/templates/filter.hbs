@@ -179,6 +179,7 @@
   <:footer>
     <AuButton
       @skin="primary"
+      @disabled={{or this.isSavingFilters (not this.filterName)}}
       @isLoading={{this.isSavingFilters}}
       {{on "click" this.saveFilters}}
     >
@@ -216,10 +217,10 @@
               </c.header>
               <c.content>
                 <div
-                  class="au-u-flex au-u-flex--column au-u-flex--start au-u-flex--vertical-start au-u-flex--spaced-tiny"
+                  class="au-u-flex au-u-flex--column au-u-flex--start au-u-flex--vertical-start au-u-flex--spaced-small"
                 >
                   <div
-                    class="au-u-flex au-u-flex--between au-u-1-1 border-bottom-light au-u-padding-bottom-tiny"
+                    class="au-u-flex au-u-flex--between au-u-1-1 border-bottom-light au-u-padding-bottom-small"
                   >
                     <AuToggleSwitch
                       @alignment="right"
@@ -241,11 +242,11 @@
                     </div>
                   </div>
                   <div
-                    class="au-u-flex au-u-flex--between au-u-1-1 border-bottom-light au-u-padding-bottom-tiny"
+                    class="au-u-flex au-u-flex--between au-u-1-1 border-bottom-light au-u-padding-bottom-small"
                   >
                     <AuButton
                       @skin="link"
-                      class="au-u-padding-none au-u-margin-none action-sdk-color link-without-line"
+                      class="au-u-padding-none au-u-margin-none action-sdk-color"
                       {{on "click" (fn this.loadFilter savedFilter)}}
                     >
                       Toepassen

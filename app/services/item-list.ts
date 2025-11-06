@@ -115,7 +115,10 @@ export default class ItemListService extends Service {
               themeIds,
               governingBodyClassificationIds,
               address,
-              filters: { ...this.filters, distance: distance?.value ?? null },
+              filters: {
+                ...this.filters,
+                distance: distance?.value?.toString() ?? null,
+              },
               size,
             }),
           );

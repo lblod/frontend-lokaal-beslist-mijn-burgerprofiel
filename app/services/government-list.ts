@@ -27,6 +27,14 @@ export default class GovernmentListService extends Service {
 
   @tracked selected: LocalGovernmentOption[] = [];
 
+  loadSelectedGoverningBodiesByLabels() {
+    Promise.all([this.municipalities, this.provinces]).then(
+      ([municipalitiesOptions, provincesOptions]) => {
+        this.syncSelectedGovernments(municipalitiesOptions, provincesOptions);
+      },
+    );
+  }
+
   get options() {
     return Promise.all([this.municipalities, this.provinces]).then(
       ([municipalities, provinces]) => {

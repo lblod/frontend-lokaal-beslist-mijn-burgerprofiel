@@ -22,7 +22,7 @@ export default class AddressRegisterSelectorComponent extends FilterComponent {
     this.filterService.updateFilters({
       street: addressSuggestion?.fullAddress,
     });
-    this.itemsService.fetchItems.perform(0, false);
+    this.itemsService.fetchItems.perform(0, undefined);
     this.updateQueryParams({
       [QueryParameterKeys.street]: addressSuggestion?.fullAddress,
     });
