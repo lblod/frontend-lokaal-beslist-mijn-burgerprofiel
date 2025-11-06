@@ -1,6 +1,5 @@
 import type { PageableRequest } from 'frontend-burgernabije-besluitendatabank/services/mu-search';
 import type AgendaItem from 'frontend-burgernabije-besluitendatabank/models/mu-search/agenda-item';
-import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 
 export interface AgendaItemsParams {
   keyword: string | null;
