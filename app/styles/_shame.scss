@@ -6,6 +6,16 @@ iframe[name*="JSD widget"] {
   right: 20px !important;
 }
 
+.au-c-card {
+  .au-c-card__clickable {
+    background: var(--au-gray-100);
+  }
+
+  .au-c-content {
+    border-top: 1px solid var(--au-gray-200);
+  }
+}
+
 .graph-bar-container {
   height: 25px;
   position: relative;
@@ -508,13 +518,4 @@ ol.less-margin {
 
 .border-bottom-light {
   border-bottom: 1px solid var(--au-gray-200) !important;
-}
-
-.au-c-card {
-  .au-c-card__clickable {
-    background: var(--au-gray-100);
-  }
-  .au-c-content {
-    border-top: 1px solid var(--au-gray-200);
-  }
 }

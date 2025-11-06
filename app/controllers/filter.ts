@@ -62,8 +62,8 @@ export default class FilterController extends Controller {
     notify?: boolean;
   }[] = [];
 
-  constructor() {
-    super(...arguments);
+  constructor(...args: []) {
+    super(...args);
     this.loadSavedFilters();
   }
 
@@ -299,7 +299,13 @@ export default class FilterController extends Controller {
     }
     this.isSavingFilters = true;
     const filters = this.filterService.filters;
-    const newFilter = { name: this.filterName, filters, notify: false };
+    const newFilter = {
+      name: this.filterName,
+      filters,
+      notify: false,
+      savedAt: new Date().toISOString(),
+      resultCount: this.itemsService.totalItemCount || 0,
+    };
 
     const saved = JSON.parse(localStorage.getItem('savedFilters') || '[]');
     const updatedSavedFilters = [...saved, newFilter];
