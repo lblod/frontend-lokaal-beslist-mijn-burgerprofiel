@@ -135,7 +135,8 @@
     "tracked-built-ins": "^3.4.0",
     "tracked-toolbox": "^2.0.0",
     "typescript": "^5.7.3",
-    "webpack": "^5.97.1"
+    "webpack": "^5.97.1",
+    "ember-tooltips": "^4.0.0"
   },
   "engines": {
     "node": "14.* || 16.* || >= 18"

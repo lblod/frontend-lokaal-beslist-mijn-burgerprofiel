@@ -4,6 +4,12 @@ import { action } from '@ember/object';
 import { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
 
+import type {
+  AgendaItemsParams,
+  SelectOption,
+  SortType,
+} from './agenda-items/types';
+
 import type RouterService from '@ember/routing/router-service';
 import type GoverningBodyListService from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
 import type GovernmentListService from 'frontend-burgernabije-besluitendatabank/services/government-list';
@@ -11,17 +17,33 @@ import type FilterService from 'frontend-burgernabije-besluitendatabank/services
 import type ItemListService from 'frontend-burgernabije-besluitendatabank/services/item-list';
 import type ThemeListService from 'frontend-burgernabije-besluitendatabank/services/theme-list';
 import type DistanceListService from 'frontend-burgernabije-besluitendatabank/services/distance-list';
-
-import type { SelectOption, SortType } from './agenda-items/types';
 import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 import type AddressService from 'frontend-burgernabije-besluitendatabank/services/address';
 import type FilterRoute from 'frontend-burgernabije-besluitendatabank/routes/filter';
 import type { ModelFrom } from 'frontend-burgernabije-besluitendatabank/lib/type-utils';
 import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
-
 import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import { formatNumber } from 'frontend-burgernabije-besluitendatabank/helpers/format-number';
 import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
+
+interface ToasterService {
+  success(message: string, title: string, options?: ToastOptions): void;
+  error(message: string, title: string, options?: ToastOptions): void;
+}
+interface ToastOptions {
+  type?: 'info' | 'success' | 'warning' | 'error';
+  icon?: string;
+  timeOut?: number;
+  closable?: boolean;
+}
+
+interface Filter {
+  name: string;
+  filters: AgendaItemsParams;
+  notify: boolean;
+  savedAt: string;
+  resultCount: number;
+}
 
 export default class FilterController extends Controller {
   @service declare governingBodyList: GoverningBodyListService;
@@ -33,10 +55,21 @@ export default class FilterController extends Controller {
   @service declare distanceList: DistanceListService;
   @service declare address: AddressService;
   @service declare mbpEmbed: MbpEmbedService;
+  @service declare toaster: ToasterService;
 
   declare model: ModelFrom<FilterRoute>;
 
   @tracked dateRangeHasErrors = false;
+  @tracked showSaveFilterModal = false;
+  @tracked showFiltersModal = false;
+  @tracked isSavingFilters = false;
+  @tracked filterName = '';
+  @tracked savedFilters: Filter[] = [];
+
+  constructor(...args: []) {
+    super(...args);
+    this.loadSavedFilters();
+  }
 
   get selectedBestuursorgaanIds() {
     return this.governingBodyList.options
@@ -230,7 +263,141 @@ export default class FilterController extends Controller {
     this.distanceList.selected = null;
     this.governmentList.selected = [];
     this.filterService.resetFiltersToInitialView();
+    this.filterService.resetDateRange();
     await this.governingBodyList.loadOptions();
     this.itemsService.fetchItems.perform(0, { size: 1 });
+  }
+
+  @action
+  toggleSaveFilterModal() {
+    this.showSaveFilterModal = !this.showSaveFilterModal;
+  }
+
+  @action
+  toggleShowFilterModal() {
+    this.showFiltersModal = !this.showFiltersModal;
+  }
+
+  @action
+  toggleNotification(index: number) {
+    this.savedFilters = this.savedFilters.map((filter, i) => {
+      if (i !== index) return filter;
+
+      const updatedFilter = { ...filter, notify: !filter.notify };
+
+      this.toaster.success(
+        `"${updatedFilter.name}" filter notificatie ${
+          updatedFilter.notify ? 'ingeschakeld' : 'uitgeschakeld'
+        }`,
+        '',
+        { timeOut: 2000 },
+      );
+
+      return updatedFilter;
+    });
+
+    localStorage.setItem('savedFilters', JSON.stringify(this.savedFilters));
+  }
+
+  @action
+  saveFilters() {
+    if (this.filterName.trim() === '') {
+      this.toaster.error('De filternaam mag niet leeg zijn.', '', {
+        timeOut: 2000,
+      });
+      return;
+    }
+    const saved = JSON.parse(localStorage.getItem('savedFilters') || '[]');
+
+    const duplicate = saved.some(
+      (f: { name: string }) =>
+        f.name.toLowerCase() === this.filterName.toLowerCase(),
+    );
+    if (duplicate) {
+      this.toaster.error(
+        `Een filter met de naam "${this.filterName}" bestaat al.`,
+        '',
+        {
+          timeOut: 2000,
+        },
+      );
+      return;
+    }
+    this.isSavingFilters = true;
+    const filters = this.filterService.filters;
+    const newFilter = {
+      name: this.filterName,
+      filters,
+      notify: true,
+      savedAt: new Date().toISOString(),
+      resultCount: this.itemsService.totalItemCount || 0,
+    };
+
+    const updatedSavedFilters = [...saved, newFilter];
+
+    localStorage.setItem('savedFilters', JSON.stringify(updatedSavedFilters));
+    this.savedFilters = updatedSavedFilters;
+    this.toaster.success(`"${this.filterName}" filter opgeslagen`, '', {
+      timeOut: 2000,
+    });
+    this.filterName = '';
+    this.showSaveFilterModal = false;
+    this.isSavingFilters = false;
+  }
+
+  @action
+  updateFilterName(event: InputEvent) {
+    this.filterName = (event.target as HTMLInputElement).value;
+  }
+
+  @action
+  loadSavedFilters() {
+    this.savedFilters = JSON.parse(
+      localStorage.getItem('savedFilters') || '[]',
+    );
+    return this.savedFilters;
+  }
+
+  @action
+  async loadFilter(savedFilter: Filter) {
+    this.resetFilters();
+    if (savedFilter.filters.street) {
+      const address = await this.address.getSelectedAddress.perform(
+        savedFilter.filters.street,
+      );
+      if (address) this.address.setSelectedAddress(address);
+    }
+    this.filterService.setFilters(savedFilter.filters);
+    this.governmentList.loadSelectedGoverningBodiesByLabels();
+    this.distanceList.selected = this.distanceList.getSelectedDistance(
+      savedFilter.filters.distance,
+    );
+    this.filterService.loadDateRange(
+      savedFilter.filters.plannedStartMin || '',
+      savedFilter.filters.plannedStartMax || '',
+    );
+    this.filterName = '';
+    this.showFiltersModal = false;
+    this.toaster.success(`"${savedFilter?.name}" filter geladen`, '', {
+      timeOut: 2000,
+    });
+  }
+
+  @action
+  deleteFilter(index: number) {
+    const savedFilter = this.savedFilters[index];
+
+    const confirmed = window.confirm(
+      `Weet je zeker dat je "${savedFilter?.name}" filter wilt verwijderen?`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+    this.savedFilters = this.savedFilters.filter((_, i) => i !== index);
+    localStorage.setItem('savedFilters', JSON.stringify(this.savedFilters));
+    this.toaster.success(`"${savedFilter?.name}" filter verwijderd`, '', {
+      timeOut: 2000,
+    });
   }
 }

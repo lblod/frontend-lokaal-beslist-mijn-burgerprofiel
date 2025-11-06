@@ -31,5 +31,12 @@ $action: var(--au-gray-900);
   .au-c-icon {
     stroke: $action !important;
     fill: $action !important;
+    width: 24px;
+    height: 24px;
+  }
+
+  .au-c-dropdown__name {
+    color: $action !important;
+    font-weight: var(--au-regular) !important;
   }
 }

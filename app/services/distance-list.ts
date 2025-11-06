@@ -61,7 +61,7 @@ export default class DistanceListService extends Service {
     return this.options;
   }
 
-  getSelectedDistance(id?: string): DistanceOption | undefined {
+  getSelectedDistance(id?: string | null): DistanceOption | undefined {
     if (!id || id.trim() === '') {
       return undefined;
     }

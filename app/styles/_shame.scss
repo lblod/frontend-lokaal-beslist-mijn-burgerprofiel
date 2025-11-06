@@ -6,6 +6,16 @@ iframe[name*="JSD widget"] {
   right: 20px !important;
 }
 
+.au-c-card {
+  .au-c-card__clickable {
+    background: var(--au-gray-100);
+  }
+
+  .au-c-content {
+    border-top: 1px solid var(--au-gray-200);
+  }
+}
+
 .graph-bar-container {
   height: 25px;
   position: relative;
@@ -491,6 +501,7 @@ ol.less-margin {
   z-index: 10;
   background-color: var(--au-white);
   max-height: 4.8rem;
+  height: 100%;
 }
 
 .ember-basic-dropdown-trigger {
@@ -503,4 +514,8 @@ ol.less-margin {
   .au-c-modal__body {
     touch-action: none;
   }
+}
+
+.border-bottom-light {
+  border-bottom: 1px solid var(--au-gray-200) !important;
 }
