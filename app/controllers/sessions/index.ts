@@ -29,6 +29,7 @@ export default class SessionsIndexController extends Controller {
   resetFilters() {
     this.address.selectedAddress = undefined;
     this.distanceList.selected = null;
+    this.filterService.setAllFiltersUnselected();
     if (this.mbpEmbed.isLoggedInAsVlaanderen) {
       this.governmentList.selected = [];
     }
@@ -40,8 +41,13 @@ export default class SessionsIndexController extends Controller {
   }
 
   @action
+  goToSaveFilter() {
+    this.router.transitionTo('filters.edit', -1);
+  }
+
+  @action
   goToFilters() {
-    this.router.transitionTo('filter');
+    this.router.transitionTo('filters.index');
   }
 
   @action

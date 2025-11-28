@@ -1,14 +1,8 @@
-import Controller from '@ember/controller';
+import Component from '@glimmer/component';
 
 import { action } from '@ember/object';
 import { service } from '@ember/service';
 import { tracked } from '@glimmer/tracking';
-
-import type {
-  AgendaItemsParams,
-  SelectOption,
-  SortType,
-} from './agenda-items/types';
 
 import type RouterService from '@ember/routing/router-service';
 import type GoverningBodyListService from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
@@ -19,33 +13,32 @@ import type ThemeListService from 'frontend-burgernabije-besluitendatabank/servi
 import type DistanceListService from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 import type AddressService from 'frontend-burgernabije-besluitendatabank/services/address';
-import type FilterRoute from 'frontend-burgernabije-besluitendatabank/routes/filter';
+import type FilterRoute from 'frontend-burgernabije-besluitendatabank/routes/filters';
 import type { ModelFrom } from 'frontend-burgernabije-besluitendatabank/lib/type-utils';
 import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import { formatNumber } from 'frontend-burgernabije-besluitendatabank/helpers/format-number';
 import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
+import type {
+  AgendaItemsParams,
+  SortType,
+} from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
+import type FilterEditRoute from 'frontend-burgernabije-besluitendatabank/routes/filters/edit';
 
-interface ToasterService {
-  success(message: string, title: string, options?: ToastOptions): void;
-  error(message: string, title: string, options?: ToastOptions): void;
-}
-interface ToastOptions {
-  type?: 'info' | 'success' | 'warning' | 'error';
-  icon?: string;
-  timeOut?: number;
-  closable?: boolean;
-}
-
-interface Filter {
+export interface Filter {
   name: string;
   filters: AgendaItemsParams;
   notify: boolean;
+  selected: boolean;
   savedAt: string;
   resultCount: number;
 }
+interface FilterListArgs {
+  model: ModelFrom<FilterEditRoute>;
+  edit?: boolean;
+}
 
-export default class FilterController extends Controller {
+export default class FilterList extends Component<FilterListArgs> {
   @service declare governingBodyList: GoverningBodyListService;
   @service declare governmentList: GovernmentListService;
   @service declare router: RouterService;
@@ -56,21 +49,19 @@ export default class FilterController extends Controller {
   @service declare address: AddressService;
   @service declare mbpEmbed: MbpEmbedService;
   @service declare toaster: ToasterService;
-
-  declare model: ModelFrom<FilterRoute>;
-
   @tracked dateRangeHasErrors = false;
-  @tracked showSaveFilterModal = false;
-  @tracked showFiltersModal = false;
   @tracked isSavingFilters = false;
   @tracked filterName = '';
-  @tracked savedFilters: Filter[] = [];
 
-  constructor(...args: []) {
-    super(...args);
-    this.loadSavedFilters();
+  constructor(owner: unknown, args: any) {
+    super(owner, args);
+    this.filterService.loadLocalStorageFilters();
+    this.filterName = this.args.model?.localStorageFilter?.name ?? '';
   }
 
+  get model() {
+    return this.args.model;
+  }
   get selectedBestuursorgaanIds() {
     return this.governingBodyList.options
       .filter(
@@ -135,10 +126,11 @@ export default class FilterController extends Controller {
   }
 
   @action
-  updateSelectedThemes(selected: Array<SelectOption>) {
+  updateSelectedThemes(selected: Array<{ label: string; id: string }>) {
     this.filterService.updateFilters({
       themeIds: selected.map((theme) => theme.id),
     });
+    this.filterService.setAllFiltersUnselected();
     this.itemsService.fetchItems.perform(0, { size: 1 });
   }
 
@@ -149,6 +141,7 @@ export default class FilterController extends Controller {
   @action
   setStatus(value: string) {
     this.filterService.updateFilters({ status: value });
+    this.filterService.setAllFiltersUnselected();
     this.itemsService.fetchItems.perform(0, { size: 1 });
   }
 
@@ -163,6 +156,7 @@ export default class FilterController extends Controller {
     this.filterService.updateFilters({
       governingBodyClassificationIds: selectedIds,
     });
+    this.filterService.setAllFiltersUnselected();
     this.itemsService.fetchItems.perform(0, { size: 1 });
   }
 
@@ -188,6 +182,7 @@ export default class FilterController extends Controller {
     });
 
     await this.governingBodyList.loadOptions();
+    this.filterService.setAllFiltersUnselected();
     this.itemsService.fetchItems.perform(0, { size: 1 });
   }
 
@@ -209,11 +204,13 @@ export default class FilterController extends Controller {
       plannedStartMin: start,
       plannedStartMax: end,
     });
+    this.filterService.setAllFiltersUnselected();
     this.itemsService.fetchItems.perform(0, { size: 1 });
   }
 
   @action
   updateSorting(event: { target: { value: SortType } }) {
+    this.filterService.setAllFiltersUnselected();
     this.filterService.updateFilters({ dateSort: event?.target.value });
   }
 
@@ -223,6 +220,7 @@ export default class FilterController extends Controller {
       keyword,
     });
     this.filterService.searchOnTitleOnly(onlyOnTitle);
+    this.filterService.setAllFiltersUnselected();
     this.itemsService.fetchItems.perform(0, { size: 1 });
   }
 
@@ -232,6 +230,7 @@ export default class FilterController extends Controller {
     this.filterService.updateFilters({
       distance: selectedDistance?.id,
     });
+    this.filterService.setAllFiltersUnselected();
     this.itemsService.fetchItems.perform(0, { size: 1 });
   }
 
@@ -242,6 +241,13 @@ export default class FilterController extends Controller {
       routeName = this.model.previousRoute.name;
     }
     this.router.transitionTo(routeName, {
+      queryParams: this.filterService.asQueryParams,
+    });
+  }
+
+  @action
+  goToLocalStorageFilters() {
+    this.router.transitionTo('filters.show', {
       queryParams: this.filterService.asQueryParams,
     });
   }
@@ -258,48 +264,6 @@ export default class FilterController extends Controller {
   }
 
   @action
-  async resetFilters() {
-    this.address.selectedAddress = undefined;
-    this.distanceList.selected = null;
-    this.governmentList.selected = [];
-    this.filterService.resetFiltersToInitialView();
-    this.filterService.resetDateRange();
-    await this.governingBodyList.loadOptions();
-    this.itemsService.fetchItems.perform(0, { size: 1 });
-  }
-
-  @action
-  toggleSaveFilterModal() {
-    this.showSaveFilterModal = !this.showSaveFilterModal;
-  }
-
-  @action
-  toggleShowFilterModal() {
-    this.showFiltersModal = !this.showFiltersModal;
-  }
-
-  @action
-  toggleNotification(index: number) {
-    this.savedFilters = this.savedFilters.map((filter, i) => {
-      if (i !== index) return filter;
-
-      const updatedFilter = { ...filter, notify: !filter.notify };
-
-      this.toaster.success(
-        `"${updatedFilter.name}" filter notificatie ${
-          updatedFilter.notify ? 'ingeschakeld' : 'uitgeschakeld'
-        }`,
-        '',
-        { timeOut: 2000 },
-      );
-
-      return updatedFilter;
-    });
-
-    localStorage.setItem('savedFilters', JSON.stringify(this.savedFilters));
-  }
-
-  @action
   saveFilters() {
     if (this.filterName.trim() === '') {
       this.toaster.error('De filternaam mag niet leeg zijn.', '', {
@@ -307,8 +271,7 @@ export default class FilterController extends Controller {
       });
       return;
     }
-    const saved = JSON.parse(localStorage.getItem('savedFilters') || '[]');
-
+    const saved = this.filterService.localStorageFilters;
     const duplicate = saved.some(
       (f: { name: string }) =>
         f.name.toLowerCase() === this.filterName.toLowerCase(),
@@ -325,79 +288,79 @@ export default class FilterController extends Controller {
     }
     this.isSavingFilters = true;
     const filters = this.filterService.filters;
+
     const newFilter = {
       name: this.filterName,
       filters,
       notify: true,
+      selected: true,
       savedAt: new Date().toISOString(),
       resultCount: this.itemsService.totalItemCount || 0,
     };
+    const updatedLocalStorageFilters = [...saved, newFilter];
 
-    const updatedSavedFilters = [...saved, newFilter];
+    this.filterService.setAllFiltersUnselected();
+    this.filterService.updateLocalStorageFilters(updatedLocalStorageFilters);
 
-    localStorage.setItem('savedFilters', JSON.stringify(updatedSavedFilters));
-    this.savedFilters = updatedSavedFilters;
     this.toaster.success(`"${this.filterName}" filter opgeslagen`, '', {
       timeOut: 2000,
     });
     this.filterName = '';
-    this.showSaveFilterModal = false;
     this.isSavingFilters = false;
+    this.goToOverview();
+  }
+
+  @action
+  editFilter(filter: Filter) {
+    const name = this.filterName?.trim() || filter.name;
+    if (name === '') {
+      this.toaster.error('De filternaam mag niet leeg zijn.', '', {
+        timeOut: 2000,
+      });
+      return;
+    }
+
+    const saved = this.filterService.localStorageFilters;
+
+    const duplicate = saved.some(
+      (f) =>
+        f.name.toLowerCase() === name.toLowerCase() &&
+        f.name.toLowerCase() !== filter.name.toLowerCase(),
+    );
+
+    if (duplicate) {
+      this.toaster.error(`Een filter met de naam "${name}" bestaat al.`, '', {
+        timeOut: 2000,
+      });
+      return;
+    }
+
+    this.isSavingFilters = true;
+
+    const updatedFilter: Filter = {
+      ...filter,
+      name,
+      filters: this.filterService.filters,
+      savedAt: new Date().toISOString(),
+      resultCount: this.itemsService.totalItemCount || 0,
+    };
+
+    const updatedLocalStorageFilters = saved.map((f) =>
+      f.name === filter.name ? updatedFilter : f,
+    );
+
+    this.filterService.updateLocalStorageFilters(updatedLocalStorageFilters);
+    this.filterService.selectedLocalStorageFilter = updatedFilter;
+    this.toaster.success(`"${name}" filter aangepast`, '', { timeOut: 2000 });
+
+    this.filterName = '';
+    this.isSavingFilters = false;
+
+    this.goToOverview();
   }
 
   @action
   updateFilterName(event: InputEvent) {
     this.filterName = (event.target as HTMLInputElement).value;
-  }
-
-  @action
-  loadSavedFilters() {
-    this.savedFilters = JSON.parse(
-      localStorage.getItem('savedFilters') || '[]',
-    );
-    return this.savedFilters;
-  }
-
-  @action
-  async loadFilter(savedFilter: Filter) {
-    this.resetFilters();
-    if (savedFilter.filters.street) {
-      const address = await this.address.getSelectedAddress.perform(
-        savedFilter.filters.street,
-      );
-      if (address) this.address.setSelectedAddress(address);
-    }
-    this.filterService.setFilters(savedFilter.filters);
-    this.governmentList.loadSelectedGoverningBodiesByLabels();
-    this.distanceList.selected = this.distanceList.getSelectedDistance(
-      savedFilter.filters.distance,
-    );
-    this.filterService.loadDateRange(
-      savedFilter.filters.plannedStartMin || '',
-      savedFilter.filters.plannedStartMax || '',
-    );
-    this.filterName = '';
-    this.showFiltersModal = false;
-    this.toaster.success(`"${savedFilter?.name}" filter geladen`, '', {
-      timeOut: 2000,
-    });
-  }
-
-  @action
-  deleteFilter(index: number) {
-    const savedFilter = this.savedFilters[index];
-
-    const confirmed = window.confirm(
-      `Weet je zeker dat je "${savedFilter?.name}" filter wilt verwijderen?`,
-    );
-
-    if (!confirmed) {
-      return;
-    }
-    this.savedFilters = this.savedFilters.filter((_, i) => i !== index);
-    localStorage.setItem('savedFilters', JSON.stringify(this.savedFilters));
-    this.toaster.success(`"${savedFilter?.name}" filter verwijderd`, '', {
-      timeOut: 2000,
-    });
   }
 }

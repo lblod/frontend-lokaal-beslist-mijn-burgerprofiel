@@ -12,7 +12,11 @@ Router.map(function () {
     this.route('session', { path: '/:id/zitting' });
   });
 
-  this.route('filter', { path: 'filters' });
+  this.route('filters', function () {
+    this.route('index', { path: '/' });
+    this.route('edit', { path: 'edit/:id' });
+    this.route('show');
+  });
 
   this.route('sessions', { path: '/zittingen' }, function () {
     this.route('session', { path: '/:session_id' });

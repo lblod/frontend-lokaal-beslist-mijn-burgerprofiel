@@ -84,7 +84,8 @@ export default class MbpEmbedService extends Service {
     const routeTitleMap: Record<string, string> = {
       ['agenda-items.agenda-item']: 'Agendapunt',
       ['sessions.session']: 'Zitting',
-      ['filter']: 'Filters',
+      ['filters']: 'Filters',
+      ['filters.edit']: 'Eigen filters',
     };
     const hiddenSpace = '‎';
     let routeTitle = hiddenSpace;

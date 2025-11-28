@@ -16,11 +16,31 @@ import {
   serializeArray,
 } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 import { action } from '@ember/object';
+import type { Filter } from 'frontend-burgernabije-besluitendatabank/components/filter-list';
+import type AddressService from './address';
+import type DistanceListService from './distance-list';
+import type ItemListService from './item-list';
+import type GoverningBodyListService from './governing-body-list';
+import type GovernmentListService from './government-list';
+import type ThemeListService from './theme-list';
 
 export default class FilterService extends Service {
+  @service declare governingBodyList: GoverningBodyListService;
+  @service declare governmentList: GovernmentListService;
   @service declare router: RouterService;
+  @service declare filterService: FilterService;
+  @service('item-list') declare itemsService: ItemListService;
+  @service declare themeList: ThemeListService;
+  @service declare distanceList: DistanceListService;
+  @service declare toaster: ToasterService;
   @service declare mbpEmbed: MbpEmbedService;
+  @service declare address: AddressService;
+  @tracked localStorageFilters: Filter[] = JSON.parse(
+    localStorage.getItem('localStorageFilters') || '[]',
+  );
 
+  @tracked selectedLocalStorageFilter =
+    this.localStorageFilters.find((f: Filter) => f.selected === true) || null;
   @tracked keywordAdvancedSearch: { [key: string]: string[] } | null = null;
   @tracked filters: AgendaItemsParams = {
     keyword: null,
@@ -37,6 +57,11 @@ export default class FilterService extends Service {
     street: null,
     distance: null,
   };
+
+  constructor() {
+    super(...arguments);
+    this.loadLocalStorageFilters();
+  }
 
   @action
   setFilters(newFilters: Partial<AgendaItemsParams>) {
@@ -230,5 +255,110 @@ export default class FilterService extends Service {
     };
 
     return params;
+  }
+
+  setAllFiltersUnselected(): Filter[] {
+    this.selectedLocalStorageFilter = null;
+
+    const unselectedFilters = JSON.parse(
+      localStorage.getItem('localStorageFilters') || '[]',
+    ).map((f: Filter) => ({ ...f, selected: false }));
+    localStorage.setItem(
+      'localStorageFilters',
+      JSON.stringify(unselectedFilters),
+    );
+    return unselectedFilters;
+  }
+
+  @action
+  selectFilter(name: string) {
+    const newFilters = this.localStorageFilters.map((f) => ({
+      ...f,
+      selected: f.name === name,
+    }));
+    this.updateLocalStorageFilters(newFilters);
+    this.selectedLocalStorageFilter =
+      newFilters.find((f) => f.selected) || null;
+  }
+
+  @action
+  loadLocalStorageFilters() {
+    const stored = localStorage.getItem('localStorageFilters');
+    this.localStorageFilters = stored ? JSON.parse(stored) : [];
+    this.selectedLocalStorageFilter =
+      this.localStorageFilters.find((f) => f.selected) || null;
+  }
+
+  @action
+  deleteFilter(index: number) {
+    const savedFilter = this.localStorageFilters[index];
+    if (!savedFilter) return;
+
+    const confirmed = window.confirm(
+      `Weet je zeker dat je "${savedFilter.name}" filter wilt verwijderen?`,
+    );
+    if (!confirmed) return;
+
+    const newFilters = this.localStorageFilters.filter((_, i) => i != index);
+    console.log(newFilters);
+    this.updateLocalStorageFilters(newFilters);
+
+    if (savedFilter.selected) {
+      this.selectedLocalStorageFilter = null;
+    }
+
+    this.toaster.success(`"${savedFilter.name}" filter verwijderd`, '', {
+      timeOut: 2000,
+    });
+    this.router.transitionTo('filters.show', {
+      queryParams: this.filterService.asQueryParams,
+    });
+  }
+
+  @action
+  async loadFilter(savedFilter: Filter) {
+    if (!savedFilter) return;
+    if (savedFilter && savedFilter.filters.street) {
+      const address = await this.address.getSelectedAddress.perform(
+        savedFilter.filters.street,
+      );
+      if (address) this.address.setSelectedAddress(address);
+    }
+    this.setFilters(savedFilter.filters);
+    this.governmentList.loadSelectedGoverningBodiesByLabels();
+    this.distanceList.selected = this.distanceList.getSelectedDistance(
+      savedFilter.filters.distance,
+    );
+    // this.loadDateRange(
+    //   savedFilter.filters.plannedStartMin || '',
+    //   savedFilter.filters.plannedStartMax || '',
+    // );
+    this.selectFilter(savedFilter.name);
+
+    this.toaster.success(`"${savedFilter?.name}" filter geladen`, '', {
+      timeOut: 2000,
+    });
+    this.itemsService.fetchItems.perform(0, { size: 1 });
+  }
+
+  @action
+  async resetFilters() {
+    this.address.selectedAddress = undefined;
+    this.distanceList.selected = null;
+    this.governmentList.selected = [];
+    this.selectedLocalStorageFilter = null;
+    this.setAllFiltersUnselected();
+    this.resetFiltersToInitialView();
+    this.resetDateRange();
+    await this.governingBodyList.loadOptions();
+    this.itemsService.fetchItems.perform(0, { size: 1 });
+  }
+
+  updateLocalStorageFilters(newFilters: Filter[]) {
+    this.localStorageFilters = newFilters;
+    localStorage.setItem(
+      'localStorageFilters',
+      JSON.stringify(this.localStorageFilters),
+    );
   }
 }

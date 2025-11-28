@@ -20,6 +20,7 @@ export interface AgendapuntenFiltersTopbarSignature {
   Args: {
     filters: FiltersAsQueryParams;
     onFiltersUpdated: () => void;
+    onFilterReset: () => void;
   };
   Element: null;
 }
@@ -45,7 +46,10 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   }
 
   get hasFilters() {
-    return this.filterValues.length >= 1;
+    return (
+      this.filterValues.length >= 1 ||
+      this.filterService.selectedLocalStorageFilter
+    );
   }
 
   get isFiltersDisabled() {
@@ -215,6 +219,12 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
         value: label,
       };
     });
+  }
+  @action
+  removeSavedFilter() {
+    this.filterService.selectedLocalStorageFilter = null;
+    this.args.onFilterReset?.();
+    this.itemsService.fetchItems.perform(0);
   }
 
   @action
