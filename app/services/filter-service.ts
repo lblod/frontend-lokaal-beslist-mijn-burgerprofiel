@@ -32,7 +32,6 @@ export default class FilterService extends Service {
   @service('item-list') declare itemsService: ItemListService;
   @service declare themeList: ThemeListService;
   @service declare distanceList: DistanceListService;
-  @service declare toaster: ToasterService;
   @service declare mbpEmbed: MbpEmbedService;
   @service declare address: AddressService;
   @tracked localStorageFilters: Filter[] = JSON.parse(
@@ -307,9 +306,6 @@ export default class FilterService extends Service {
       this.selectedLocalStorageFilter = null;
     }
 
-    this.toaster.success(`"${savedFilter.name}" filter verwijderd`, '', {
-      timeOut: 2000,
-    });
     this.router.transitionTo('filters.show', {
       queryParams: this.filterService.asQueryParams,
     });
@@ -335,9 +331,6 @@ export default class FilterService extends Service {
     // );
     this.selectFilter(savedFilter.name);
 
-    this.toaster.success(`"${savedFilter?.name}" filter geladen`, '', {
-      timeOut: 2000,
-    });
     this.itemsService.fetchItems.perform(0, { size: 1 });
   }
 

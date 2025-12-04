@@ -44,8 +44,12 @@
         id="filter-name"
         @placeholder="Filter naam"
         @width="block"
+        @error={{this.errorMessage}}
         {{on "input" this.updateFilterName}}
       />
+      {{#if this.errorMessage}}
+        <AuHelpText @error={{true}}>{{this.errorMessage}}</AuHelpText>
+      {{/if}}
     </div>
     <AuHr class="au-u-margin-bottom-none" />
 

@@ -49,6 +49,7 @@ export default class MbpEmbedService extends Service {
 
     try {
       await this.client.connect();
+      console.log(this.client); //TODO: remove this line
       console.log('MBP SDK connected!');
       this.client.ui.setStatusLoading(false);
     } catch (e) {

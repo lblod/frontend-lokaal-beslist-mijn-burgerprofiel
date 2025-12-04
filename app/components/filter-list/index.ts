@@ -48,10 +48,10 @@ export default class FilterList extends Component<FilterListArgs> {
   @service declare distanceList: DistanceListService;
   @service declare address: AddressService;
   @service declare mbpEmbed: MbpEmbedService;
-  @service declare toaster: ToasterService;
   @tracked dateRangeHasErrors = false;
   @tracked isSavingFilters = false;
   @tracked filterName = '';
+  @tracked errorMessage = '';
 
   constructor(owner: unknown, args: any) {
     super(owner, args);
@@ -266,10 +266,7 @@ export default class FilterList extends Component<FilterListArgs> {
   @action
   saveFilters() {
     if (this.filterName.trim() === '') {
-      this.toaster.error('De filternaam mag niet leeg zijn.', '', {
-        timeOut: 2000,
-      });
-      return;
+      return (this.errorMessage = 'De filternaam mag niet leeg zijn.');
     }
     const saved = this.filterService.localStorageFilters;
     const duplicate = saved.some(
@@ -277,14 +274,7 @@ export default class FilterList extends Component<FilterListArgs> {
         f.name.toLowerCase() === this.filterName.toLowerCase(),
     );
     if (duplicate) {
-      this.toaster.error(
-        `Een filter met de naam "${this.filterName}" bestaat al.`,
-        '',
-        {
-          timeOut: 2000,
-        },
-      );
-      return;
+      return (this.errorMessage = `Een filter met de naam "${this.filterName}" bestaat al.`);
     }
     this.isSavingFilters = true;
     const filters = this.filterService.filters;
@@ -302,9 +292,6 @@ export default class FilterList extends Component<FilterListArgs> {
     this.filterService.setAllFiltersUnselected();
     this.filterService.updateLocalStorageFilters(updatedLocalStorageFilters);
 
-    this.toaster.success(`"${this.filterName}" filter opgeslagen`, '', {
-      timeOut: 2000,
-    });
     this.filterName = '';
     this.isSavingFilters = false;
     this.goToOverview();
@@ -314,10 +301,7 @@ export default class FilterList extends Component<FilterListArgs> {
   editFilter(filter: Filter) {
     const name = this.filterName?.trim() || filter.name;
     if (name === '') {
-      this.toaster.error('De filternaam mag niet leeg zijn.', '', {
-        timeOut: 2000,
-      });
-      return;
+      return (this.errorMessage = 'De filternaam mag niet leeg zijn.');
     }
 
     const saved = this.filterService.localStorageFilters;
@@ -329,10 +313,7 @@ export default class FilterList extends Component<FilterListArgs> {
     );
 
     if (duplicate) {
-      this.toaster.error(`Een filter met de naam "${name}" bestaat al.`, '', {
-        timeOut: 2000,
-      });
-      return;
+      return (this.errorMessage = `Een filter met de naam "${name}" bestaat al.`);
     }
 
     this.isSavingFilters = true;
@@ -351,7 +332,6 @@ export default class FilterList extends Component<FilterListArgs> {
 
     this.filterService.updateLocalStorageFilters(updatedLocalStorageFilters);
     this.filterService.selectedLocalStorageFilter = updatedFilter;
-    this.toaster.success(`"${name}" filter aangepast`, '', { timeOut: 2000 });
 
     this.filterName = '';
     this.isSavingFilters = false;
