@@ -5,7 +5,6 @@
   {{! template-lint-disable no-inline-styles }}
   <AuMainContainer style="max-height: 100vh;" as |m|>
     <m.content @scroll={{true}}>
-      <p>DeviceId: {{this.mbpEmbed.deviceId}}</p>
       {{outlet}}
     </m.content>
   </AuMainContainer>
