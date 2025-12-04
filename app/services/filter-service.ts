@@ -57,8 +57,8 @@ export default class FilterService extends Service {
     distance: null,
   };
 
-  constructor() {
-    super(...arguments);
+  constructor(...args: []) {
+    super(...args);
     this.loadLocalStorageFilters();
   }
 

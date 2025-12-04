@@ -13,7 +13,6 @@ import type ThemeListService from 'frontend-burgernabije-besluitendatabank/servi
 import type DistanceListService from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/services/distance-list';
 import type AddressService from 'frontend-burgernabije-besluitendatabank/services/address';
-import type FilterRoute from 'frontend-burgernabije-besluitendatabank/routes/filters';
 import type { ModelFrom } from 'frontend-burgernabije-besluitendatabank/lib/type-utils';
 import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
@@ -53,7 +52,7 @@ export default class FilterList extends Component<FilterListArgs> {
   @tracked filterName = '';
   @tracked errorMessage = '';
 
-  constructor(owner: unknown, args: any) {
+  constructor(owner: unknown, args: FilterListArgs) {
     super(owner, args);
     this.filterService.loadLocalStorageFilters();
     this.filterName = this.args.model?.localStorageFilter?.name ?? '';
