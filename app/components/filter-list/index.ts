@@ -263,7 +263,7 @@ export default class FilterList extends Component<FilterListArgs> {
   }
 
   @action
-  saveFilters() {
+  async saveFilters() {
     if (this.filterName.trim() === '') {
       return (this.errorMessage = 'De filternaam mag niet leeg zijn.');
     }
@@ -291,9 +291,47 @@ export default class FilterList extends Component<FilterListArgs> {
     this.filterService.setAllFiltersUnselected();
     this.filterService.updateLocalStorageFilters(updatedLocalStorageFilters);
 
-    this.filterName = '';
-    this.isSavingFilters = false;
-    this.goToOverview();
+    try {
+      await this.saveFilterToBackend(newFilter);
+    } catch (err) {
+      console.error(err);
+      this.errorMessage =
+        'Er is een fout opgetreden bij het opslaan van het filter.';
+    } finally {
+      this.filterName = '';
+      this.isSavingFilters = false;
+      this.goToOverview();
+    }
+  }
+
+  async saveFilterToBackend(filter: Filter) {
+    const deviceId = localStorage.getItem('deviceId');
+    if (!deviceId) {
+      throw new Error('Device ID not found in localStorage.');
+    }
+
+    const payload = {
+      deviceId,
+      filter,
+    };
+
+    const response = await fetch(
+      'http://lokaal-beslist.andres-dev.s.redhost.be:8888/register-filter',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      },
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to save filter: ${errorText}`);
+    }
+
+    console.log('Filter successfully saved on backend.');
   }
 
   @action
