@@ -315,7 +315,7 @@ export default class FilterList extends Component<FilterListArgs> {
       filter,
     };
 
-    const response = await fetch('/register-filter', {
+    const response = await fetch('mbp/register-filter', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
