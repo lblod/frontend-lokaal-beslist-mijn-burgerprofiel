@@ -1,9 +1,12 @@
 {{page-title "Lokaal Beslist"}}
 <AuApp>
   <AuModalContainer />
+
   {{! template-lint-disable no-inline-styles }}
   <AuMainContainer style="max-height: 100vh;" as |m|>
     <m.content @scroll={{true}}>
+      <p>Client: {{this.mbpEmbed.client.id}}</p>
+      <p>Session: {{this.mbpEmbed.client.session.id}}</p>
       {{outlet}}
     </m.content>
   </AuMainContainer>

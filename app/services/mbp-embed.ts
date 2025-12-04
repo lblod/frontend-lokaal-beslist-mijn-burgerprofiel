@@ -7,10 +7,11 @@ import type Transition from '@ember/routing/transition';
 
 import { createMbpEmbedClient } from '@govflanders/mbp-embed-sdk';
 import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
+import { tracked } from '@glimmer/tracking';
 
 export default class MbpEmbedService extends Service {
-  declare client: MbpEmbedClient;
-  declare tenant: Tenant;
+  @tracked client?: MbpEmbedClient;
+  declare tenant?: Tenant;
   declare municipalityLabel?: string;
 
   get clientId() {
@@ -49,8 +50,8 @@ export default class MbpEmbedService extends Service {
 
     try {
       await this.client.connect();
-      console.log(this.client); //TODO: remove this line
       console.log('MBP SDK connected!');
+      console.log(this.client['session']);
       this.client.ui.setStatusLoading(false);
     } catch (e) {
       console.error('MBP SDK connection failed:', e);
