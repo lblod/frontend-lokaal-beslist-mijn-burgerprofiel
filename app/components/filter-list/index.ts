@@ -315,16 +315,13 @@ export default class FilterList extends Component<FilterListArgs> {
       filter,
     };
 
-    const response = await fetch(
-      'http://lokaal-beslist.andres-dev.s.redhost.be:8888/register-filter',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
+    const response = await fetch('/register-filter', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    );
+      body: JSON.stringify(payload),
+    });
 
     if (!response.ok) {
       const errorText = await response.text();
