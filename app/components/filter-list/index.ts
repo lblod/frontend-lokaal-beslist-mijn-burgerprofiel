@@ -318,9 +318,14 @@ export default class FilterList extends Component<FilterListArgs> {
     const response = await fetch('/mbp/register-filter', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/vnd.api+json',
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({
+        data: {
+          type: 'filter-registration',
+          attributes: payload,
+        },
+      }),
     });
 
     if (!response.ok) {
