@@ -148,6 +148,6 @@
     "lint"
   ],
   "dependencies": {
-    "@govflanders/mbp-embed-sdk": "^0.0.5"
+    "@govflanders/mbp-embed-sdk": "^0.1.1"
   }
 }
