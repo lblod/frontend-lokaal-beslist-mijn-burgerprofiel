@@ -80,7 +80,7 @@ export default class MbpEmbedService extends Service {
             priority: 'high',
           },
           trigger: {
-            date: new Date(Date.now() + 10 * 60 * 1000), // in 10 minutes
+            date: new Date(Date.now() + 1 * 60 * 1000), // in 10 minutes
           },
           action: {
             type: 'embed',

@@ -18,4 +18,12 @@
     >
       Zittingen</AuLink>
   </Tab>
+  <Tab>
+    <AuLink
+      @route="test"
+      class={{if (eq this.router.currentRouteName "test") "active"}}
+    >
+      Test notification
+    </AuLink>
+  </Tab>
 </AuTabs>
