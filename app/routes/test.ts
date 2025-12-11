@@ -9,7 +9,10 @@ export default class TestRoute extends Route {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(args: { Args: any }) {
     super(args);
-    this.mbpEmbed.client?.notifications.scheduleNotification({
+  }
+
+  async beforeModel() {
+    await this.mbpEmbed.client?.notifications.scheduleNotification({
       content: {
         subtitle: 'Herinnering',
         body: 'Test notification.',
