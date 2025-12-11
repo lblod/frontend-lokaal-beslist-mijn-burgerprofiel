@@ -6,12 +6,7 @@ import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/servic
 export default class TestRoute extends Route {
   @service declare mbpEmbed: MbpEmbedService;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(args: { Args: any }) {
-    super(args);
-  }
-
-  async beforeModel() {
+  async model() {
     await this.mbpEmbed.client?.notifications.scheduleNotification({
       content: {
         subtitle: 'Herinnering',
@@ -20,7 +15,7 @@ export default class TestRoute extends Route {
         priority: 'high',
       },
       trigger: {
-        date: new Date(Date.now() + 1 * 60 * 1000), // in 1 minutes
+        date: new Date(Date.now() + 1 * 5 * 1000), // in 5 seconds
       },
       action: {
         type: 'embed',
