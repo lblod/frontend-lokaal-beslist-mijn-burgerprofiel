@@ -28,6 +28,7 @@ export default class MbpEmbedService extends Service {
       this.municipalityLabel = deserializeArray(gemeentesQueryParam)?.[0];
     }
     await this.connectToClient();
+
     this.tenant = await this.client?.context.getTenant();
     this.setAppColors();
   }
@@ -71,25 +72,25 @@ export default class MbpEmbedService extends Service {
         // You might request permission here if the SDK supports it
       }
 
-      const notificationId =
-        await this.client.notifications.scheduleNotification({
-          content: {
-            subtitle: 'Herinnering',
-            body: 'Uw afspraak bij het gemeentehuis is morgen om 10:00.',
-            data: { appointmentId: 'abc123' },
-            priority: 'high',
-          },
-          trigger: {
-            date: new Date(Date.now() + 1 * 60 * 1000), // in 10 minutes
-          },
-          action: {
-            type: 'embed',
-            url: '/afspraken/abc123',
-          },
-        });
-      const all = await this.client.notifications.getAllNotifications();
-      console.table(all);
-      console.log(notificationId);
+      // const notificationId =
+      //   await this.client.notifications.scheduleNotification({
+      //     content: {
+      //       subtitle: 'Herinnering',
+      //       body: 'Uw afspraak bij het gemeentehuis is morgen om 10:00.',
+      //       data: { appointmentId: 'abc123' },
+      //       priority: 'high',
+      //     },
+      //     trigger: {
+      //       date: new Date(Date.now() + 1 * 60 * 1000), // in 10 minutes
+      //     },
+      //     action: {
+      //       type: 'embed',
+      //       url: '/afspraken/abc123',
+      //     },
+      //   });
+      // const all = await this.client.notifications.getAllNotifications();
+      // console.table(all);
+      // console.log(notificationId);
     } catch (e) {
       console.error('MBP SDK connection failed:', e);
     }

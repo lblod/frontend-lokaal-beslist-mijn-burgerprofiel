@@ -5,7 +5,6 @@ import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/servic
 
 export default class TestRoute extends Route {
   @service declare mbpEmbed: MbpEmbedService;
-
   async model() {
     await this.mbpEmbed.client?.notifications.scheduleNotification({
       content: {
