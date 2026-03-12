@@ -58,7 +58,7 @@ function buildFilters({
     query[':query:session_planned_start'] =
       `session_planned_start:[${filters?.plannedStartMin} TO ${filters?.plannedStartMax || '*'}]`;
   }
-  if (locationIds) {
+  if (locationIds && !address) {
     query[':terms:search_location_id'] = locationIds;
   }
   if (themeIds) {
