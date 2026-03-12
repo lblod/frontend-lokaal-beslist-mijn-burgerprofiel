@@ -24,16 +24,17 @@ export default class FilterShowController extends Controller {
   @action
   toggleNotification(index: number) {
     console.log(index);
-    this.filterService.localStorageFilters =
-      this.filterService.localStorageFilters.map((filter, i) => {
+    this.filterService.savedFilters = this.filterService.savedFilters.map(
+      (filter, i) => {
         if (i !== index) return filter;
 
         return { ...filter, notify: !filter.notify };
-      });
-
+      },
+    );
+    // Save this filter into database and remove localStorage filters to prevent confusion
     localStorage.setItem(
       'localStorageFilters',
-      JSON.stringify(this.filterService.localStorageFilters),
+      JSON.stringify(this.filterService.savedFilters),
     );
   }
 

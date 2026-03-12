@@ -47,8 +47,7 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
 
   get hasFilters() {
     return (
-      this.filterValues.length >= 1 ||
-      this.filterService.selectedLocalStorageFilter
+      this.filterValues.length >= 1 || this.filterService.selectedSavedFilter
     );
   }
 
@@ -222,7 +221,7 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   }
   @action
   removeSavedFilter() {
-    this.filterService.selectedLocalStorageFilter = null;
+    this.filterService.selectedSavedFilter = null;
     this.args.onFilterReset?.();
     this.itemsService.fetchItems.perform(0);
   }

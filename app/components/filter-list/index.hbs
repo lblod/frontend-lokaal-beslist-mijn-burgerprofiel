@@ -54,13 +54,13 @@
     <AuHr class="au-u-margin-bottom-none" />
 
   {{else}}
-    {{#if this.filterService.localStorageFilters.length}}
+    {{#if this.filterService.savedFilters.length}}
       <div class="au-u-margin-top">
         <Filters::SelectFilter
           @id="filter"
           @label="Zoek op eigen filter"
-          @options={{this.filterService.localStorageFilters}}
-          @selected={{this.filterService.selectedLocalStorageFilter}}
+          @options={{this.filterService.savedFilters}}
+          @selected={{this.filterService.selectedSavedFilter}}
           @updateSelected={{this.filterService.loadFilter}}
           @queryParam="filter"
           @searchEnabled={{false}}
@@ -71,7 +71,7 @@
           <AuButton
             @skin="link-secondary"
             class="au-u-padding-none au-u-flex--end action-sdk-color"
-            {{on "click" this.goToLocalStorageFilters}}
+            {{on "click" this.goToFilters}}
           >
             Eigen filters beheren
           </AuButton>

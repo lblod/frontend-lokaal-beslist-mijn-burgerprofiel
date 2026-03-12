@@ -26,6 +26,7 @@ export default class FilterEditRoute extends Route {
   async model(params: Params, transition: Transition) {
     let localStorageFilter = null;
     if (params.id >= 0) {
+      // Get filters from database and remove localStorage filters to prevent confusion
       localStorageFilter = JSON.parse(
         localStorage.getItem('localStorageFilters') || '[]',
       )[params.id];

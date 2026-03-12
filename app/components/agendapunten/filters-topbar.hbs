@@ -19,7 +19,7 @@
         {{on "click" @onFilterReset}}
         class="au-u-bold link-without-line"
       >Wis filters</AuButton>
-      {{#unless this.filterService.selectedLocalStorageFilter}}
+      {{#unless this.filterService.selectedSavedFilter}}
         <AuButton
           class="au-u-bold link-without-line"
           @skin="link"
@@ -29,13 +29,13 @@
     </div>
     <AuHr class="au-u-1-1 au-u-margin-top-none" />
     <div class="pills">
-      {{#if this.filterService.selectedLocalStorageFilter}}
+      {{#if this.filterService.selectedSavedFilter}}
         <AuPill
           @actionIcon="cross"
           @actionText="close"
           id="saved-filter-pill"
           @onClickAction={{this.removeSavedFilter}}
-        >{{this.filterService.selectedLocalStorageFilter.name}}</AuPill>
+        >{{this.filterService.selectedSavedFilter.name}}</AuPill>
       {{else}}
         {{#each this.filterValues as |keyValue|}}
           <AuPill

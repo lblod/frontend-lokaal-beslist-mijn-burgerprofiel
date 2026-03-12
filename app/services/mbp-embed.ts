@@ -11,7 +11,6 @@ import { tracked } from '@glimmer/tracking';
 
 export default class MbpEmbedService extends Service {
   @tracked client?: MbpEmbedClient;
-  @tracked deviceId: string | null = localStorage.getItem('deviceId') || null;
   declare tenant?: Tenant;
   declare municipalityLabel?: string;
 
@@ -30,15 +29,6 @@ export default class MbpEmbedService extends Service {
     await this.connectToClient();
     this.tenant = await this.client?.context.getTenant();
     this.setAppColors();
-  }
-
-  get getOrCreateDeviceId() {
-    let deviceId = localStorage.getItem('deviceId');
-    if (!deviceId) {
-      deviceId = crypto.randomUUID();
-      localStorage.setItem('deviceId', deviceId);
-    }
-    return deviceId;
   }
 
   async connectToClient() {
@@ -61,7 +51,6 @@ export default class MbpEmbedService extends Service {
     try {
       await this.client.connect();
       console.log('MBP SDK connected!');
-      this.deviceId = this.getOrCreateDeviceId;
       this.client.ui.setStatusLoading(false);
     } catch (e) {
       console.error('MBP SDK connection failed:', e);

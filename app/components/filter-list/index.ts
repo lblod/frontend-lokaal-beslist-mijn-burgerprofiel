@@ -54,7 +54,7 @@ export default class FilterList extends Component<FilterListArgs> {
 
   constructor(owner: unknown, args: FilterListArgs) {
     super(owner, args);
-    this.filterService.loadLocalStorageFilters();
+    this.filterService.loadSavedFilters();
     this.filterName = this.args.model?.localStorageFilter?.name ?? '';
   }
 
@@ -245,7 +245,7 @@ export default class FilterList extends Component<FilterListArgs> {
   }
 
   @action
-  goToLocalStorageFilters() {
+  goToFilters() {
     this.router.transitionTo('filters.show', {
       queryParams: this.filterService.asQueryParams,
     });
@@ -267,7 +267,7 @@ export default class FilterList extends Component<FilterListArgs> {
     if (this.filterName.trim() === '') {
       return (this.errorMessage = 'De filternaam mag niet leeg zijn.');
     }
-    const saved = this.filterService.localStorageFilters;
+    const saved = this.filterService.savedFilters;
     const duplicate = saved.some(
       (f: { name: string }) =>
         f.name.toLowerCase() === this.filterName.toLowerCase(),
@@ -286,10 +286,10 @@ export default class FilterList extends Component<FilterListArgs> {
       savedAt: new Date().toISOString(),
       resultCount: this.itemsService.totalItemCount || 0,
     };
-    const updatedLocalStorageFilters = [...saved, newFilter];
+    const updatedSavedFilters = [...saved, newFilter];
 
     this.filterService.setAllFiltersUnselected();
-    this.filterService.updateLocalStorageFilters(updatedLocalStorageFilters);
+    this.filterService.updateSavedFilters(updatedSavedFilters);
 
     this.filterName = '';
     this.isSavingFilters = false;
@@ -303,7 +303,7 @@ export default class FilterList extends Component<FilterListArgs> {
       return (this.errorMessage = 'De filternaam mag niet leeg zijn.');
     }
 
-    const saved = this.filterService.localStorageFilters;
+    const saved = this.filterService.savedFilters;
 
     const duplicate = saved.some(
       (f) =>
@@ -325,12 +325,12 @@ export default class FilterList extends Component<FilterListArgs> {
       resultCount: this.itemsService.totalItemCount || 0,
     };
 
-    const updatedLocalStorageFilters = saved.map((f) =>
+    const updatedSavedFilters = saved.map((f) =>
       f.name === filter.name ? updatedFilter : f,
     );
 
-    this.filterService.updateLocalStorageFilters(updatedLocalStorageFilters);
-    this.filterService.selectedLocalStorageFilter = updatedFilter;
+    this.filterService.updateSavedFilters(updatedSavedFilters);
+    this.filterService.selectedSavedFilter = updatedFilter;
 
     this.filterName = '';
     this.isSavingFilters = false;

@@ -34,12 +34,12 @@ export default class FilterService extends Service {
   @service declare distanceList: DistanceListService;
   @service declare mbpEmbed: MbpEmbedService;
   @service declare address: AddressService;
-  @tracked localStorageFilters: Filter[] = JSON.parse(
+  @tracked savedFilters: Filter[] = JSON.parse(
     localStorage.getItem('localStorageFilters') || '[]',
   );
 
-  @tracked selectedLocalStorageFilter =
-    this.localStorageFilters.find((f: Filter) => f.selected === true) || null;
+  @tracked selectedSavedFilter =
+    this.savedFilters.find((f: Filter) => f.selected === true) || null;
   @tracked keywordAdvancedSearch: { [key: string]: string[] } | null = null;
   @tracked filters: AgendaItemsParams = {
     keyword: null,
@@ -59,7 +59,7 @@ export default class FilterService extends Service {
 
   constructor(...args: []) {
     super(...args);
-    this.loadLocalStorageFilters();
+    this.loadSavedFilters();
   }
 
   @action
@@ -257,8 +257,8 @@ export default class FilterService extends Service {
   }
 
   setAllFiltersUnselected(): Filter[] {
-    this.selectedLocalStorageFilter = null;
-
+    this.selectedSavedFilter = null;
+    // Set filters into database and remove localStorage filters to prevent confusion
     const unselectedFilters = JSON.parse(
       localStorage.getItem('localStorageFilters') || '[]',
     ).map((f: Filter) => ({ ...f, selected: false }));
@@ -271,26 +271,25 @@ export default class FilterService extends Service {
 
   @action
   selectFilter(name: string) {
-    const newFilters = this.localStorageFilters.map((f) => ({
+    const newFilters = this.savedFilters.map((f) => ({
       ...f,
       selected: f.name === name,
     }));
-    this.updateLocalStorageFilters(newFilters);
-    this.selectedLocalStorageFilter =
-      newFilters.find((f) => f.selected) || null;
+    this.updateSavedFilters(newFilters);
+    this.selectedSavedFilter = newFilters.find((f) => f.selected) || null;
   }
 
   @action
-  loadLocalStorageFilters() {
+  loadSavedFilters() {
     const stored = localStorage.getItem('localStorageFilters');
-    this.localStorageFilters = stored ? JSON.parse(stored) : [];
-    this.selectedLocalStorageFilter =
-      this.localStorageFilters.find((f) => f.selected) || null;
+    this.savedFilters = stored ? JSON.parse(stored) : [];
+    this.selectedSavedFilter =
+      this.savedFilters.find((f) => f.selected) || null;
   }
 
   @action
   deleteFilter(index: number) {
-    const savedFilter = this.localStorageFilters[index];
+    const savedFilter = this.savedFilters[index];
     if (!savedFilter) return;
 
     const confirmed = window.confirm(
@@ -298,12 +297,12 @@ export default class FilterService extends Service {
     );
     if (!confirmed) return;
 
-    const newFilters = this.localStorageFilters.filter((_, i) => i != index);
+    const newFilters = this.savedFilters.filter((_, i) => i != index);
     console.log(newFilters);
-    this.updateLocalStorageFilters(newFilters);
+    this.updateSavedFilters(newFilters);
 
     if (savedFilter.selected) {
-      this.selectedLocalStorageFilter = null;
+      this.selectedSavedFilter = null;
     }
 
     this.router.transitionTo('filters.show', {
@@ -339,7 +338,7 @@ export default class FilterService extends Service {
     this.address.selectedAddress = undefined;
     this.distanceList.selected = null;
     this.governmentList.selected = [];
-    this.selectedLocalStorageFilter = null;
+    this.selectedSavedFilter = null;
     this.setAllFiltersUnselected();
     this.resetFiltersToInitialView();
     this.resetDateRange();
@@ -347,11 +346,11 @@ export default class FilterService extends Service {
     this.itemsService.fetchItems.perform(0, { size: 1 });
   }
 
-  updateLocalStorageFilters(newFilters: Filter[]) {
-    this.localStorageFilters = newFilters;
+  updateSavedFilters(newFilters: Filter[]) {
+    this.savedFilters = newFilters;
     localStorage.setItem(
       'localStorageFilters',
-      JSON.stringify(this.localStorageFilters),
+      JSON.stringify(this.savedFilters),
     );
   }
 }

@@ -16,7 +16,7 @@
 </AuToolbar>
 
 <div class="c-interface__sidebar-main au-u-margin-top-large">
-  {{#if this.filterService.localStorageFilters.length}}
+  {{#if this.filterService.savedFilters.length}}
     <div class="au-u-margin-none au-u-padding-none au-u-flex au-u-flex--column">
       <p
         class="au-u-padding-left au-u-padding-top-small au-u-padding-bottom-small filters-topbar-active-filters"
@@ -24,7 +24,7 @@
       <AuHr class="au-u-margin-none" />
       <AuList @direction={{this.direction}} @divider={{true}} as |Item|>
         {{#each
-          this.filterService.localStorageFilters key="name"
+          this.filterService.savedFilters key="name"
           as |savedFilter index|
         }}
           <Item>
