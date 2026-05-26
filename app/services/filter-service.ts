@@ -256,7 +256,10 @@ export default class FilterService extends Service {
 
   setAllFiltersUnselected(): Filter[] {
     this.selectedSavedFilter = null;
-    const unselectedFilters = this.savedFilters.map((f) => ({ ...f, selected: false }));
+    const unselectedFilters = this.savedFilters.map((f) => ({
+      ...f,
+      selected: false,
+    }));
     this.savedFilters = unselectedFilters;
     return unselectedFilters;
   }
@@ -425,27 +428,31 @@ export default class FilterService extends Service {
       });
       if (!response.ok) return;
       const json = await response.json();
-      const remoteFilters: Filter[] = (json.data || []).map((d: {
-        id: string;
-        attributes: {
-          name: string;
-          filter: AgendaItemsParams;
-          notify?: boolean;
-          createdAt?: string;
-        };
-      }) => ({
-        name: d.attributes.name,
-        filters: d.attributes.filter,
-        notify: d.attributes.notify !== false,
-        selected: false,
-        savedAt: d.attributes.createdAt || new Date().toISOString(),
-        resultCount: 0,
-        remoteId: d.id,
-      }));
+      const remoteFilters: Filter[] = (json.data || []).map(
+        (d: {
+          id: string;
+          attributes: {
+            name: string;
+            filter: AgendaItemsParams;
+            notify?: boolean;
+            createdAt?: string;
+          };
+        }) => ({
+          name: d.attributes.name,
+          filters: d.attributes.filter,
+          notify: d.attributes.notify !== false,
+          selected: false,
+          savedAt: d.attributes.createdAt || new Date().toISOString(),
+          resultCount: 0,
+          remoteId: d.id,
+        }),
+      );
 
       const previouslySelectedId = this.selectedSavedFilter?.remoteId;
       if (previouslySelectedId) {
-        const match = remoteFilters.find((f) => f.remoteId === previouslySelectedId);
+        const match = remoteFilters.find(
+          (f) => f.remoteId === previouslySelectedId,
+        );
         if (match) match.selected = true;
       }
 

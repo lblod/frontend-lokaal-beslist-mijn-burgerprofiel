@@ -16,61 +16,68 @@
 </AuToolbar>
 
 <div class="c-interface__sidebar-main au-u-margin-top-large">
-  {{#unless this.session.isAuthenticated}}
+  {{#if this.session.isAuthenticated}}
+    {{#if this.filterService.savedFilters.length}}
+      <div
+        class="au-u-margin-none au-u-padding-none au-u-flex au-u-flex--column"
+      >
+        <p
+          class="au-u-padding-left au-u-padding-top-small au-u-padding-bottom-small filters-topbar-active-filters"
+        >FILTER NOTIFICATIES</p>
+        <AuHr class="au-u-margin-none" />
+        <AuList @direction={{this.direction}} @divider={{true}} as |Item|>
+          {{#each
+            this.filterService.savedFilters key="name"
+            as |savedFilter index|
+          }}
+            <Item>
+              <div
+                class="au-u-1-1 au-u-flex au-u-flex--between au-u-padding-left au-u-padding-right au-u-padding-top-tiny au-u-padding-bottom-tiny"
+              >
+                <span
+                  class="au-u-h5 au-u-flex au-u-flex--vertical-center au-u-flex--spaced-tiny"
+                >{{savedFilter.name}}
+                  <AuIcon
+                    @icon="gear"
+                    @size="large"
+                    class="cursor"
+                    {{on "click" (fn this.goToEditFilter index)}}
+                  /></span>
+                <AuToggleSwitch
+                  @alignment="right"
+                  @checked={{savedFilter.notify}}
+                  @name="notification-toggle-{{index}}"
+                  @toggle="identifier"
+                  {{on "change" (fn this.toggleNotification index)}}
+                />
+              </div>
+            </Item>
+          {{/each}}
+        </AuList>
+      </div>
+    {{else}}
+      <div
+        class="au-u-flex au-u-flex--column au-u-flex--vertical-center au-u-flex--center au-u-height-full"
+      >
+        <p
+          class="au-u-padding-top-small au-u-padding-bottom-small au-u-text-center"
+        >Geen filters opgeslagen</p>
+        <div>
+          <AuButton @skin="primary" {{on "click" this.goToCreateFilter}}>Maak je
+            eerste filter aan</AuButton>
+        </div>
+      </div>
+    {{/if}}
+  {{else}}
     <div
       class="au-u-flex au-u-flex--column au-u-flex--vertical-center au-u-flex--center au-u-height-full au-u-padding"
     >
-      <p class="au-u-padding-top-small au-u-padding-bottom-small au-u-text-center">
-        Meld u aan met Mijn Burgerprofiel om filters op te slaan en notificaties te ontvangen.
-      </p>
-    </div>
-  {{else if this.filterService.savedFilters.length}}
-    <div class="au-u-margin-none au-u-padding-none au-u-flex au-u-flex--column">
-      <p
-        class="au-u-padding-left au-u-padding-top-small au-u-padding-bottom-small filters-topbar-active-filters"
-      >FILTER NOTIFICATIES</p>
-      <AuHr class="au-u-margin-none" />
-      <AuList @direction={{this.direction}} @divider={{true}} as |Item|>
-        {{#each
-          this.filterService.savedFilters key="name"
-          as |savedFilter index|
-        }}
-          <Item>
-            <div
-              class="au-u-1-1 au-u-flex au-u-flex--between au-u-padding-left au-u-padding-right au-u-padding-top-tiny au-u-padding-bottom-tiny"
-            >
-              <span
-                class="au-u-h5 au-u-flex au-u-flex--vertical-center au-u-flex--spaced-tiny"
-              >{{savedFilter.name}}
-                <AuIcon
-                  @icon="gear"
-                  @size="large"
-                  class="cursor"
-                  {{on "click" (fn this.goToEditFilter index)}}
-                /></span>
-              <AuToggleSwitch
-                @alignment="right"
-                @checked={{savedFilter.notify}}
-                @name="notification-toggle-{{index}}"
-                @toggle="identifier"
-                {{on "change" (fn this.toggleNotification index)}}
-              />
-            </div>
-          </Item>
-        {{/each}}
-      </AuList>
-    </div>
-  {{else}}
-    <div
-      class="au-u-flex au-u-flex--column au-u-flex--vertical-center au-u-flex--center au-u-height-full"
-    >
       <p
         class="au-u-padding-top-small au-u-padding-bottom-small au-u-text-center"
-      >Geen filters opgeslagen</p>
-      <div>
-        <AuButton @skin="primary" {{on "click" this.goToCreateFilter}}>Maak je
-          eerste filter aan</AuButton>
-      </div>
+      >
+        Meld u aan met Mijn Burgerprofiel om filters op te slaan en notificaties
+        te ontvangen.
+      </p>
     </div>
-  {{/unless}}
+  {{/if}}
 </div>
