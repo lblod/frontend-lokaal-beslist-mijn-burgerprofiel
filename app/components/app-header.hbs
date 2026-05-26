@@ -3,6 +3,23 @@
   @homeRoute="agenda-items"
   @appTitle="Lokaal Beslist"
 >
+  {{#if this.session.isAuthenticated}}
+    {{#if this.session.fullName}}
+      <li class="au-c-list-horizontal__item">
+        <span class="au-u-para-small">{{this.session.fullName}}</span>
+      </li>
+    {{/if}}
+    <li class="au-c-list-horizontal__item">
+      <AuButton
+        @skin="secondary"
+        @icon="log-out"
+        @iconAlignment="left"
+        {{on "click" this.logout}}
+      >
+        Afmelden
+      </AuButton>
+    </li>
+  {{/if}}
   <li class="au-c-list-horizontal__item">
     <AuLink @route="help" @skin="secondary" @icon="question-circle">
       Meer info

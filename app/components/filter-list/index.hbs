@@ -12,7 +12,7 @@
   </Group>
 
   <Group>
-    {{#if @model.localStorageFilter}}
+    {{#if @model.editingFilter}}
       <AuButton
         class="action-sdk-color border-top"
         @skin="link"
@@ -37,8 +37,8 @@
       <AuLabel for="filter-name">Kies een naam voor je eigen filter</AuLabel>
       <AuInput
         value={{if
-          @model.localStorageFilter.name
-          @model.localStorageFilter.name
+          @model.editingFilter.name
+          @model.editingFilter.name
           this.filterName
         }}
         id="filter-name"
@@ -54,30 +54,32 @@
     <AuHr class="au-u-margin-bottom-none" />
 
   {{else}}
-    {{#if this.filterService.savedFilters.length}}
-      <div class="au-u-margin-top">
-        <Filters::SelectFilter
-          @id="filter"
-          @label="Zoek op eigen filter"
-          @options={{this.filterService.savedFilters}}
-          @selected={{this.filterService.selectedSavedFilter}}
-          @updateSelected={{this.filterService.loadFilter}}
-          @queryParam="filter"
-          @searchEnabled={{false}}
-          @placeholder="Kies een filter"
-          @searchField="name"
-        />
-        <div class="au-u-flex au-u-flex--end">
-          <AuButton
-            @skin="link-secondary"
-            class="au-u-padding-none au-u-flex--end action-sdk-color"
-            {{on "click" this.goToFilters}}
-          >
-            Eigen filters beheren
-          </AuButton>
+    {{#if this.session.isAuthenticated}}
+      {{#if this.filterService.savedFilters.length}}
+        <div class="au-u-margin-top">
+          <Filters::SelectFilter
+            @id="filter"
+            @label="Zoek op eigen filter"
+            @options={{this.filterService.savedFilters}}
+            @selected={{this.filterService.selectedSavedFilter}}
+            @updateSelected={{this.filterService.loadFilter}}
+            @queryParam="filter"
+            @searchEnabled={{false}}
+            @placeholder="Kies een filter"
+            @searchField="name"
+          />
+          <div class="au-u-flex au-u-flex--end">
+            <AuButton
+              @skin="link-secondary"
+              class="au-u-padding-none au-u-flex--end action-sdk-color"
+              {{on "click" this.goToFilters}}
+            >
+              Eigen filters beheren
+            </AuButton>
+          </div>
         </div>
-      </div>
-      <AuHr class="au-u-margin-bottom-none" />
+        <AuHr class="au-u-margin-bottom-none" />
+      {{/if}}
     {{/if}}
   {{/if}}
 
@@ -181,26 +183,28 @@
 <div class="c-interface__sidebar-submit-buttons">
   <AuHr />
   {{#if @edit}}
-    {{#if @model.localStorageFilter}}
-      <AuButton
-        @skin="primary"
-        @width="block"
-        @loadingMessage="hidden"
-        @disabled={{this.isSavingFilters}}
-        @isLoading={{this.isSavingFilters}}
-        {{on "click" (fn this.editFilter @model.localStorageFilter)}}
-      > Filter opslaan</AuButton>
-    {{else}}
-      <AuButton
-        @skin="primary"
-        @width="block"
-        @loadingMessage="hidden"
-        @disabled={{or this.isSavingFilters (not this.filterName)}}
-        @isLoading={{this.isSavingFilters}}
-        {{on "click" this.saveFilters}}
-      >
-        Filter opslaan
-      </AuButton>
+    {{#if this.session.isAuthenticated}}
+      {{#if @model.editingFilter}}
+        <AuButton
+          @skin="primary"
+          @width="block"
+          @loadingMessage="hidden"
+          @disabled={{this.isSavingFilters}}
+          @isLoading={{this.isSavingFilters}}
+          {{on "click" (fn this.editFilter @model.editingFilter)}}
+        > Filter opslaan</AuButton>
+      {{else}}
+        <AuButton
+          @skin="primary"
+          @width="block"
+          @loadingMessage="hidden"
+          @disabled={{or this.isSavingFilters (not this.filterName)}}
+          @isLoading={{this.isSavingFilters}}
+          {{on "click" this.saveFilters}}
+        >
+          Filter opslaan
+        </AuButton>
+      {{/if}}
     {{/if}}
   {{else}}
     <AuButton

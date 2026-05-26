@@ -19,13 +19,15 @@
         {{on "click" @onFilterReset}}
         class="au-u-bold link-without-line"
       >Wis filters</AuButton>
-      {{#unless this.filterService.selectedSavedFilter}}
-        <AuButton
-          class="au-u-bold link-without-line"
-          @skin="link"
-          {{on "click" @onFilterSave}}
-        >Filters Opslaan</AuButton>
-      {{/unless}}
+      {{#if this.session.isAuthenticated}}
+        {{#unless this.filterService.selectedSavedFilter}}
+          <AuButton
+            class="au-u-bold link-without-line"
+            @skin="link"
+            {{on "click" @onFilterSave}}
+          >Filters Opslaan</AuButton>
+        {{/unless}}
+      {{/if}}
     </div>
     <AuHr class="au-u-1-1 au-u-margin-top-none" />
     <div class="pills">

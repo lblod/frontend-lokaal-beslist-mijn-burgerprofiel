@@ -12,6 +12,7 @@ import type GovernmentListService from 'frontend-burgernabije-besluitendatabank/
 import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 import type ThemeListService from 'frontend-burgernabije-besluitendatabank/services/theme-list';
 import type GoverningBodyListService from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
+import type SessionService from 'frontend-burgernabije-besluitendatabank/services/session';
 
 import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
 import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
@@ -36,6 +37,7 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   @service declare governingBodyList: GoverningBodyListService;
   @service declare themeList: ThemeListService;
   @service declare mbpEmbed: MbpEmbedService;
+  @service declare session: SessionService;
 
   constructor(
     owner: unknown,

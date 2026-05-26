@@ -15,6 +15,7 @@ import type { DistanceOption } from 'frontend-burgernabije-besluitendatabank/ser
 import type AddressService from 'frontend-burgernabije-besluitendatabank/services/address';
 import type { ModelFrom } from 'frontend-burgernabije-besluitendatabank/lib/type-utils';
 import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
+import type SessionService from 'frontend-burgernabije-besluitendatabank/services/session';
 import { LocalGovernmentType } from 'frontend-burgernabije-besluitendatabank/services/government-list';
 import { formatNumber } from 'frontend-burgernabije-besluitendatabank/helpers/format-number';
 import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
@@ -31,6 +32,7 @@ export interface Filter {
   selected: boolean;
   savedAt: string;
   resultCount: number;
+  remoteId?: string;
 }
 interface FilterListArgs {
   model: ModelFrom<FilterEditRoute>;
@@ -47,6 +49,7 @@ export default class FilterList extends Component<FilterListArgs> {
   @service declare distanceList: DistanceListService;
   @service declare address: AddressService;
   @service declare mbpEmbed: MbpEmbedService;
+  @service declare session: SessionService;
   @tracked dateRangeHasErrors = false;
   @tracked isSavingFilters = false;
   @tracked filterName = '';
@@ -55,7 +58,7 @@ export default class FilterList extends Component<FilterListArgs> {
   constructor(owner: unknown, args: FilterListArgs) {
     super(owner, args);
     this.filterService.loadSavedFilters();
-    this.filterName = this.args.model?.localStorageFilter?.name ?? '';
+    this.filterName = this.args.model?.editingFilter?.name ?? '';
   }
 
   get model() {
@@ -263,7 +266,7 @@ export default class FilterList extends Component<FilterListArgs> {
   }
 
   @action
-  saveFilters() {
+  async saveFilters() {
     if (this.filterName.trim() === '') {
       return (this.errorMessage = 'De filternaam mag niet leeg zijn.');
     }
@@ -278,7 +281,7 @@ export default class FilterList extends Component<FilterListArgs> {
     this.isSavingFilters = true;
     const filters = this.filterService.filters;
 
-    const newFilter = {
+    const newFilter: Filter = {
       name: this.filterName,
       filters,
       notify: true,
@@ -286,6 +289,10 @@ export default class FilterList extends Component<FilterListArgs> {
       savedAt: new Date().toISOString(),
       resultCount: this.itemsService.totalItemCount || 0,
     };
+
+    const remoteId = await this.filterService.uploadFilter(newFilter);
+    if (remoteId) newFilter.remoteId = remoteId;
+
     const updatedSavedFilters = [...saved, newFilter];
 
     this.filterService.setAllFiltersUnselected();
@@ -297,7 +304,7 @@ export default class FilterList extends Component<FilterListArgs> {
   }
 
   @action
-  editFilter(filter: Filter) {
+  async editFilter(filter: Filter) {
     const name = this.filterName?.trim() || filter.name;
     if (name === '') {
       return (this.errorMessage = 'De filternaam mag niet leeg zijn.');
@@ -324,6 +331,17 @@ export default class FilterList extends Component<FilterListArgs> {
       savedAt: new Date().toISOString(),
       resultCount: this.itemsService.totalItemCount || 0,
     };
+
+    if (updatedFilter.remoteId) {
+      await this.filterService.updateRemoteFilter(updatedFilter.remoteId, {
+        name: updatedFilter.name,
+        filter: updatedFilter.filters,
+        notify: updatedFilter.notify,
+      });
+    } else {
+      const remoteId = await this.filterService.uploadFilter(updatedFilter);
+      if (remoteId) updatedFilter.remoteId = remoteId;
+    }
 
     const updatedSavedFilters = saved.map((f) =>
       f.name === filter.name ? updatedFilter : f,

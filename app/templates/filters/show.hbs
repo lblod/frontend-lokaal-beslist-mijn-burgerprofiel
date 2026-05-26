@@ -16,7 +16,15 @@
 </AuToolbar>
 
 <div class="c-interface__sidebar-main au-u-margin-top-large">
-  {{#if this.filterService.savedFilters.length}}
+  {{#unless this.session.isAuthenticated}}
+    <div
+      class="au-u-flex au-u-flex--column au-u-flex--vertical-center au-u-flex--center au-u-height-full au-u-padding"
+    >
+      <p class="au-u-padding-top-small au-u-padding-bottom-small au-u-text-center">
+        Meld u aan met Mijn Burgerprofiel om filters op te slaan en notificaties te ontvangen.
+      </p>
+    </div>
+  {{else if this.filterService.savedFilters.length}}
     <div class="au-u-margin-none au-u-padding-none au-u-flex au-u-flex--column">
       <p
         class="au-u-padding-left au-u-padding-top-small au-u-padding-bottom-small filters-topbar-active-filters"
@@ -64,5 +72,5 @@
           eerste filter aan</AuButton>
       </div>
     </div>
-  {{/if}}
+  {{/unless}}
 </div>

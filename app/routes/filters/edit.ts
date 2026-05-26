@@ -24,13 +24,12 @@ export default class FilterEditRoute extends Route {
   }
 
   async model(params: Params, transition: Transition) {
-    let localStorageFilter = null;
+    let editingFilter = null;
     if (params.id >= 0) {
-      // Get filters from database and remove localStorage filters to prevent confusion
-      localStorageFilter = JSON.parse(
-        localStorage.getItem('localStorageFilters') || '[]',
-      )[params.id];
-      this.filterService.loadFilter(localStorageFilter);
+      editingFilter = this.filterService.savedFilters[params.id] ?? null;
+      if (editingFilter) {
+        this.filterService.loadFilter(editingFilter);
+      }
     }
     this.governingBodyList.loadOptions();
     return {
@@ -38,7 +37,7 @@ export default class FilterEditRoute extends Route {
       distanceOptions: this.distanceList.getOptions(),
       previousRoute: transition?.from,
       initialQueryParams: this.filterService.asQueryParams,
-      localStorageFilter,
+      editingFilter,
       id: params.id,
     };
   }

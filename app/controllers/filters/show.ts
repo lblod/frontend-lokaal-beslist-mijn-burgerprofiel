@@ -5,9 +5,11 @@ import { service } from '@ember/service';
 import type { ModelFrom } from 'frontend-burgernabije-besluitendatabank/lib/type-utils';
 import type FilterRoute from 'frontend-burgernabije-besluitendatabank/routes/filters';
 import type FilterService from 'frontend-burgernabije-besluitendatabank/services/filter-service';
+import type SessionService from 'frontend-burgernabije-besluitendatabank/services/session';
 
 export default class FilterShowController extends Controller {
   @service declare filterService: FilterService;
+  @service declare session: SessionService;
   @service declare router: RouterService;
 
   declare model: ModelFrom<FilterRoute>;
@@ -22,20 +24,21 @@ export default class FilterShowController extends Controller {
   }
 
   @action
-  toggleNotification(index: number) {
-    console.log(index);
-    this.filterService.savedFilters = this.filterService.savedFilters.map(
-      (filter, i) => {
-        if (i !== index) return filter;
+  async toggleNotification(index: number) {
+    const target = this.filterService.savedFilters[index];
+    if (!target) return;
 
-        return { ...filter, notify: !filter.notify };
-      },
+    const updated = this.filterService.savedFilters.map((filter, i) =>
+      i === index ? { ...filter, notify: !filter.notify } : filter,
     );
-    // Save this filter into database and remove localStorage filters to prevent confusion
-    localStorage.setItem(
-      'localStorageFilters',
-      JSON.stringify(this.filterService.savedFilters),
-    );
+    this.filterService.updateSavedFilters(updated);
+
+    const changed = updated[index];
+    if (changed?.remoteId) {
+      await this.filterService.updateRemoteFilter(changed.remoteId, {
+        notify: changed.notify,
+      });
+    }
   }
 
   @action
