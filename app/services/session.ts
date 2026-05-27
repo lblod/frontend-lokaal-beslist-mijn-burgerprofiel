@@ -14,8 +14,14 @@ export default class SessionService extends Service {
   }
 
   async initialize(handoverToken?: string) {
-    if (!handoverToken) return;
+    if (handoverToken) {
+      await this.exchangeHandoverToken(handoverToken);
+    } else {
+      await this.restoreSession();
+    }
+  }
 
+  private async exchangeHandoverToken(handoverToken: string) {
     try {
       const response = await fetch('/auth/v1/exchange', {
         method: 'POST',
@@ -29,15 +35,7 @@ export default class SessionService extends Service {
         this.firstName = data.data?.attributes?.firstName ?? null;
         this.lastName = data.data?.attributes?.lastName ?? null;
         this.isAuthenticated = true;
-
-        const filterService = getOwner(this)?.lookup(
-          'service:filter-service',
-        ) as FilterService | undefined;
-        try {
-          await filterService?.reconcileWithBackend();
-        } catch (e) {
-          console.warn('saved-filter reconcile failed:', e);
-        }
+        await this.loadFilters();
       } else {
         console.error('Handover token exchange failed:', response.status);
       }
@@ -45,6 +43,35 @@ export default class SessionService extends Service {
       console.error('Session initialization failed:', e);
     } finally {
       this.removeHandoverTokenFromUrl();
+    }
+  }
+
+  private async restoreSession() {
+    try {
+      const response = await fetch('/auth/v1/session', {
+        credentials: 'same-origin',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        this.firstName = data.data?.attributes?.firstName ?? null;
+        this.lastName = data.data?.attributes?.lastName ?? null;
+        this.isAuthenticated = true;
+        await this.loadFilters();
+      }
+    } catch (e) {
+      console.warn('Session restore failed:', e);
+    }
+  }
+
+  private async loadFilters() {
+    const filterService = getOwner(this)?.lookup(
+      'service:filter-service',
+    ) as FilterService | undefined;
+    try {
+      await filterService?.reconcileWithBackend();
+    } catch (e) {
+      console.warn('saved-filter reconcile failed:', e);
     }
   }
 
