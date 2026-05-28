@@ -1,5 +1,6 @@
 import type { PageableRequest } from 'frontend-burgernabije-besluitendatabank/services/mu-search';
 import type Session from 'frontend-burgernabije-besluitendatabank/models/mu-search/session';
+import type { Address } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
 
 export interface SessionsParams {
   municipalityLabels: Array<string>;
@@ -26,6 +27,9 @@ export type SessionsQueryArguments = {
   keyword: string | null;
   locationIds?: string;
   provinceIds?: string;
+  themeIds?: string | null;
+  address?: Address | null;
+  distance?: string | null;
   plannedStartMin: string | null;
   plannedStartMax: string | null;
   dateSort?: string;

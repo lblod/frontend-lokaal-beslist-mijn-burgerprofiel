@@ -62,13 +62,11 @@ function buildFilters({
     query[':terms:search_location_id'] = locationIds;
   }
   if (themeIds) {
-    query[':query:themas.uuid'] = deserializeArray(themeIds)
-      .map((id) => `"${id}"`)
-      .join(' OR ');
+    query[':terms:search_theme_id'] = deserializeArray(themeIds).join(',');
   }
   if (filters?.distance || address) {
     query[':geo:address_geometry_coord'] =
-      `${address?.location.lat}, ${address?.location.lon},${filters?.distance ?? 50}km`;
+      `${address?.location.xLambert72}, ${address?.location.yLambert72},${filters?.distance ?? 50}km`;
   }
   if (governingBodyClassificationIds) {
     query[':terms:search_governing_body_classification_id'] =

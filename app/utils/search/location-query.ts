@@ -24,6 +24,8 @@ export async function createLocationQuery(
       location: {
         lat: result.Location.Lat_WGS84,
         lon: result.Location.Lon_WGS84,
+        xLambert72: result.Location.X_Lambert72,
+        yLambert72: result.Location.Y_Lambert72,
       },
     };
   });

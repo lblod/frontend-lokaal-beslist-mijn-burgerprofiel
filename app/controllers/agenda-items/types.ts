@@ -92,6 +92,8 @@ export interface Address {
   location: {
     lat: number;
     lon: number;
+    xLambert72: number;
+    yLambert72: number;
   };
 }
 
