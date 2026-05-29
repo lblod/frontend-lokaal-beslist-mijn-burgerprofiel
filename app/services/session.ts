@@ -65,9 +65,9 @@ export default class SessionService extends Service {
   }
 
   private async loadFilters() {
-    const filterService = getOwner(this)?.lookup(
-      'service:filter-service',
-    ) as FilterService | undefined;
+    const filterService = getOwner(this)?.lookup('service:filter-service') as
+      | FilterService
+      | undefined;
     try {
       await filterService?.reconcileWithBackend();
     } catch (e) {
