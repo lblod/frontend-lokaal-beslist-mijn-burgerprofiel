@@ -61,14 +61,24 @@
             Onbekend
           {{/if}}
         </li>
-        {{#each this.model.agendaItem.hasLocation as |loc|}}
+        {{#each this.model.locations as |loc|}}
           <li>
             <AuIcon @size="large" @icon="location" />
             <span class="au-u-hidden-visually">Locatie:</span>
-            {{loc.label}}
+            {{#if loc.label}}
+              <AuLinkExternal
+                href={{loc.href}}
+                @iconAlignment="right"
+                @icon="external-link"
+              >
+                {{loc.label}}
+              </AuLinkExternal>
+            {{else}}
+              {{loc.label}}
+            {{/if}}
           </li>
         {{/each}}
-        {{#each this.model.agendaItem.hasThemes as |theme|}}
+        {{#each this.model.themes as |theme|}}
           <li>
             <AuIcon @size="large" @icon="bookmark" />
             <span class="au-u-hidden-visually">Thema:</span>
