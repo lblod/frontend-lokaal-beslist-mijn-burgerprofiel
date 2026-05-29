@@ -313,21 +313,40 @@ export default class FilterService extends Service {
   @action
   async loadFilter(savedFilter: Filter) {
     if (!savedFilter) return;
-    if (savedFilter && savedFilter.filters.street) {
+
+    if (savedFilter.filters.street) {
       const address = await this.address.getSelectedAddress.perform(
         savedFilter.filters.street,
       );
       if (address) this.address.setSelectedAddress(address);
+    } else {
+      this.address.selectedAddress = undefined;
     }
-    this.setFilters(savedFilter.filters);
+
+    this.filters = {
+      keyword: null,
+      keywordSearchOnlyInTitle: null,
+      municipalityLabels: [],
+      provinceLabels: [],
+      plannedStartMin: null,
+      plannedStartMax: null,
+      dateSort: 'desc' as SortType,
+      governingBodyClassificationIds: [],
+      dataQualityList: [],
+      status: '',
+      themeIds: [],
+      street: null,
+      distance: null,
+      ...savedFilter.filters,
+    };
+    this.keywordAdvancedSearch = savedFilter.filters.keyword
+      ? keywordSearch([savedFilter.filters.keyword])
+      : null;
+
     this.governmentList.loadSelectedGoverningBodiesByLabels();
     this.distanceList.selected = this.distanceList.getSelectedDistance(
       savedFilter.filters.distance,
     );
-    // this.loadDateRange(
-    //   savedFilter.filters.plannedStartMin || '',
-    //   savedFilter.filters.plannedStartMax || '',
-    // );
     this.selectFilter(savedFilter.name);
 
     this.itemsService.fetchItems.perform(0, { size: 1 });

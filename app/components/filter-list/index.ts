@@ -297,6 +297,7 @@ export default class FilterList extends Component<FilterListArgs> {
 
     this.filterService.setAllFiltersUnselected();
     this.filterService.updateSavedFilters(updatedSavedFilters);
+    this.filterService.selectedSavedFilter = newFilter;
 
     this.filterName = '';
     this.isSavingFilters = false;

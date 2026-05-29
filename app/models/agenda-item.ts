@@ -8,6 +8,8 @@ import { sortSessions } from 'frontend-burgernabije-besluitendatabank/utils/sort
 import type AgendaItemHandlingModel from './agenda-item-handling';
 import type ResolutionModel from './resolution';
 import type SessionModel from './session';
+import type ConceptModel from './concept';
+import type LocationModel from './location';
 
 export default class AgendaItemModel extends Model {
   @attr('string') declare title: string;
@@ -20,6 +22,12 @@ export default class AgendaItemModel extends Model {
 
   @belongsTo('agenda-item-handling', { async: true, inverse: null })
   declare handledBy?: AsyncBelongsTo<AgendaItemHandlingModel>;
+
+  @hasMany('concept', { async: true, inverse: null })
+  declare hasThemes?: AsyncHasMany<ConceptModel>;
+
+  @hasMany('location', { async: true, inverse: null })
+  declare hasLocation?: AsyncHasMany<LocationModel>;
 
   /**
    * @returns the first session with hasMunicipality == true

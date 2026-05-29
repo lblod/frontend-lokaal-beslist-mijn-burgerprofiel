@@ -35,7 +35,9 @@ export default class AgendaItemRoute extends Route {
   }
 
   async model(params: DetailParams) {
-    const agendaItem = await this.store.findRecord('agenda-item', params.id);
+    const agendaItem = await this.store.findRecord('agenda-item', params.id, {
+      include: 'has-themes,has-location',
+    });
 
     // wait until sessions are loaded
     const sessions = await agendaItem.sessions;
