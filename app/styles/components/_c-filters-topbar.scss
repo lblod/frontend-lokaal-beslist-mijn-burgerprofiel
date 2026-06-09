@@ -1,8 +1,10 @@
 .filters-topbar-active-filters {
   background-color: var(--au-gray-200);
-  padding: $au-unit 0;
+  padding: 0 0 $au-unit-small;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
+  align-items: flex-start;
 
   .pills {
     padding: 0 $au-unit-small;
@@ -12,7 +14,13 @@
   }
 
   #reset-button {
-    padding: 0 $au-unit;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    padding: 1rem $au-unit-small;
+    width: 100%;
+    align-items: end;
+    background-color: var(--au-gray-200);
   }
 
   .au-c-pill-container {

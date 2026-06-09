@@ -7,6 +7,7 @@ import config from 'frontend-burgernabije-besluitendatabank/config/environment';
 import type PlausibleService from 'ember-plausible/services/plausible';
 import type GoverningBodyDisabledList from 'frontend-burgernabije-besluitendatabank/services/governing-body-disabled-list';
 import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
+import type SessionService from 'frontend-burgernabije-besluitendatabank/services/session';
 import type Transition from '@ember/routing/transition';
 import type ThemeListService from 'frontend-burgernabije-besluitendatabank/services/theme-list';
 import type GoverningBodyListService from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
@@ -19,6 +20,7 @@ export default class ApplicationRoute extends Route {
   @service declare governingBodyList: GoverningBodyListService;
   @service declare themeList: ThemeListService;
   @service declare mbpEmbed: MbpEmbedService;
+  @service declare session: SessionService;
   @service declare router: Route;
   @service declare navigation: NavigationService;
   @service('item-list') declare itemsService: ItemListService;
@@ -34,13 +36,15 @@ export default class ApplicationRoute extends Route {
     });
   }
 
-  beforeModel(transition: Transition): void {
+  async beforeModel(transition: Transition): Promise<void> {
     this.startAnalytics();
     this.setGoverningBodyDisabledList();
-    let gemeentes = undefined;
-    if (transition.to?.queryParams) {
-      gemeentes = transition.to?.queryParams['gemeentes'];
-    }
+
+    const queryParams = transition.to?.queryParams ?? {};
+    const handoverToken = queryParams['token'];
+    const gemeentes = queryParams['gemeentes'];
+    await this.session.initialize(handoverToken);
+
     this.mbpEmbed
       .setup(gemeentes)
       .then(() => this.mbpEmbed.setLoadingStateFalse());

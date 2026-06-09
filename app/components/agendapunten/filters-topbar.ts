@@ -12,6 +12,7 @@ import type GovernmentListService from 'frontend-burgernabije-besluitendatabank/
 import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 import type ThemeListService from 'frontend-burgernabije-besluitendatabank/services/theme-list';
 import type GoverningBodyListService from 'frontend-burgernabije-besluitendatabank/services/governing-body-list';
+import type SessionService from 'frontend-burgernabije-besluitendatabank/services/session';
 
 import QueryParameterKeys from 'frontend-burgernabije-besluitendatabank/constants/query-parameter-keys';
 import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
@@ -20,6 +21,7 @@ export interface AgendapuntenFiltersTopbarSignature {
   Args: {
     filters: FiltersAsQueryParams;
     onFiltersUpdated: () => void;
+    onFilterReset: () => void;
   };
   Element: null;
 }
@@ -35,6 +37,7 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   @service declare governingBodyList: GoverningBodyListService;
   @service declare themeList: ThemeListService;
   @service declare mbpEmbed: MbpEmbedService;
+  @service declare session: SessionService;
 
   constructor(
     owner: unknown,
@@ -45,7 +48,9 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
   }
 
   get hasFilters() {
-    return this.filterValues.length >= 1;
+    return (
+      this.filterValues.length >= 1 || this.filterService.selectedSavedFilter
+    );
   }
 
   get isFiltersDisabled() {
@@ -215,6 +220,12 @@ export default class AgendapuntenFiltersTopbar extends Component<AgendapuntenFil
         value: label,
       };
     });
+  }
+  @action
+  removeSavedFilter() {
+    this.filterService.selectedSavedFilter = null;
+    this.args.onFilterReset?.();
+    this.itemsService.fetchItems.perform(0);
   }
 
   @action

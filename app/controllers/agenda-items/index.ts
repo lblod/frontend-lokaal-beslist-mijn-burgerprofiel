@@ -33,6 +33,7 @@ export default class AgendaItemsIndexController extends Controller {
       this.governmentList.selected = [];
     }
     this.filterService.resetFiltersToInitialView();
+    this.filterService.setAllFiltersUnselected();
     this.itemsService.currentPage = 0;
     this.router.transitionTo(this.router.currentRouteName, {
       queryParams: this.filterService.resetQueryParams,
@@ -40,8 +41,13 @@ export default class AgendaItemsIndexController extends Controller {
   }
 
   @action
+  goToSaveFilter() {
+    this.router.transitionTo('filters.edit', -1);
+  }
+
+  @action
   goToFilters() {
-    this.router.transitionTo('filter');
+    this.router.transitionTo('filters.index');
   }
 
   @action

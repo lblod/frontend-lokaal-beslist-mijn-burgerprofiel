@@ -7,10 +7,11 @@ import type Transition from '@ember/routing/transition';
 
 import { createMbpEmbedClient } from '@govflanders/mbp-embed-sdk';
 import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
+import { tracked } from '@glimmer/tracking';
 
 export default class MbpEmbedService extends Service {
-  declare client: MbpEmbedClient;
-  declare tenant: Tenant;
+  @tracked client?: MbpEmbedClient;
+  declare tenant?: Tenant;
   declare municipalityLabel?: string;
 
   get clientId() {
@@ -84,7 +85,8 @@ export default class MbpEmbedService extends Service {
     const routeTitleMap: Record<string, string> = {
       ['agenda-items.agenda-item']: 'Agendapunt',
       ['sessions.session']: 'Zitting',
-      ['filter']: 'Filters',
+      ['filters']: 'Filters',
+      ['filters.edit']: 'Eigen filters',
     };
     const hiddenSpace = '‎';
     let routeTitle = hiddenSpace;

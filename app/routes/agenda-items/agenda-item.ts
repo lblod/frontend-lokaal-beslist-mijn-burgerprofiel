@@ -5,20 +5,35 @@ import { service } from '@ember/service';
 import type AgendaItemController from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/agenda-item';
 import type AgendaItemModel from 'frontend-burgernabije-besluitendatabank/models/agenda-item';
 import type ArticleModel from 'frontend-burgernabije-besluitendatabank/models/article';
+import type ConceptModel from 'frontend-burgernabije-besluitendatabank/models/concept';
 import type VoteModel from 'frontend-burgernabije-besluitendatabank/models/vote';
 import type GoverningBodyDisabledList from 'frontend-burgernabije-besluitendatabank/services/governing-body-disabled-list';
 import type KeywordStoreService from 'frontend-burgernabije-besluitendatabank/services/keyword-store';
 import type MbpEmbedService from 'frontend-burgernabije-besluitendatabank/services/mbp-embed';
 import { sortObjectsByTitle } from 'frontend-burgernabije-besluitendatabank/utils/array-utils';
+import {
+  formatLatLon,
+  osmUrlFromLabel,
+  osmUrlFromWkt,
+  wgs84FromWkt,
+} from 'frontend-burgernabije-besluitendatabank/utils/openstreetmap';
 
 interface DetailParams {
   id: string;
+}
+
+interface LocationEntry {
+  id: string;
+  label?: string;
+  href: string;
 }
 
 interface AgendaItemRouteModel {
   agendaItem: AgendaItemModel;
   vote?: VoteModel;
   articles: ArticleModel[];
+  themes: ConceptModel[];
+  locations: LocationEntry[];
   agendaItemOnSameSession: AgendaItemModel[];
   similiarAgendaItems: AgendaItemModel[];
 }
@@ -35,7 +50,10 @@ export default class AgendaItemRoute extends Route {
   }
 
   async model(params: DetailParams) {
-    const agendaItem = await this.store.findRecord('agenda-item', params.id);
+    const agendaItem = await this.store.findRecord('agenda-item', params.id, {
+      include:
+        'has-themes,has-location,handled-by.resolutions.has-themes,handled-by.resolutions.has-location.geometry',
+    });
 
     // wait until sessions are loaded
     const sessions = await agendaItem.sessions;
@@ -86,6 +104,61 @@ export default class AgendaItemRoute extends Route {
       .flat()
       .sort((a, b) => a.numberAsInt - b.numberAsInt);
 
+    // Themes can be linked to the agenda-item directly (sro:heeftThema), but in
+    // practice they live on the generated resolution (dct:subject). Merge both
+    // sources and de-duplicate by id so the detail page shows them either way.
+    const agendaItemThemes = (await agendaItem.hasThemes)?.slice() ?? [];
+    const resolutionThemes = (
+      await Promise.all(
+        resolutions?.map(
+          async (resolution) => (await resolution.hasThemes)?.slice() ?? [],
+        ) || [],
+      )
+    ).flat();
+    const themesById = new Map<string, ConceptModel>();
+    [...agendaItemThemes, ...resolutionThemes].forEach((theme) => {
+      themesById.set(theme.id, theme);
+    });
+    const themes = [...themesById.values()];
+
+    // Locations follow the same pattern as themes: the agenda-item can carry
+    // them directly (sro:heeftLocatie), but in practice the physical place
+    // (locn:Location) lives on the resolution (prov:atLocation). The place's
+    // geometry holds Lambert 72 (EPSG:31370) coordinates, which we convert to
+    // WGS84 to build a precise OpenStreetMap link; otherwise we fall back to a
+    // label search.
+    const agendaItemLocations: LocationEntry[] = (
+      (await agendaItem.hasLocation)?.slice() ?? []
+    ).map((location) => ({
+      id: location.id,
+      label: location.label,
+      href: osmUrlFromLabel(location.label),
+    }));
+    const resolutionLocations = (
+      await Promise.all(
+        resolutions?.map(async (resolution): Promise<LocationEntry[]> => {
+          const place = await resolution.hasLocation;
+          if (!place) {
+            return [];
+          }
+          const geometry = await place.geometry;
+          const latLon = wgs84FromWkt(geometry?.coordinates);
+          // Fall back to the coordinates when the place has no label.
+          const label =
+            place.label || (latLon ? formatLatLon(latLon) : undefined);
+          const href =
+            osmUrlFromWkt(geometry?.coordinates) ??
+            osmUrlFromLabel(place.label);
+          return [{ id: place.id, label, href }];
+        }) || [],
+      )
+    ).flat();
+    const locationsById = new Map<string, LocationEntry>();
+    [...agendaItemLocations, ...resolutionLocations].forEach((location) => {
+      locationsById.set(location.id, location);
+    });
+    const locations = [...locationsById.values()];
+
     const locationId = agendaItem.session?.municipalityId;
 
     // load 5 similiar agenda items in order to filter out the current agenda item
@@ -98,6 +171,8 @@ export default class AgendaItemRoute extends Route {
       agendaItem,
       vote,
       articles,
+      themes,
+      locations,
       agendaItemOnSameSession,
       similarAgendaItemsPromise,
     };

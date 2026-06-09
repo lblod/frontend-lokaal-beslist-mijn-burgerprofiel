@@ -1,0 +1,222 @@
+<AuToolbar
+  @border="bottom"
+  class="au-u-padding link-without-line action-sdk-color sticky-top au-u-padding-top-none au-u-padding-bottom-none"
+  as |Group|
+>
+  <Group>
+    <AuButton
+      class="link-without-line action-sdk-color"
+      @skin="link"
+      {{on "click" this.closeFilters}}
+    >Sluiten</AuButton>
+  </Group>
+
+  <Group>
+    {{#if @model.editingFilter}}
+      <AuButton
+        class="action-sdk-color border-top"
+        @skin="link"
+        {{on "click" (fn this.filterService.deleteFilter @model.id)}}
+      >Filter verwijderen</AuButton>
+    {{else}}
+      <AuButton
+        class="action-sdk-color border-top"
+        @skin="link"
+        {{on "click" this.filterService.resetFilters}}
+      >Reset filters</AuButton>
+    {{/if}}
+
+  </Group>
+</AuToolbar>
+
+<div
+  class="c-interface__sidebar-main au-u-padding-left au-u-padding-right au-u-margin-top-large"
+>
+  {{#if @edit}}
+    <div class="au-u-margin-top">
+      <AuLabel for="filter-name">Kies een naam voor je eigen filter</AuLabel>
+      <AuInput
+        value={{if
+          @model.editingFilter.name
+          @model.editingFilter.name
+          this.filterName
+        }}
+        id="filter-name"
+        @placeholder="Filter naam"
+        @width="block"
+        @error={{this.errorMessage}}
+        {{on "input" this.updateFilterName}}
+      />
+      {{#if this.errorMessage}}
+        <AuHelpText @error={{true}}>{{this.errorMessage}}</AuHelpText>
+      {{/if}}
+    </div>
+    <AuHr class="au-u-margin-bottom-none" />
+
+  {{else}}
+    {{#if this.session.isAuthenticated}}
+      {{#if this.filterService.savedFilters.length}}
+        <div class="au-u-margin-top">
+          <Filters::SelectFilter
+            @id="filter"
+            @label="Zoek op eigen filter"
+            @options={{this.filterService.savedFilters}}
+            @selected={{this.filterService.selectedSavedFilter}}
+            @updateSelected={{this.filterService.loadFilter}}
+            @queryParam="filter"
+            @searchEnabled={{false}}
+            @placeholder="Kies een filter"
+            @searchField="name"
+          />
+          <div class="au-u-flex au-u-flex--end">
+            <AuButton
+              @skin="link-secondary"
+              class="au-u-padding-none au-u-flex--end action-sdk-color"
+              {{on "click" this.goToFilters}}
+            >
+              Eigen filters beheren
+            </AuButton>
+          </div>
+        </div>
+        <AuHr class="au-u-margin-bottom-none" />
+      {{/if}}
+    {{/if}}
+  {{/if}}
+
+  {{#if this.isMunicipalitySelectorShown}}
+    <Filters::SelectMultipleFilter
+      class="au-u-margin-top-small"
+      @id="municipality"
+      @label="Kies één of meer besturen"
+      @options={{this.governmentList.options}}
+      @selected={{this.governmentList.selected}}
+      @updateSelected={{this.updateSelectedGovernment}}
+      @noMatchesMessage="Geen besturen gevonden"
+      @searchField="label"
+      @queryParam="gemeentes+provincies"
+      @placeholder="Alle besturen"
+    />
+  {{/if}}
+  <Filters::AdvancedInputSearch
+    class={{if this.isMunicipalitySelectorShown "" "au-u-margin-top"}}
+    @value={{this.filterService.filters.keyword}}
+    @searchOnlyOnTitle={{this.filterService.filters.keywordSearchOnlyInTitle}}
+    @onUpdateKeyword={{this.updateKeyword}}
+  />
+  <section class="au-u-flex au-u-flex--column">
+    <AuLabel for="sort-on">Sorteren</AuLabel>
+    <select
+      id="sort-on"
+      type="select"
+      {{on "change" this.updateSorting}}
+      class="au-c-input au-u-1-1"
+    >
+      <option value="desc" selected={{this.isFilterDescending}}>Nieuwste eerst</option>
+      <option value="asc" selected={{this.isFilterAscending}}>Oudste eerst</option>
+    </select>
+  </section>
+  <AuHr />
+  <Filters::Address::AdressenSelector
+    @id="address-search"
+    @selected={{this.distanceList.selected}}
+  />
+  <Filters::SelectFilter
+    @id="distance"
+    @label="Afstand"
+    @options={{this.model.distanceOptions}}
+    @selected={{this.distanceList.selected}}
+    @updateSelected={{this.updateDistance}}
+    @queryParam="afstand"
+    @allowClear={{true}}
+    @searchEnabled={{false}}
+    @placeholder="Alle afstanden"
+    @searchField="label"
+  />
+  <Filters::SelectMultipleFilter
+    @id="theme"
+    @label="Thema"
+    @options={{this.themaOptions}}
+    @selected={{this.selectedThemes}}
+    @updateSelected={{this.updateSelectedThemes}}
+    @noMatchesMessage="Geen thema's gevonden"
+    @searchField="label"
+    @queryParam="thema"
+    @placeholder="Alle thema's"
+  />
+  <Filters::DateRangeFilter
+    @startQueryParam="begin"
+    @endQueryParam="eind"
+    @start={{this.startDate}}
+    @end={{this.endDate}}
+    @updateSelected={{this.updateSelectedDateRange}}
+  />
+  <Filters::SelectRadioButtonFilter
+    @id="status"
+    @label="Status agendapunten"
+    @options={{this.model.agendaStatusOptions}}
+    @selected={{this.status}}
+    @updateSelected={{this.setStatus}}
+    @queryParam="status"
+    @allowClear={{false}}
+    @searchEnabled={{false}}
+    @placeholder="Alle agendapunten"
+  />
+  <AuHr />
+  <section class="c-advanced-filter-holder">
+    <Accordion
+      @buttonLabel="GEAVANCEERDE FILTERS"
+      @showBottomBorder={{false}}
+      @isInitiallyOpen={{this.hasSelectedAdvancedFilters}}
+    >
+      <Filters::SelectMultipleCheckboxFilter
+        @id="governing-body"
+        @label="Bestuursorganen"
+        @options={{this.governingBodyList.options}}
+        @selected={{this.selectedBestuursorgaanIds}}
+        @updateSelected={{this.updateSelectedGoverningBodyClassifications}}
+        @searchField="label"
+        @queryParam="bestuursorganen"
+      />
+    </Accordion>
+  </section>
+</div>
+<div class="c-interface__sidebar-submit-buttons">
+  <AuHr />
+  {{#if @edit}}
+    {{#if this.session.isAuthenticated}}
+      {{#if @model.editingFilter}}
+        <AuButton
+          @skin="primary"
+          @width="block"
+          @loadingMessage="hidden"
+          @disabled={{this.isSavingFilters}}
+          @isLoading={{this.isSavingFilters}}
+          {{on "click" (fn this.editFilter @model.editingFilter)}}
+        > Filter opslaan</AuButton>
+      {{else}}
+        <AuButton
+          @skin="primary"
+          @width="block"
+          @loadingMessage="hidden"
+          @disabled={{or this.isSavingFilters (not this.filterName)}}
+          @isLoading={{this.isSavingFilters}}
+          {{on "click" this.saveFilters}}
+        >
+          Filter opslaan
+        </AuButton>
+      {{/if}}
+    {{/if}}
+  {{else}}
+    <AuButton
+      @skin="primary"
+      @width="block"
+      @disabled={{or this.isApplyingFilters this.filtersHaveErrors}}
+      @loading={{this.isApplyingFilters}}
+      @loadingMessage="hidden"
+      @hideText={{this.isApplyingFilters}}
+      {{on "click" this.goToOverview}}
+    >
+      {{this.showResultsText}}
+    </AuButton>
+  {{/if}}
+</div>

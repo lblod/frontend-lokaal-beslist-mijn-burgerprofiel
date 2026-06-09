@@ -27,6 +27,7 @@ $action: var(--au-gray-900);
 
 .action-sdk-color {
   color: $action !important;
+  text-decoration-color: $action !important;
 
   .au-c-icon {
     stroke: $action !important;

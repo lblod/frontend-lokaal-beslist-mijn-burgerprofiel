@@ -9,6 +9,7 @@ import type {
   SortType,
 } from 'frontend-burgernabije-besluitendatabank/controllers/agenda-items/types';
 import type MbpEmbedService from './mbp-embed';
+import type SessionService from './session';
 
 import { keywordSearch } from 'frontend-burgernabije-besluitendatabank/helpers/keyword-search';
 import {
@@ -16,11 +17,28 @@ import {
   serializeArray,
 } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 import { action } from '@ember/object';
+import type { Filter } from 'frontend-burgernabije-besluitendatabank/components/filter-list';
+import type AddressService from './address';
+import type DistanceListService from './distance-list';
+import type ItemListService from './item-list';
+import type GoverningBodyListService from './governing-body-list';
+import type GovernmentListService from './government-list';
+import type ThemeListService from './theme-list';
 
 export default class FilterService extends Service {
+  @service declare governingBodyList: GoverningBodyListService;
+  @service declare governmentList: GovernmentListService;
   @service declare router: RouterService;
+  @service declare filterService: FilterService;
+  @service('item-list') declare itemsService: ItemListService;
+  @service declare themeList: ThemeListService;
+  @service declare distanceList: DistanceListService;
   @service declare mbpEmbed: MbpEmbedService;
+  @service declare session: SessionService;
+  @service declare address: AddressService;
+  @tracked savedFilters: Filter[] = [];
 
+  @tracked selectedSavedFilter: Filter | null = null;
   @tracked keywordAdvancedSearch: { [key: string]: string[] } | null = null;
   @tracked filters: AgendaItemsParams = {
     keyword: null,
@@ -37,6 +55,10 @@ export default class FilterService extends Service {
     street: null,
     distance: null,
   };
+
+  constructor(...args: []) {
+    super(...args);
+  }
 
   @action
   setFilters(newFilters: Partial<AgendaItemsParams>) {
@@ -230,5 +252,233 @@ export default class FilterService extends Service {
     };
 
     return params;
+  }
+
+  setAllFiltersUnselected(): Filter[] {
+    this.selectedSavedFilter = null;
+    const unselectedFilters = this.savedFilters.map((f) => ({
+      ...f,
+      selected: false,
+    }));
+    this.savedFilters = unselectedFilters;
+    return unselectedFilters;
+  }
+
+  @action
+  selectFilter(name: string) {
+    const newFilters = this.savedFilters.map((f) => ({
+      ...f,
+      selected: f.name === name,
+    }));
+    this.updateSavedFilters(newFilters);
+    this.selectedSavedFilter = newFilters.find((f) => f.selected) || null;
+  }
+
+  @action
+  async loadSavedFilters() {
+    if (!this.session.isAuthenticated) {
+      this.savedFilters = [];
+      this.selectedSavedFilter = null;
+      return;
+    }
+    await this.reconcileWithBackend();
+  }
+
+  @action
+  deleteFilter(index: number) {
+    const savedFilter = this.savedFilters[index];
+    if (!savedFilter) return;
+
+    const confirmed = window.confirm(
+      `Weet je zeker dat je "${savedFilter.name}" filter wilt verwijderen?`,
+    );
+    if (!confirmed) return;
+
+    const newFilters = this.savedFilters.filter((_, i) => i != index);
+    this.updateSavedFilters(newFilters);
+
+    if (savedFilter.remoteId) {
+      void this.deleteRemoteFilter(savedFilter.remoteId);
+    }
+
+    if (savedFilter.selected) {
+      this.selectedSavedFilter = null;
+    }
+
+    this.router.transitionTo('filters.show', {
+      queryParams: this.filterService.asQueryParams,
+    });
+  }
+
+  @action
+  async loadFilter(savedFilter: Filter) {
+    if (!savedFilter) return;
+
+    if (savedFilter.filters.street) {
+      const address = await this.address.getSelectedAddress.perform(
+        savedFilter.filters.street,
+      );
+      if (address) this.address.setSelectedAddress(address);
+    } else {
+      this.address.selectedAddress = undefined;
+    }
+
+    this.filters = {
+      keyword: null,
+      keywordSearchOnlyInTitle: null,
+      municipalityLabels: [],
+      provinceLabels: [],
+      plannedStartMin: null,
+      plannedStartMax: null,
+      dateSort: 'desc' as SortType,
+      governingBodyClassificationIds: [],
+      dataQualityList: [],
+      status: '',
+      themeIds: [],
+      street: null,
+      distance: null,
+      ...savedFilter.filters,
+    };
+    this.keywordAdvancedSearch = savedFilter.filters.keyword
+      ? keywordSearch([savedFilter.filters.keyword])
+      : null;
+
+    this.governmentList.loadSelectedGoverningBodiesByLabels();
+    this.distanceList.selected = this.distanceList.getSelectedDistance(
+      savedFilter.filters.distance,
+    );
+    this.selectFilter(savedFilter.name);
+
+    this.itemsService.fetchItems.perform(0, { size: 1 });
+  }
+
+  @action
+  async resetFilters() {
+    this.address.selectedAddress = undefined;
+    this.distanceList.selected = null;
+    this.governmentList.selected = [];
+    this.selectedSavedFilter = null;
+    this.setAllFiltersUnselected();
+    this.resetFiltersToInitialView();
+    this.resetDateRange();
+    await this.governingBodyList.loadOptions();
+    this.itemsService.fetchItems.perform(0, { size: 1 });
+  }
+
+  updateSavedFilters(newFilters: Filter[]) {
+    this.savedFilters = newFilters;
+  }
+
+  async uploadFilter(filter: Filter): Promise<string | null> {
+    if (!this.session.isAuthenticated) return null;
+    try {
+      const response = await fetch('/saved-filters', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/vnd.api+json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+          data: {
+            attributes: {
+              name: filter.name,
+              filter: filter.filters,
+              notify: filter.notify,
+            },
+          },
+        }),
+      });
+      if (!response.ok) {
+        console.warn('saved-filter upload failed:', response.status);
+        return null;
+      }
+      const json = await response.json();
+      return json?.data?.id || null;
+    } catch (e) {
+      console.warn('saved-filter upload error:', e);
+      return null;
+    }
+  }
+
+  async updateRemoteFilter(
+    remoteId: string,
+    attrs: { name?: string; filter?: AgendaItemsParams; notify?: boolean },
+  ): Promise<void> {
+    if (!this.session.isAuthenticated || !remoteId) return;
+    try {
+      const response = await fetch(
+        `/saved-filters/${encodeURIComponent(remoteId)}`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/vnd.api+json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ data: { attributes: attrs } }),
+        },
+      );
+      if (!response.ok) {
+        console.warn('saved-filter update failed:', response.status);
+      }
+    } catch (e) {
+      console.warn('saved-filter update error:', e);
+    }
+  }
+
+  async deleteRemoteFilter(remoteId: string): Promise<void> {
+    if (!this.session.isAuthenticated || !remoteId) return;
+    try {
+      await fetch(`/saved-filters/${encodeURIComponent(remoteId)}`, {
+        method: 'DELETE',
+        credentials: 'same-origin',
+      });
+    } catch (e) {
+      console.warn('saved-filter delete error:', e);
+    }
+  }
+
+  async reconcileWithBackend(): Promise<void> {
+    if (!this.session.isAuthenticated) {
+      this.savedFilters = [];
+      this.selectedSavedFilter = null;
+      return;
+    }
+
+    try {
+      const response = await fetch('/saved-filters', {
+        headers: { Accept: 'application/vnd.api+json' },
+        credentials: 'same-origin',
+      });
+      if (!response.ok) return;
+      const json = await response.json();
+      const remoteFilters: Filter[] = (json.data || []).map(
+        (d: {
+          id: string;
+          attributes: {
+            name: string;
+            filter: AgendaItemsParams;
+            notify?: boolean;
+            createdAt?: string;
+          };
+        }) => ({
+          name: d.attributes.name,
+          filters: d.attributes.filter,
+          notify: d.attributes.notify !== false,
+          selected: false,
+          savedAt: d.attributes.createdAt || new Date().toISOString(),
+          resultCount: 0,
+          remoteId: d.id,
+        }),
+      );
+
+      const previouslySelectedId = this.selectedSavedFilter?.remoteId;
+      if (previouslySelectedId) {
+        const match = remoteFilters.find(
+          (f) => f.remoteId === previouslySelectedId,
+        );
+        if (match) match.selected = true;
+      }
+
+      this.updateSavedFilters(remoteFilters);
+      this.selectedSavedFilter = remoteFilters.find((f) => f.selected) || null;
+    } catch (e) {
+      console.warn('saved-filter list error:', e);
+    }
   }
 }

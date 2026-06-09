@@ -14,6 +14,7 @@ import type {
   SessionsQueryResult,
 } from 'frontend-burgernabije-besluitendatabank/controllers/sessions/types';
 import { keywordSearch } from 'frontend-burgernabije-besluitendatabank/helpers/keyword-search';
+import { deserializeArray } from 'frontend-burgernabije-besluitendatabank/utils/query-params';
 
 export function createSessionsQuery({
   index,
@@ -24,6 +25,9 @@ export function createSessionsQuery({
   dateSort,
   locationIds,
   governingBodyClassificationIds,
+  themeIds,
+  address,
+  distance,
   status,
   size = 15,
 }: SessionsQueryArguments): SessionsQueryResult {
@@ -38,6 +42,9 @@ export function createSessionsQuery({
       plannedStartMin,
       plannedStartMax,
       governingBodyClassificationIds,
+      themeIds,
+      address,
+      distance,
       status,
     }),
     dataMapping,
@@ -50,6 +57,9 @@ function buildFilters({
   plannedStartMin,
   plannedStartMax,
   governingBodyClassificationIds,
+  themeIds,
+  address,
+  distance,
   status,
 }: Partial<SessionsQueryArguments>): Record<string, string> {
   const filters: Record<string, string> = {
@@ -62,12 +72,19 @@ function buildFilters({
     }] ) `;
   }
 
-  if (locationIds) {
+  if (locationIds && !address) {
     filters[':terms:search_location_id'] = locationIds;
+  }
+  if (address || distance) {
+    filters[':geo:address_geometry_coord'] =
+      `${address?.location.xLambert72}, ${address?.location.yLambert72},${distance ?? 50}km`;
   }
   if (governingBodyClassificationIds) {
     filters[':terms:search_governing_body_classification_id'] =
       governingBodyClassificationIds;
+  }
+  if (themeIds) {
+    filters[':terms:search_theme_id'] = deserializeArray(themeIds).join(',');
   }
   if (status === 'Behandeld') {
     filters[':has:ended_at'] = 't';
