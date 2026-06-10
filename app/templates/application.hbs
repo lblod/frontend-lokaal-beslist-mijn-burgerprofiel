@@ -5,6 +5,8 @@
   {{! template-lint-disable no-inline-styles }}
   <AuMainContainer style="max-height: 100vh;" as |m|>
     <m.content @scroll={{true}}>
+
+      <TestNotificationButton />
       {{outlet}}
     </m.content>
   </AuMainContainer>

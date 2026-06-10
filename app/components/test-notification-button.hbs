@@ -1,0 +1,13 @@
+{{#if this.session.isAuthenticated}}
+  {{! template-lint-disable no-inline-styles }}
+  <div>
+    <AuButton
+      @skin="secondary"
+      @loading={{eq this.status "sending"}}
+      @loadingMessage="hidden"
+      {{on "click" this.send}}
+    >
+      {{this.label}}
+    </AuButton>
+  </div>
+{{/if}}
