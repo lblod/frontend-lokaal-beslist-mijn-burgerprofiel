@@ -324,6 +324,7 @@ export default class FilterService extends Service {
     }
 
     this.filters = {
+      ...savedFilter.filters,
       keyword: null,
       keywordSearchOnlyInTitle: null,
       municipalityLabels: [],
@@ -337,7 +338,6 @@ export default class FilterService extends Service {
       themeIds: [],
       street: null,
       distance: null,
-      ...savedFilter.filters,
     };
     this.keywordAdvancedSearch = savedFilter.filters.keyword
       ? keywordSearch([savedFilter.filters.keyword])
@@ -380,8 +380,9 @@ export default class FilterService extends Service {
           data: {
             attributes: {
               name: filter.name,
-              filter: filter.filters,
+              filter: await this.withResolvedCoordinates(filter.filters),
               notify: filter.notify,
+              count: filter.resultCount,
             },
           },
         }),
@@ -400,17 +401,25 @@ export default class FilterService extends Service {
 
   async updateRemoteFilter(
     remoteId: string,
-    attrs: { name?: string; filter?: AgendaItemsParams; notify?: boolean },
+    attrs: {
+      name?: string;
+      filter?: AgendaItemsParams;
+      notify?: boolean;
+      count?: number;
+    },
   ): Promise<void> {
     if (!this.session.isAuthenticated || !remoteId) return;
     try {
+      const payload = attrs.filter
+        ? { ...attrs, filter: await this.withResolvedCoordinates(attrs.filter) }
+        : attrs;
       const response = await fetch(
         `/saved-filters/${encodeURIComponent(remoteId)}`,
         {
           method: 'PUT',
           headers: { 'Content-Type': 'application/vnd.api+json' },
           credentials: 'same-origin',
-          body: JSON.stringify({ data: { attributes: attrs } }),
+          body: JSON.stringify({ data: { attributes: payload } }),
         },
       );
       if (!response.ok) {
@@ -419,6 +428,32 @@ export default class FilterService extends Service {
     } catch (e) {
       console.warn('saved-filter update error:', e);
     }
+  }
+
+  // Geocode the filter's street to Lambert-72 coordinates and persist them on the saved
+  // filter, so the backend daily-scan can reproduce the geo (distance) search. Returns the
+  // filter unchanged when there is no street or the address can't be resolved.
+  private async withResolvedCoordinates(
+    filters: AgendaItemsParams,
+  ): Promise<AgendaItemsParams> {
+    if (!filters.street) {
+      return filters;
+    }
+    try {
+      const address = await this.address.getSelectedAddress.perform(
+        filters.street,
+      );
+      if (address?.location) {
+        return {
+          ...filters,
+          addressXLambert72: address.location.xLambert72,
+          addressYLambert72: address.location.yLambert72,
+        };
+      }
+    } catch (e) {
+      console.warn('saved-filter coordinate resolution failed:', e);
+    }
+    return filters;
   }
 
   async deleteRemoteFilter(remoteId: string): Promise<void> {
@@ -455,6 +490,7 @@ export default class FilterService extends Service {
             filter: AgendaItemsParams;
             notify?: boolean;
             createdAt?: string;
+            lastSeenCount?: number;
           };
         }) => ({
           name: d.attributes.name,
@@ -462,7 +498,7 @@ export default class FilterService extends Service {
           notify: d.attributes.notify !== false,
           selected: false,
           savedAt: d.attributes.createdAt || new Date().toISOString(),
-          resultCount: 0,
+          resultCount: d.attributes.lastSeenCount ?? 0,
           remoteId: d.id,
         }),
       );

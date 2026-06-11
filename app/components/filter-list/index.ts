@@ -338,6 +338,7 @@ export default class FilterList extends Component<FilterListArgs> {
         name: updatedFilter.name,
         filter: updatedFilter.filters,
         notify: updatedFilter.notify,
+        count: updatedFilter.resultCount,
       });
     } else {
       const remoteId = await this.filterService.uploadFilter(updatedFilter);

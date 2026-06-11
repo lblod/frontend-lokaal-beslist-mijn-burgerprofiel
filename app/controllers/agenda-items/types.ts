@@ -15,6 +15,8 @@ export interface AgendaItemsParams {
   themeIds: Array<string>;
   street: string | null;
   distance: string | null;
+  addressXLambert72?: number | null;
+  addressYLambert72?: number | null;
 }
 
 export type FiltersAsQueryParams = {
