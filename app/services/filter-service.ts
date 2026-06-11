@@ -324,20 +324,19 @@ export default class FilterService extends Service {
     }
 
     this.filters = {
-      ...savedFilter.filters,
       keyword: null,
       keywordSearchOnlyInTitle: null,
       municipalityLabels: [],
       provinceLabels: [],
       plannedStartMin: null,
       plannedStartMax: null,
-      dateSort: 'desc' as SortType,
       governingBodyClassificationIds: [],
       dataQualityList: [],
       status: '',
       themeIds: [],
       street: null,
       distance: null,
+      ...savedFilter.filters,
     };
     this.keywordAdvancedSearch = savedFilter.filters.keyword
       ? keywordSearch([savedFilter.filters.keyword])
