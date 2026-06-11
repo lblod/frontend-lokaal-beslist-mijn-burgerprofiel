@@ -17,6 +17,9 @@ export interface AgendaItemsParams {
   distance: string | null;
   addressXLambert72?: number | null;
   addressYLambert72?: number | null;
+  // Resolved radius in km. `distance` is a distanceList option id (e.g. "3" → 10 km), not km
+  // itself, so the resolved value is persisted for the backend scan's geo query.
+  distanceKm?: number | null;
 }
 
 export type FiltersAsQueryParams = {

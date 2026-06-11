@@ -438,6 +438,9 @@ export default class FilterService extends Service {
     if (!filters.street) {
       return filters;
     }
+    // `distance` is a distanceList option id, not km — resolve it to the actual radius.
+    const distanceKm =
+      this.distanceList.getSelectedDistance(filters.distance)?.value ?? null;
     try {
       const address = await this.address.getSelectedAddress.perform(
         filters.street,
@@ -447,12 +450,13 @@ export default class FilterService extends Service {
           ...filters,
           addressXLambert72: address.location.xLambert72,
           addressYLambert72: address.location.yLambert72,
+          distanceKm,
         };
       }
     } catch (e) {
       console.warn('saved-filter coordinate resolution failed:', e);
     }
-    return filters;
+    return { ...filters, distanceKm };
   }
 
   async deleteRemoteFilter(remoteId: string): Promise<void> {
