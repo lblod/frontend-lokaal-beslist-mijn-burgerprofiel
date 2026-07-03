@@ -75,6 +75,26 @@ export default class SessionService extends Service {
     }
   }
 
+  // Fires a simple test notification to the signed-in user via the
+  // push-notification-service. Resolves to true on success (HTTP 2xx).
+  async sendTestNotification(): Promise<boolean> {
+    if (!this.isAuthenticated) return false;
+    try {
+      const response = await fetch('/test-notification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+      });
+      if (!response.ok) {
+        console.warn('test-notification failed:', response.status);
+      }
+      return response.ok;
+    } catch (e) {
+      console.warn('test-notification error:', e);
+      return false;
+    }
+  }
+
   async logout() {
     try {
       await fetch('/auth/v1/session', {
